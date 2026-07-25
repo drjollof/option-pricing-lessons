@@ -74,7 +74,7 @@ export const LessonClient: React.FC<{ lesson: Lesson }> = ({ lesson }) => {
           {activePhase.showParamControls && (
             <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
               <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">Adjust Parameters Below</h3>
-              <ParamControls />
+              <ParamControls maxN={activePhase.kind === 'convergence-sweep' ? 100 : activePhase.kind === 'path-explorer' ? 5 : 6} />
             </div>
           )}
         </div>

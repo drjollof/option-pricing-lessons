@@ -7,9 +7,10 @@ import { useLessonStore } from '@/store/lessonStore';
 interface ArrayGridPaneProps {
   tree: number[][];
   direction?: 'forward' | 'backward';
+  highlightTree?: boolean[][];
 }
 
-export const ArrayGridPane: React.FC<ArrayGridPaneProps> = ({ tree, direction = 'forward' }) => {
+export const ArrayGridPane: React.FC<ArrayGridPaneProps> = ({ tree, direction = 'forward', highlightTree }) => {
   const { currentFrame } = useLessonStore();
   const N = tree.length - 1;
   
@@ -52,23 +53,26 @@ export const ArrayGridPane: React.FC<ArrayGridPaneProps> = ({ tree, direction = 
                   const isVisible = direction === 'backward' 
                     ? (i >= N - currentFrame) 
                     : (currentFrame >= i);
+                  const isHighlighted = highlightTree?.[i]?.[j] ?? false;
 
                   return (
                     <motion.div 
                       key={`cell-${i}-${j}`}
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ 
-                        opacity: cellVal !== null && isVisible ? 1 : 0, 
-                        scale: cellVal !== null && isVisible ? 1 : 0.8 
+                        opacity: cellVal !== null ? (isVisible ? 1 : 0.2) : 0, 
+                        scale: cellVal !== null ? (isVisible ? 1 : 0.95) : 0.8 
                       }}
                       transition={{ duration: 0.4 }}
-                      className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-lg text-xs sm:text-sm font-mono font-semibold transition-all hover:scale-105 cursor-pointer shadow-sm"
-                      style={{ 
-                        backgroundColor: cellVal !== null ? getBackgroundColor(cellVal) : 'transparent',
-                        color: cellVal !== null ? '#1e293b' : 'transparent',
-                        border: cellVal !== null ? '1px solid rgba(148, 163, 184, 0.4)' : 'none',
-                        boxShadow: cellVal !== null ? '0 1px 2px rgba(0,0,0,0.05)' : 'none'
-                      }}
+                      className={`w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-lg text-xs sm:text-sm font-mono font-semibold transition-all shadow-sm border ${
+                        cellVal === null 
+                          ? 'opacity-0' 
+                          : !isVisible 
+                            ? 'bg-slate-50 border-slate-100 text-slate-300 dark:bg-slate-900/50 dark:border-slate-800 dark:text-slate-700'
+                            : isHighlighted 
+                              ? 'bg-red-50 border-red-300 text-red-700 dark:bg-red-950/30 dark:border-red-800/50 dark:text-red-300'
+                              : 'bg-white border-slate-200 text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200'
+                      }`}
                     >
                       {cellVal !== null ? cellVal.toFixed(1) : ''}
                     </motion.div>

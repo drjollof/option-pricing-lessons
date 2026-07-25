@@ -7,9 +7,10 @@ import { useLessonStore } from '@/store/lessonStore';
 interface LatticePaneProps {
   tree: number[][];
   direction?: 'forward' | 'backward';
+  highlightTree?: boolean[][];
 }
 
-export const LatticePane: React.FC<LatticePaneProps> = ({ tree, direction = 'forward' }) => {
+export const LatticePane: React.FC<LatticePaneProps> = ({ tree, direction = 'forward', highlightTree }) => {
   const { currentFrame } = useLessonStore();
   const N = tree.length - 1;
   
@@ -27,8 +28,9 @@ export const LatticePane: React.FC<LatticePaneProps> = ({ tree, direction = 'for
   const height = 400;
   const padding = 40;
   
-  const getX = (i: number) => padding + (i / N) * (width - 2 * padding);
+  const getX = (i: number) => N === 0 ? width / 2 : padding + (i / N) * (width - 2 * padding);
   const getY = (i: number, j: number) => {
+    if (N === 0) return height / 2;
     const spread = (width - 2 * padding) * (i / N);
     const topY = height / 2 - spread / 2;
     const step = i === 0 ? 0 : spread / i;
@@ -78,19 +80,43 @@ export const LatticePane: React.FC<LatticePaneProps> = ({ tree, direction = 'for
             ? (i >= N - currentFrame) 
             : (currentFrame >= i);
 
-          return layer.map((val, j) => (
-            <motion.g 
-              key={`node-${i}-${j}`}
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.5 }}
-              transition={{ duration: 0.5, type: 'spring', bounce: 0.4 }}
-            >
-              <circle cx={getX(i)} cy={getY(i, j)} r={22} className="fill-blue-50 dark:fill-slate-800 stroke-blue-500 dark:stroke-blue-400 shadow-sm transition-transform hover:scale-110 cursor-pointer" strokeWidth={2.5} />
-              <text x={getX(i)} y={getY(i, j)} textAnchor="middle" dy=".3em" fontSize="13" fontWeight="600" className="fill-slate-700 dark:fill-slate-200 font-mono pointer-events-none">
-                {val.toFixed(1)}
-              </text>
-            </motion.g>
-          ));
+          return layer.map((val, j) => {
+            const isHighlighted = highlightTree?.[i]?.[j] ?? false;
+            
+            return (
+              <motion.g 
+                key={`node-${i}-${j}`}
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.5 }}
+                transition={{ duration: 0.5, type: 'spring', bounce: 0.4 }}
+              >
+                <circle 
+                  cx={getX(i)} 
+                  cy={getY(i, j)} 
+                  r={22} 
+                  className={`shadow-sm transition-transform hover:scale-110 cursor-pointer ${
+                    isHighlighted 
+                      ? 'fill-red-50 dark:fill-red-950/30 stroke-red-500 dark:stroke-red-400' 
+                      : 'fill-blue-50 dark:fill-slate-800 stroke-blue-500 dark:stroke-blue-400'
+                  }`}
+                  strokeWidth={isHighlighted ? 3.5 : 2.5} 
+                />
+                <text 
+                  x={getX(i)} 
+                  y={getY(i, j)} 
+                  textAnchor="middle" 
+                  dy=".3em" 
+                  fontSize="13" 
+                  fontWeight="600" 
+                  className={`font-mono pointer-events-none ${
+                    isHighlighted ? 'fill-red-700 dark:fill-red-300' : 'fill-slate-700 dark:fill-slate-200'
+                  }`}
+                >
+                  {val.toFixed(1)}
+                </text>
+              </motion.g>
+            );
+          });
         })}
       </svg>
     </div>

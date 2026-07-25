@@ -16,6 +16,15 @@ export const MathConsolePane: React.FC<MathConsolePaneProps> = ({ stepText, form
   const { currentFrame } = useLessonStore();
   const bottomRef = useRef<HTMLDivElement>(null);
   const [viewMode, setViewMode] = useState<'math' | 'code'>('math');
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    if (codeSnippet) {
+      navigator.clipboard.writeText(codeSnippet);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   // Auto-scroll to bottom when new items are added
   useEffect(() => {
@@ -96,9 +105,25 @@ export const MathConsolePane: React.FC<MathConsolePaneProps> = ({ stepText, form
           <motion.div 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
-            className="bg-slate-950 border border-slate-800 rounded-xl p-5 overflow-x-auto h-full"
+            className="bg-slate-950 border border-slate-800 rounded-xl p-5 overflow-x-auto h-full relative group"
           >
-            <pre className="font-mono text-[13px] leading-relaxed text-emerald-400">
+            <button
+              onClick={handleCopy}
+              className="absolute top-3 right-3 p-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity border border-slate-700 backdrop-blur-sm"
+              title="Copy code"
+            >
+              {copied ? (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-400">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              )}
+            </button>
+            <pre className="font-mono text-[13px] leading-relaxed text-emerald-400 mt-2">
               <code>{codeSnippet}</code>
             </pre>
           </motion.div>

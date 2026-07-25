@@ -7,6 +7,25 @@ export const lesson1: Lesson = {
   defaultParams: { S0: 100, K: 100, u: 1.15, d: 0.85, r: 0.05, T: 1, N: 3 },
   phases: [
     {
+      id: 'what-is-an-option',
+      title: 'What is an Option?',
+      description: "Before we price anything, let's establish what a derivative is. An option is a contract that gives you the RIGHT, but not the obligation, to buy (Call) or sell (Put) an underlying stock at a fixed Strike Price (K) on a specific Expiration Date (T).",
+      kind: 'static-slides',
+      showParamControls: false,
+      stepTexts: [
+        "Step 0: If you buy a Call option, you are betting the stock goes UP.",
+        "Step 1: If the stock is above K at expiration, your payoff is S - K.",
+        "Step 2: If the stock is below K, the option expires worthless (payoff = 0).",
+        "Step 3: Because the future is uncertain, how much should you pay for this contract today? That is the core problem of quantitative finance."
+      ],
+      formulas: [
+        [ `\\text{Call Payoff} = \\max(0, S_T - K)` ],
+        [ `\\text{If } S_T > K, \\text{ Payoff } > 0` ],
+        [ `\\text{If } S_T \\leq K, \\text{ Payoff } = 0` ],
+        [ `\\text{Fair Value Today } (C_0) = ?` ]
+      ]
+    },
+    {
       id: 'stock-build',
       title: 'Building the Stock Tree',
       description: "The binomial model simplifies reality by assuming that over any small time period, the stock price can only move to one of two possible states: 'up' or 'down'. By compounding these discrete steps, we can model the entire distribution of future stock prices.",
@@ -59,6 +78,25 @@ export const lesson1: Lesson = {
         tree.append(layer)
         
     return tree`
+    },
+    {
+      id: 'real-prob-problem',
+      title: 'The Problem with Real Probabilities',
+      description: "Now we have a tree of future stock prices. To find the option's fair value, you might think we should just estimate the real-world probability of the stock going up, and calculate the expected value. But there's a huge problem with this.",
+      kind: 'static-slides',
+      showParamControls: false,
+      stepTexts: [
+        "Step 0: Suppose you believe the stock has a 60% chance of going up.",
+        "Step 1: Your friend believes it has a 40% chance of going up.",
+        "Step 2: If the option price depended on personal beliefs, you and your friend would calculate two completely different 'fair' prices.",
+        "Step 3: But traded options have ONE single market price! Therefore, option pricing cannot depend on subjective, real-world probabilities."
+      ],
+      formulas: [
+        [ `p_{real} = 0.60 \\quad (\\text{Your belief})` ],
+        [ `p_{real} = 0.40 \\quad (\\text{Friend's belief})` ],
+        [ `\\text{Expected Value} = \\text{Subjective!}` ],
+        [ `\\text{Prices must be objective.}` ]
+      ]
     },
     {
       id: 'no-arbitrage',

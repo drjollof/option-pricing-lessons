@@ -26,9 +26,31 @@ export default function Home() {
           <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
             Interactive, visual, and code-driven lessons to master quantitative finance. From binomial lattices to Black-Scholes.
           </p>
+          
+          <div className="mt-8 flex flex-wrap items-center gap-4">
+            <Link 
+              href="/sandbox"
+              className="group inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:rotate-12 transition-transform"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              Sandbox Explorer
+            </Link>
+            
+            <Link 
+              href="/textbook"
+              className="group inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-semibold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 hover:shadow-md transition-all"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-500 dark:text-emerald-400 group-hover:scale-110 transition-transform"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path></svg>
+              Textbook Mode
+            </Link>
+          </div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="mb-12 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Curriculum</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
           {lessons.map((lesson, idx) => {
             const isCompleted = mounted && completedLessons.includes(lesson.id);
             return (
@@ -60,26 +82,6 @@ export default function Home() {
               </Link>
             );
           })}
-          
-          <Link 
-            href="/sandbox"
-            className="group flex flex-col bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-3xl p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
-            <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center font-bold text-xl mb-4 group-hover:scale-110 transition-transform">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-            </div>
-            <h2 className="text-xl font-bold text-white mb-2">
-              Sandbox Explorer
-            </h2>
-            <p className="text-indigo-100 text-sm leading-relaxed mb-4 flex-grow">
-              Pure exploration. Choose any visualizer, adjust parameters without constraints, and see how the model behaves.
-            </p>
-            
-            <div className="text-sm font-semibold text-white flex items-center gap-1 group-hover:gap-2 transition-all">
-              Enter Sandbox <span>→</span>
-            </div>
-          </Link>
         </div>
       </div>
     </main>

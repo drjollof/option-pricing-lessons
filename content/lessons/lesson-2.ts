@@ -7,6 +7,25 @@ export const lesson2: Lesson = {
   defaultParams: { S0: 100, K: 100, u: 1.15, d: 0.85, r: 0.05, T: 1, N: 3 },
   phases: [
     {
+      id: 'put-mechanics',
+      title: 'The Put Option Mechanics',
+      description: "Unlike a Call option, a Put option gives you the right to SELL the stock at the Strike Price (K). This means you profit when the stock price falls.",
+      kind: 'static-slides',
+      showParamControls: false,
+      stepTexts: [
+        "Step 0: If you buy a Put option, you are betting the stock goes DOWN.",
+        "Step 1: If the stock crashes below K, you can buy it cheaply in the market and sell it at K. Your payoff is K - S.",
+        "Step 2: If the stock is above K, the option expires worthless (payoff = 0).",
+        "Step 3: Just like the Call, we can price the Put by stepping backward through the binomial tree."
+      ],
+      formulas: [
+        [ `\\text{Put Payoff} = \\max(0, K - S_T)` ],
+        [ `\\text{If } S_T < K, \\text{ Payoff } > 0` ],
+        [ `\\text{If } S_T \\geq K, \\text{ Payoff } = 0` ],
+        [ `\\text{Fair Value Today } (P_0) = ?` ]
+      ]
+    },
+    {
       id: 'put-backward-induction',
       title: 'Put Option & Backward Induction',
       description: "A Put option gives the holder the right to sell the stock at the strike price K. Similar to a Call option, we calculate its terminal payoffs at expiration as max(0, K - S) and discount them backward to find the fair value today.",
@@ -72,6 +91,25 @@ export const lesson2: Lesson = {
           `\\text{Right Side: } 100 - 100 (0.9512) = 4.88`,
           `4.9 \\approx 4.88 \\quad \\checkmark`
         ]
+      ]
+    },
+    {
+      id: 'arbitrageurs-playbook',
+      title: "The Arbitrageur's Playbook",
+      description: "What happens if the market prices drift, and Put-Call Parity is violated? Suppose a Call is trading for $15, but it SHOULD be $13.40. An arbitrageur can step in and lock in a risk-free profit without using any of their own money.",
+      kind: 'static-slides',
+      showParamControls: false,
+      stepTexts: [
+        "Step 0: The Call is overpriced at $15 (it should be $13.40). The Put is fairly priced at $8.50.",
+        "Step 1: The Arbitrageur SELLS the expensive Call, BUYS the fair Put, BUYS the Stock, and BORROWS the rest.",
+        "Step 2: At expiration, no matter what the stock price is, the portfolio's net value perfectly cancels out to zero.",
+        "Step 3: But today, the net cash flow is positive! This guarantees free money, forcing the market prices back in line."
+      ],
+      formulas: [
+        [ `C_{market} = 15.00 \\quad P_{market} = 8.50` ],
+        [ `\\text{Trade: } -C + P + S_0 - \\text{Borrow}` ],
+        [ `\\text{Payoff at } T = \\max(0, K-S_T) - \\max(0, S_T-K) + S_T - K = 0` ],
+        [ `\\text{Profit Today } = +15.00 - 8.50 - 100 + 95.12 = +\\$1.62` ]
       ]
     }
   ]

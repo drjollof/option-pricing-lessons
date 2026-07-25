@@ -2,7 +2,11 @@
 import React from 'react';
 import { useLessonStore } from '@/store/lessonStore';
 
-export const ParamControls: React.FC = () => {
+interface ParamControlsProps {
+  maxN?: number;
+}
+
+export const ParamControls: React.FC<ParamControlsProps> = ({ maxN = 100 }) => {
   const { params, updateParams } = useLessonStore();
 
   const handleSlider = (key: keyof typeof params, value: number) => {
@@ -44,7 +48,7 @@ export const ParamControls: React.FC = () => {
           <span>N (Steps)</span>
           <span className="text-blue-600 dark:text-blue-400">{params.N}</span>
         </label>
-        <input type="range" min="1" max="100" step="1" value={params.N} onChange={(e) => handleSlider('N', parseFloat(e.target.value))} className="accent-blue-600" />
+        <input type="range" min="1" max={maxN} step="1" value={Math.min(params.N, maxN)} onChange={(e) => handleSlider('N', parseFloat(e.target.value))} className="accent-blue-600" />
       </div>
       <div className="flex flex-col gap-2">
         <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex justify-between">

@@ -5,11 +5,13 @@ import { LatticePane } from './LatticePane';
 import { ArrayGridPane } from './ArrayGridPane';
 import { MathConsolePane } from './MathConsolePane';
 import { PlaybackControls } from './PlaybackControls';
-import { buildStockTree, priceEuropeanOption, buildDeltaTree } from '@/lib/binomial';
+import { buildStockTree, priceEuropeanOption, priceAmericanOption, buildDeltaTree } from '@/lib/binomial';
 import { useLessonStore } from '@/store/lessonStore';
 import { LessonPhase } from '@/content/types';
 
 import { ConvergenceChartPane } from './ConvergenceChartPane';
+import { PathExplorerPane } from './PathExplorerPane';
+import { MonteCarloPane } from './MonteCarloPane';
 
 interface ThreePanePlayerProps {
   phase: LessonPhase;
@@ -19,7 +21,15 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
   const { params, setMaxFrames, setFrame, pause, maxFrames } = useLessonStore();
   
   const stockTree = useMemo(() => buildStockTree(params), [params]);
-  const { optionTree } = useMemo(() => priceEuropeanOption(params, phase.optionType || 'call'), [params, phase.optionType]);
+  const optionResult = useMemo(() => {
+    return phase.isAmerican 
+      ? priceAmericanOption(params, phase.optionType || 'call')
+      : priceEuropeanOption(params, phase.optionType || 'call');
+  }, [params, phase.optionType, phase.isAmerican]);
+  
+  const optionTree = optionResult.optionTree;
+  const exerciseTree = 'exerciseTree' in optionResult ? optionResult.exerciseTree : undefined;
+  
   const deltaTree = useMemo(() => buildDeltaTree(params, optionTree, stockTree), [params, optionTree, stockTree]);
 
   useEffect(() => {
@@ -35,6 +45,22 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
     return (
       <div className="w-full h-[500px]">
         <ConvergenceChartPane maxN={100} />
+      </div>
+    );
+  }
+
+  if (phase.kind === 'path-explorer') {
+    return (
+      <div className="w-full h-[500px]">
+        <PathExplorerPane />
+      </div>
+    );
+  }
+
+  if (phase.kind === 'monte-carlo') {
+    return (
+      <div className="w-full h-[500px]">
+        <MonteCarloPane />
       </div>
     );
   }
@@ -74,7 +100,7 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
             {/* Lattice: 3rd on mobile, 2nd on desktop */}
             <div className="lg:col-span-4 h-[400px] lg:h-[500px] order-3 lg:order-2">
               {treeToRender ? (
-                <LatticePane tree={treeToRender} direction={phase.direction || 'forward'} />
+                <LatticePane tree={treeToRender} direction={phase.direction || 'forward'} highlightTree={phase.reveals === 'option_tree' ? exerciseTree : undefined} />
               ) : (
                 <div className="flex items-center justify-center w-full h-full border border-slate-200 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900 text-slate-400">
                   No tree data available
@@ -85,7 +111,7 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
             {/* Array Grid: 4th on mobile, 3rd on desktop */}
             <div className="lg:col-span-3 h-[400px] lg:h-[500px] order-4 lg:order-3">
               {treeToRender ? (
-                <ArrayGridPane tree={treeToRender} direction={phase.direction || 'forward'} />
+                <ArrayGridPane tree={treeToRender} direction={phase.direction || 'forward'} highlightTree={phase.reveals === 'option_tree' ? exerciseTree : undefined} />
               ) : (
                 <div className="flex items-center justify-center w-full h-full border border-slate-200 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900 text-slate-400">
                   No array data available
