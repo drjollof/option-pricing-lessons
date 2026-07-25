@@ -52,7 +52,7 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
             <div className="lg:col-span-12 h-[400px] lg:h-[500px] order-1">
               <MathConsolePane stepText={phase.stepTexts || []} formulas={phase.formulas || []} codeSnippet={phase.codeSnippet} />
             </div>
-            {maxFrames > 0 && phase.kind !== 'convergence-sweep' && (
+            {maxFrames > 0 && (
               <div className="lg:col-span-12 order-2 mt-2 lg:mt-0">
                 <PlaybackControls />
               </div>
@@ -65,8 +65,7 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
               <MathConsolePane stepText={phase.stepTexts || []} formulas={phase.formulas || []} codeSnippet={phase.codeSnippet} />
             </div>
 
-            {/* Playback Controls: 2nd on mobile, 4th (bottom row) on desktop */}
-            {maxFrames > 0 && phase.kind !== 'convergence-sweep' && (
+            {maxFrames > 0 && (
               <div className="lg:col-span-12 order-2 lg:order-4 mt-2 lg:mt-0">
                 <PlaybackControls />
               </div>
