@@ -16,7 +16,7 @@ interface ThreePanePlayerProps {
 }
 
 export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
-  const { params, setMaxFrames, setFrame, pause } = useLessonStore();
+  const { params, setMaxFrames, setFrame, pause, maxFrames } = useLessonStore();
   
   const stockTree = useMemo(() => buildStockTree(params), [params]);
   const { optionTree } = useMemo(() => priceEuropeanOption(params, phase.optionType || 'call'), [params, phase.optionType]);
@@ -48,15 +48,32 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
     <div className="flex flex-col gap-6 w-full mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full">
         {phase.kind === 'derivation-steps' ? (
-          <div className="lg:col-span-12 h-[400px] lg:h-[500px]">
-            <MathConsolePane stepText={phase.stepTexts || []} formulas={phase.formulas || []} codeSnippet={phase.codeSnippet} />
-          </div>
-        ) : (
           <>
-            <div className="lg:col-span-5 h-[400px] lg:h-[500px]">
+            <div className="lg:col-span-12 h-[400px] lg:h-[500px] order-1">
               <MathConsolePane stepText={phase.stepTexts || []} formulas={phase.formulas || []} codeSnippet={phase.codeSnippet} />
             </div>
-            <div className="lg:col-span-4 h-[400px] lg:h-[500px]">
+            {maxFrames > 0 && phase.kind !== 'convergence-sweep' && (
+              <div className="lg:col-span-12 order-2 mt-2 lg:mt-0">
+                <PlaybackControls />
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            {/* Math Console: 1st on mobile, 1st on desktop */}
+            <div className="lg:col-span-5 h-[400px] lg:h-[500px] order-1">
+              <MathConsolePane stepText={phase.stepTexts || []} formulas={phase.formulas || []} codeSnippet={phase.codeSnippet} />
+            </div>
+
+            {/* Playback Controls: 2nd on mobile, 4th (bottom row) on desktop */}
+            {maxFrames > 0 && phase.kind !== 'convergence-sweep' && (
+              <div className="lg:col-span-12 order-2 lg:order-4 mt-2 lg:mt-0">
+                <PlaybackControls />
+              </div>
+            )}
+
+            {/* Lattice: 3rd on mobile, 2nd on desktop */}
+            <div className="lg:col-span-4 h-[400px] lg:h-[500px] order-3 lg:order-2">
               {treeToRender ? (
                 <LatticePane tree={treeToRender} direction={phase.direction || 'forward'} />
               ) : (
@@ -65,7 +82,9 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
                 </div>
               )}
             </div>
-            <div className="lg:col-span-3 h-[400px] lg:h-[500px]">
+
+            {/* Array Grid: 4th on mobile, 3rd on desktop */}
+            <div className="lg:col-span-3 h-[400px] lg:h-[500px] order-4 lg:order-3">
               {treeToRender ? (
                 <ArrayGridPane tree={treeToRender} direction={phase.direction || 'forward'} />
               ) : (
@@ -77,11 +96,6 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
           </>
         )}
       </div>
-
-      {/* Playback Controls */}
-      {(phase.kind === 'tree-reveal' || phase.kind === 'hedge-rebalance-animation') && (
-        <PlaybackControls />
-      )}
     </div>
   );
 };
