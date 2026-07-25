@@ -17,8 +17,8 @@ export const MonteCarloPane: React.FC = () => {
   const padding = 50;
 
   // Find max and min across all paths to set the scale
-  let minPrice = p => p;
-  let maxPrice = p => p;
+  let minPrice = 0;
+  let maxPrice = 0;
   
   if (mcResult.paths.length > 0) {
     const allPrices = mcResult.paths.flatMap(p => p.prices);

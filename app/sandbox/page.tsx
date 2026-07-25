@@ -8,7 +8,7 @@ import { useLessonStore } from '@/store/lessonStore';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
 
 export default function SandboxPage() {
-  const [visualizer, setVisualizer] = useState<'stock_tree' | 'option_tree' | 'delta_tree' | 'convergence-sweep'>('stock_tree');
+  const [visualizer, setVisualizer] = useState<'stock_tree' | 'option_tree' | 'delta_tree' | 'convergence-sweep' | 'path-explorer' | 'monte-carlo'>('stock_tree');
   const [optionType, setOptionType] = useState<'call' | 'put'>('call');
 
   let stepTexts: string[] = [];

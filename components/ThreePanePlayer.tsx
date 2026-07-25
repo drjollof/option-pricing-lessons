@@ -28,7 +28,7 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
   }, [params, phase.optionType, phase.isAmerican]);
   
   const optionTree = optionResult.optionTree;
-  const exerciseTree = 'exerciseTree' in optionResult ? optionResult.exerciseTree : undefined;
+  const exerciseTree = ('exerciseTree' in optionResult ? (optionResult as any).exerciseTree : undefined) as boolean[][] | undefined;
   
   const deltaTree = useMemo(() => buildDeltaTree(params, optionTree, stockTree), [params, optionTree, stockTree]);
 
