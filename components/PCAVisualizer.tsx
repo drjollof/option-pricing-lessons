@@ -1,0 +1,63 @@
+"use client";
+import React, { useMemo } from 'react';
+import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { useLessonStore } from '@/store/lessonStore';
+
+export const PCAVisualizer: React.FC = () => {
+  const { params } = useLessonStore();
+  
+  // Synthetic PCA data
+  const data = useMemo(() => {
+    // If we have N features (let's say 10 components)
+    // The first components explain most of the variance
+    const componentsCount = 10;
+    
+    // the steeper the decay, the better PCA works (controlled by sigma in our lesson)
+    const decay = params.sigma || 0.2; 
+    
+    let currentCumulative = 0;
+    const generatedData = [];
+    
+    let remainingVariance = 100;
+    
+    for (let i = 1; i <= componentsCount; i++) {
+      // Simulate eigenvalue proportion
+      let explained = remainingVariance * (0.5 + (0.5 - decay)); 
+      if (i === componentsCount) explained = remainingVariance; // remaining
+      
+      currentCumulative += explained;
+      remainingVariance -= explained;
+      
+      generatedData.push({
+        name: `PC${i}`,
+        explainedVariance: parseFloat(explained.toFixed(2)),
+        cumulativeVariance: parseFloat(currentCumulative.toFixed(2)),
+      });
+    }
+    
+    return generatedData;
+  }, [params.sigma]);
+
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-slate-800">
+      <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-6">PCA Scree Plot</h3>
+      <ResponsiveContainer width="100%" height={400}>
+        <ComposedChart data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+          <XAxis dataKey="name" tick={{ fill: '#64748b' }} axisLine={{ stroke: '#cbd5e1' }} tickLine={false} />
+          <YAxis yAxisId="left" tick={{ fill: '#64748b' }} axisLine={{ stroke: '#cbd5e1' }} tickLine={false} unit="%" />
+          <YAxis yAxisId="right" orientation="right" tick={{ fill: '#64748b' }} axisLine={{ stroke: '#cbd5e1' }} tickLine={false} unit="%" domain={[0, 100]} />
+          
+          <Tooltip 
+             cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+             contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+          />
+          <Legend />
+          
+          <Bar yAxisId="left" dataKey="explainedVariance" name="Explained Variance" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+          <Line yAxisId="right" type="monotone" dataKey="cumulativeVariance" name="Cumulative Variance" stroke="#10b981" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+        </ComposedChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};

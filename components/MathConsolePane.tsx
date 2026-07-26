@@ -3,6 +3,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import 'katex/dist/katex.min.css';
 import { BlockMath } from 'react-katex';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { useLessonStore } from '@/store/lessonStore';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -89,9 +92,11 @@ export const MathConsolePane: React.FC<MathConsolePaneProps> = ({ stepText, form
                   transition={{ duration: 0.4 }}
                   className="flex flex-col gap-3"
                 >
-                  <p className="text-[15px] leading-relaxed text-slate-300 font-medium">
-                    {text}
-                  </p>
+                  <div className="text-[15px] leading-relaxed text-slate-300 font-medium prose prose-invert prose-p:my-0">
+                    <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+                      {text}
+                    </ReactMarkdown>
+                  </div>
                   
                   {formulas[idx] && (
                     <div className="bg-slate-950/50 backdrop-blur-md border border-slate-800/60 p-4 rounded-xl shadow-inner flex flex-col gap-2 overflow-x-auto">

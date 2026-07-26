@@ -15,9 +15,11 @@ export const PhaseHeader: React.FC<PhaseHeaderProps> = ({ title, description, vi
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-slate-100 dark:border-slate-800 pb-6">
       <div>
         <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">{title}</h2>
-        <p className="text-slate-500 dark:text-slate-400 font-medium max-w-3xl leading-relaxed">
-          {description || `Given an initial stock price S0 = ${params.S0}, we project its future value across ${params.N} steps.`}
-        </p>
+        {description && (
+          <p className="text-slate-500 dark:text-slate-400 font-medium max-w-3xl leading-relaxed">
+            {description}
+          </p>
+        )}
       </div>
       <div className="flex flex-wrap gap-2">
         {(!visibleParams || visibleParams.includes('S0')) && (
