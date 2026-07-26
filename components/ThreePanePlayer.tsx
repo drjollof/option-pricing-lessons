@@ -18,7 +18,7 @@ interface ThreePanePlayerProps {
 }
 
 export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
-  const { params, setMaxFrames, setFrame, pause, maxFrames } = useLessonStore();
+  const { params, setMaxFrames, setFrame, pause, maxFrames, play } = useLessonStore();
   
   const stockTree = useMemo(() => buildStockTree(params), [params]);
   const optionResult = useMemo(() => {
@@ -39,11 +39,14 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
       : (phase.reveals === 'delta_tree' ? params.N - 1 : params.N);
     setMaxFrames(maxF);
     
-    // If we want it to show all instantly (all static-slides, or explicitly requested), initialize to the final frame.
-    // The user can still hit 'Replay' on the playback controls to see the animation.
-    const shouldShowInstantly = phase.kind === 'static-slides' || phase.showAllInstantly;
-    setFrame(shouldShowInstantly ? maxF : 0);
-  }, [params.N, phase, setMaxFrames, setFrame, pause]);
+    // Always start from 0 and autoplay (user preference)
+    setFrame(0);
+    
+    // Use a small timeout to let the state settle before playing
+    if (maxF > 0) {
+      setTimeout(() => play(), 100);
+    }
+  }, [params.N, phase, setMaxFrames, setFrame, pause, play]);
 
   if (phase.kind === 'convergence-sweep') {
     return (

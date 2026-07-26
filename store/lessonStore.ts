@@ -43,7 +43,6 @@ export const useLessonStore = create<LessonState>((set) => ({
   setMaxFrames: (max) => set({ maxFrames: max }),
   updateParams: (newParams) => set((state) => ({
     params: { ...state.params, ...newParams },
-    currentFrame: 0,
     isPlaying: false
   })),
 }));

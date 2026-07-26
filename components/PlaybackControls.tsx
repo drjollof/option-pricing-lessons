@@ -36,7 +36,7 @@ export const PlaybackControls: React.FC = () => {
         <button 
           onClick={stepBackward} 
           disabled={currentFrame === 0}
-          className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors"
+          className="p-2 rounded-lg text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
         </button>
@@ -55,7 +55,7 @@ export const PlaybackControls: React.FC = () => {
         <button 
           onClick={stepForward} 
           disabled={currentFrame === maxFrames}
-          className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors"
+          className="p-2 rounded-lg text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
         </button>
@@ -81,7 +81,7 @@ export const PlaybackControls: React.FC = () => {
         <select 
           value={playbackSpeed} 
           onChange={(e) => setSpeed(parseInt(e.target.value))}
-          className="text-sm bg-slate-100 dark:bg-slate-800 border-none rounded-md px-2 py-1 outline-none focus:ring-2 focus:ring-blue-500"
+          className="text-sm text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 border-none rounded-md px-2 py-1 outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value={2000}>0.5x (Slow)</option>
           <option value={1000}>1.0x (Normal)</option>

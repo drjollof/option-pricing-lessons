@@ -70,16 +70,25 @@ export default async function TextbookChapter({ params }: { params: Promise<{ le
                   </p>
                   
                   {phase.formulas && phase.formulas[stepIdx] && (
-                    <div className="my-6 p-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm overflow-x-auto">
-                      {Array.isArray(phase.formulas[stepIdx]) ? (
-                        (phase.formulas[stepIdx] as string[]).map((f, i) => (
-                          <div key={i} className="my-2">
-                            <BlockMath math={f} />
-                          </div>
-                        ))
-                      ) : (
-                        <BlockMath math={phase.formulas[stepIdx] as string} />
-                      )}
+                    <div className="my-6 p-6 border border-slate-800 rounded-2xl bg-slate-900 text-slate-100 shadow-xl overflow-x-auto relative">
+                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+                        <span className="ml-2 text-xs font-semibold tracking-widest text-slate-400">MATH CONSOLE</span>
+                      </div>
+                      <div className="text-slate-100">
+                        {Array.isArray(phase.formulas[stepIdx]) ? (
+                          (phase.formulas[stepIdx] as string[]).map((f, i) => (
+                            <div key={i} className="my-2">
+                              <BlockMath math={f} />
+                            </div>
+                          ))
+                        ) : (
+                          <BlockMath math={phase.formulas[stepIdx] as string} />
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>

@@ -12,6 +12,7 @@ export const lesson5: Lesson = {
       description: "Unlike European options which can only be exercised at maturity, American options give the holder the right to exercise early at ANY node in the tree. To price them, we must explicitly check if the immediate intrinsic payoff is greater than the discounted expected continuation value.",
       kind: 'static-slides',
       showParamControls: false,
+      visibleParams: [],
       stepTexts: [
         "Step 0: We still calculate the terminal payoffs at maturity just like European options.",
         "Step 1: As we step backward, we calculate the expected continuation value.",
@@ -19,6 +20,10 @@ export const lesson5: Lesson = {
         "Step 3: The node value becomes the MAXIMUM of the continuation value and the intrinsic value."
       ],
       formulas: [
+        [
+          `V_{terminal} = \\max(0, S_T - K) \\quad \\text{(Call)}`,
+          `V_{terminal} = \\max(0, K - S_T) \\quad \\text{(Put)}`
+        ],
         [
           `V_{continuation} = e^{-r \\Delta t} (q V_{up} + (1-q) V_{down})`
         ],
@@ -98,9 +103,10 @@ export const lesson5: Lesson = {
     {
       id: 'american-premium',
       title: 'The American Premium',
-      description: "Because an American option gives you strictly MORE rights than a European option (the right to exercise early), its fair value must be greater than or equal to the European option. The difference in price is known as the 'Early Exercise Premium'.",
+      description: "Now let's compare the value of the European Put and the American Put using the exact same parameters. Because the American Put gives the holder extra optionality (the right to exercise early), it is inherently more valuable. The difference between these two prices is called the Early Exercise Premium.",
       kind: 'static-slides',
       showParamControls: false,
+      visibleParams: [],
       stepTexts: [
         "Step 0: Let's compare the European Put and American Put prices we calculated.",
         "Step 1: The European Put (Lesson 2) was worth $8.50 today.",

@@ -26,11 +26,21 @@ export const MathConsolePane: React.FC<MathConsolePaneProps> = ({ stepText, form
     }
   };
 
-  // Auto-scroll to bottom when new items are added
+  const prevFrameRef = useRef(currentFrame);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom only when stepping forward, not on initial bulk load of static pages
   useEffect(() => {
-    if (bottomRef.current && viewMode === 'math') {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (scrollContainerRef.current && viewMode === 'math') {
+      if (currentFrame > prevFrameRef.current) {
+        // Scroll only the inner container, preventing the entire window from jumping down
+        scrollContainerRef.current.scrollTo({
+          top: scrollContainerRef.current.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
     }
+    prevFrameRef.current = currentFrame;
   }, [currentFrame, viewMode]);
 
   return (
@@ -64,8 +74,10 @@ export const MathConsolePane: React.FC<MathConsolePaneProps> = ({ stepText, form
           </div>
         )}
       </div>
-      
-      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-6">
+      <div 
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-6"
+      >
         {viewMode === 'math' ? (
           <>
             <AnimatePresence mode="popLayout">
