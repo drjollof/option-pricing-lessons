@@ -10,7 +10,9 @@ export const lesson2: Lesson = {
       id: 'put-mechanics',
       title: 'The Put Option Mechanics',
       description: "Unlike a Call option, a Put option gives you the right to SELL the stock at the Strike Price (K). This means you profit when the stock price falls.",
-      kind: 'static-slides',
+      kind: 'tree-reveal',
+      reveals: 'stock_tree',
+      direction: 'forward',
       showParamControls: false,
       stepTexts: [
         "Step 0: If you buy a Put option, you are betting the stock goes DOWN.",
@@ -48,16 +50,16 @@ export const lesson2: Lesson = {
           `\\begin{aligned} P_{3,0} &= \\max(0, 100 - 61.4) = 38.6 \\end{aligned}`
         ],
         [
-          `\\begin{aligned} P_{2,2} &= 0.9835 (0.556 \\times 0 \\\\ &\\quad + 0.444 \\times 0) = 0 \\end{aligned}`,
-          `\\begin{aligned} P_{2,1} &= 0.9835 (0.556 \\times 0 \\\\ &\\quad + 0.444 \\times 16.9) = 7.4 \\end{aligned}`,
-          `\\begin{aligned} P_{2,0} &= 0.9835 (0.556 \\times 16.9 \\\\ &\\quad + 0.444 \\times 38.6) = 26.1 \\end{aligned}`
+          `\\begin{aligned} P_{2,2} &= e^{-r \\Delta t} (q P_{3,3} + (1-q) P_{3,2}) \\\\ &= 0.9835 (0.556 \\times 0 + 0.444 \\times 0) = 0 \\end{aligned}`,
+          `\\begin{aligned} P_{2,1} &= e^{-r \\Delta t} (q P_{3,2} + (1-q) P_{3,1}) \\\\ &= 0.9835 (0.556 \\times 0 + 0.444 \\times 16.9) = 7.4 \\end{aligned}`,
+          `\\begin{aligned} P_{2,0} &= e^{-r \\Delta t} (q P_{3,1} + (1-q) P_{3,0}) \\\\ &= 0.9835 (0.556 \\times 16.9 + 0.444 \\times 38.6) = 26.1 \\end{aligned}`
         ],
         [
-          `\\begin{aligned} P_{1,1} &= 0.9835 (0.556 \\times 0 \\\\ &\\quad + 0.444 \\times 7.4) = 3.2 \\end{aligned}`,
-          `\\begin{aligned} P_{1,0} &= 0.9835 (0.556 \\times 7.4 \\\\ &\\quad + 0.444 \\times 26.1) = 15.4 \\end{aligned}`
+          `\\begin{aligned} P_{1,1} &= e^{-r \\Delta t} (q P_{2,2} + (1-q) P_{2,1}) \\\\ &= 0.9835 (0.556 \\times 0 + 0.444 \\times 7.4) = 3.2 \\end{aligned}`,
+          `\\begin{aligned} P_{1,0} &= e^{-r \\Delta t} (q P_{2,1} + (1-q) P_{2,0}) \\\\ &= 0.9835 (0.556 \\times 7.4 + 0.444 \\times 26.1) = 15.4 \\end{aligned}`
         ],
         [
-          `\\begin{aligned} P_{0,0} &= 0.9835 (0.556 \\times 3.2 \\\\ &\\quad + 0.444 \\times 15.4) = 8.5 \\end{aligned}`
+          `\\begin{aligned} P_0 &= e^{-r \\Delta t} (q P_{1,1} + (1-q) P_{1,0}) \\\\ &= 0.9835 (0.556 \\times 3.2 + 0.444 \\times 15.4) \\\\ &= 8.5 \\end{aligned}`
         ]
       ]
     },
@@ -67,6 +69,8 @@ export const lesson2: Lesson = {
       description: "Put-Call Parity is a fundamental principle in quantitative finance. It states that holding a Call option and shorting a Put option is financially identical to holding the underlying stock and borrowing the present value of the strike price. If this equation breaks down, arbitrageurs will instantly exploit the discrepancy.",
       kind: 'derivation-steps',
       showParamControls: false,
+      showAllInstantly: true,
+      visibleParams: [],
       stepTexts: [
         "Step 0: European Calls and Puts with the same strike (K) and expiration (T) are mathematically linked by Put-Call Parity.",
         "Step 1: The relationship is C - P = S₀ - Ke^{-rT}.",
@@ -99,6 +103,8 @@ export const lesson2: Lesson = {
       description: "What happens if the market prices drift, and Put-Call Parity is violated? Suppose a Call is trading for $15, but it SHOULD be $13.40. An arbitrageur can step in and lock in a risk-free profit without using any of their own money.",
       kind: 'static-slides',
       showParamControls: false,
+      showAllInstantly: true,
+      visibleParams: [],
       stepTexts: [
         "Step 0: The Call is overpriced at $15 (it should be $13.40). The Put is fairly priced at $8.50.",
         "Step 1: The Arbitrageur SELLS the expensive Call, BUYS the fair Put, BUYS the Stock, and BORROWS the rest.",

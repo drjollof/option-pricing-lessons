@@ -12,6 +12,8 @@ export const lesson1: Lesson = {
       description: "Before we price anything, let's establish what a derivative is. An option is a contract that gives you the RIGHT, but not the obligation, to buy (Call) or sell (Put) an underlying stock at a fixed Strike Price (K) on a specific Expiration Date (T).",
       kind: 'static-slides',
       showParamControls: false,
+      showAllInstantly: true,
+      visibleParams: ['K'],
       stepTexts: [
         "Step 0: If you buy a Call option, you are betting the stock goes UP.",
         "Step 1: If the stock is above K at expiration, your payoff is S - K.",
@@ -33,6 +35,7 @@ export const lesson1: Lesson = {
       reveals: 'stock_tree',
       direction: 'forward',
       showParamControls: false,
+      visibleParams: ['S0', 'u', 'd'],
       stepTexts: [
         "Step 0: We begin with the initial stock price S₀ = 100. This is the root node of our binomial tree.",
         "Step 1: At step 1, the stock can branch up (multiplied by u) or down (multiplied by d) from the root.",
@@ -59,37 +62,28 @@ export const lesson1: Lesson = {
           `S_{3, 0} = 72.2 \\cdot 0.85 = 61.4`
         ]
       ],
-      codeSnippet: `def build_stock_tree(S0: float, u: float, d: float, N: int) -> list[list[float]]:
-    """Builds the binomial lattice for the underlying stock."""
-    tree = []
-    
-    # Iterate through each time step
-    for i in range(N + 1):
-        layer = []
-        
-        # At step i, there are i+1 nodes
-        for j in range(i + 1):
-            # Calculate stock price at node (i, j)
-            # Up moves = i - j
-            # Down moves = j
-            price = S0 * (u ** (i - j)) * (d ** j)
-            layer.append(price)
-            
+      codeSnippet: `def build_stock_tree(S0, u, d, N):
+    tree = [[S0]]
+    for i in range(1, N + 1):
+        # The i-th step has i+1 nodes
+        # j represents the number of 'down' moves
+        layer = [S0 * (u ** (i - j)) * (d ** j) for j in range(i + 1)]
         tree.append(layer)
-        
     return tree`
     },
     {
       id: 'real-prob-problem',
       title: 'The Problem with Real Probabilities',
-      description: "Now we have a tree of future stock prices. To find the option's fair value, you might think we should just estimate the real-world probability of the stock going up, and calculate the expected value. But there's a huge problem with this.",
+      description: "You might think: 'To find the expected value, I just need to predict the real probability (p) that the stock goes up.' But here's the catch: Different investors have different risk tolerances. Even if two investors agree on 'p', they will disagree on the price of the option because they require different compensation for risk.",
       kind: 'static-slides',
       showParamControls: false,
+      showAllInstantly: true,
+      visibleParams: [],
       stepTexts: [
-        "Step 0: Suppose you believe the stock has a 60% chance of going up.",
-        "Step 1: Your friend believes it has a 40% chance of going up.",
-        "Step 2: If the option price depended on personal beliefs, you and your friend would calculate two completely different 'fair' prices.",
-        "Step 3: But traded options have ONE single market price! Therefore, option pricing cannot depend on subjective, real-world probabilities."
+        "Step 0: A risk-averse investor might demand a huge discount to take on the risk of the option.",
+        "Step 1: A risk-seeking investor might pay a premium because they love the leverage.",
+        "Step 2: If price depends on individual risk tolerance, we can't find a single fair market value.",
+        "Step 3: So how do market makers price options consistently? By removing risk entirely from the equation."
       ],
       formulas: [
         [ `p_{real} = 0.60 \\quad (\\text{Your belief})` ],
@@ -104,6 +98,8 @@ export const lesson1: Lesson = {
       description: "To prevent risk-free profits (arbitrage), options must be priced as if investors are completely indifferent to risk. This introduces a synthetic 'risk-neutral probability' (q), which is the exact mathematical probability required for the expected return of the stock to equal the risk-free rate.",
       kind: 'derivation-steps',
       showParamControls: false,
+      showAllInstantly: false,
+      visibleParams: ['u', 'd', 'r', 'dt'],
       stepTexts: [
         "Step 0: We want to price an option without knowing the true probability of the stock going up or down.",
         "Step 1: By creating a risk-free portfolio (delta hedging), the expected return must equal the risk-free rate r.",
@@ -112,7 +108,7 @@ export const lesson1: Lesson = {
       ],
       formulas: [
         `q = \\frac{e^{r \\Delta t} - d}{u - d}`,
-        `R = e^{r \\Delta t} = e^{0.05 \\times (1/3)} \\approx 1.0168`,
+        `e^{r \\Delta t} = e^{0.05 \\times (1/3)} \\approx 1.0168`,
         `q = \\frac{1.0168 - 0.85}{1.15 - 0.85}`,
         `q \\approx 0.556`
       ]
@@ -125,6 +121,7 @@ export const lesson1: Lesson = {
       reveals: 'option_tree',
       direction: 'backward',
       showParamControls: false,
+      visibleParams: ['S0', 'K', 'u', 'd', 'r', 'dt'],
       stepTexts: [
         "Step 0 (Terminal): First, we calculate the intrinsic value of the Call option at expiration (Step 3). Payoff = max(0, S - K).",
         "Step 1 (Step 2): Next, we step backward. For each node, the option value is the discounted expected value of the two future nodes.",
@@ -139,16 +136,16 @@ export const lesson1: Lesson = {
           `C_{3,0} = \\max(0, 61.4 - 100) = 0`
         ],
         [
-          `\\begin{aligned} C_{2,2} &= 0.9835 (0.556 \\times 52.1 \\\\ &\\quad + 0.444 \\times 12.4) = 33.9 \\end{aligned}`,
-          `\\begin{aligned} C_{2,1} &= 0.9835 (0.556 \\times 12.4 \\\\ &\\quad + 0.444 \\times 0) = 6.8 \\end{aligned}`,
-          `\\begin{aligned} C_{2,0} &= 0.9835 (0.556 \\times 0 \\\\ &\\quad + 0.444 \\times 0) = 0 \\end{aligned}`
+          `\\begin{aligned} C_{2,2} &= e^{-r \\Delta t} (q C_{3,3} + (1-q) C_{3,2}) \\\\ &= 0.9835 (0.556 \\times 52.1 + 0.444 \\times 12.4) = 33.9 \\end{aligned}`,
+          `\\begin{aligned} C_{2,1} &= e^{-r \\Delta t} (q C_{3,2} + (1-q) C_{3,1}) \\\\ &= 0.9835 (0.556 \\times 12.4 + 0.444 \\times 0) = 6.8 \\end{aligned}`,
+          `\\begin{aligned} C_{2,0} &= e^{-r \\Delta t} (q C_{3,1} + (1-q) C_{3,0}) \\\\ &= 0.9835 (0.556 \\times 0 + 0.444 \\times 0) = 0 \\end{aligned}`
         ],
         [
-          `\\begin{aligned} C_{1,1} &= 0.9835 (0.556 \\times 33.9 \\\\ &\\quad + 0.444 \\times 6.8) = 21.5 \\end{aligned}`,
-          `\\begin{aligned} C_{1,0} &= 0.9835 (0.556 \\times 6.8 \\\\ &\\quad + 0.444 \\times 0) = 3.7 \\end{aligned}`
+          `\\begin{aligned} C_{1,1} &= e^{-r \\Delta t} (q C_{2,2} + (1-q) C_{2,1}) \\\\ &= 0.9835 (0.556 \\times 33.9 + 0.444 \\times 6.8) = 21.5 \\end{aligned}`,
+          `\\begin{aligned} C_{1,0} &= e^{-r \\Delta t} (q C_{2,1} + (1-q) C_{2,0}) \\\\ &= 0.9835 (0.556 \\times 6.8 + 0.444 \\times 0) = 3.7 \\end{aligned}`
         ],
         [
-          `\\begin{aligned} C_0 &= e^{-0.05} (0.5224(17.75) + 0.4776(0)) \\\\ &= 0.9512 \\times 9.273 \\\\ &= 8.82 \\end{aligned}`
+          `\\begin{aligned} C_0 &= e^{-r \\Delta t} (q C_{1,1} + (1-q) C_{1,0}) \\\\ &= 0.9835 (0.556 \\times 21.5 + 0.444 \\times 3.7) \\\\ &= 0.9835 (11.954 + 1.643) \\\\ &= 13.37 \\end{aligned}`
         ]
       ],
       codeSnippet: `def price_european_option(stock_tree, K, r, dt, p, is_call=True):

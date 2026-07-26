@@ -34,11 +34,15 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
 
   useEffect(() => {
     pause(); 
-    const maxF = phase.kind === 'derivation-steps' 
+    const maxF = (phase.kind === 'derivation-steps' || phase.kind === 'static-slides')
       ? (phase.stepTexts?.length || 1) - 1 
       : (phase.reveals === 'delta_tree' ? params.N - 1 : params.N);
     setMaxFrames(maxF);
-    setFrame(0);
+    
+    // If we want it to show all instantly (all static-slides, or explicitly requested), initialize to the final frame.
+    // The user can still hit 'Replay' on the playback controls to see the animation.
+    const shouldShowInstantly = phase.kind === 'static-slides' || phase.showAllInstantly;
+    setFrame(shouldShowInstantly ? maxF : 0);
   }, [params.N, phase, setMaxFrames, setFrame, pause]);
 
   if (phase.kind === 'convergence-sweep') {
@@ -73,7 +77,7 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
   return (
     <div className="flex flex-col gap-6 w-full mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full">
-        {phase.kind === 'derivation-steps' ? (
+        {phase.kind === 'derivation-steps' || phase.kind === 'static-slides' ? (
           <>
             <div className="lg:col-span-12 h-[400px] lg:h-[500px] order-1">
               <MathConsolePane stepText={phase.stepTexts || []} formulas={phase.formulas || []} codeSnippet={phase.codeSnippet} />

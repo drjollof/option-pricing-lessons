@@ -16,9 +16,12 @@ export const LessonClient: React.FC<{ lesson: Lesson }> = ({ lesson }) => {
   const { markComplete } = useProgressStore();
 
   useEffect(() => {
-    updateParams(lesson.defaultParams);
     setActivePhaseIndex(0);
-  }, [lesson, updateParams]);
+  }, [lesson.id]);
+
+  useEffect(() => {
+    updateParams({ ...lesson.defaultParams, ...(activePhase.overrideParams || {}) });
+  }, [lesson.defaultParams, activePhase.overrideParams, updateParams]);
 
   useEffect(() => {
     if (activePhaseIndex === lesson.phases.length - 1) {
@@ -67,14 +70,14 @@ export const LessonClient: React.FC<{ lesson: Lesson }> = ({ lesson }) => {
         </div>
 
         <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200/60 dark:border-slate-800/60 p-6 md:p-8 backdrop-blur-xl mb-12">
-          <PhaseHeader title={activePhase.title} description={activePhase.description} />
+          <PhaseHeader title={activePhase.title} description={activePhase.description} visibleParams={activePhase.visibleParams} />
           
           <ThreePanePlayer phase={activePhase} key={activePhase.id} />
           
           {activePhase.showParamControls && (
             <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
               <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">Adjust Parameters Below</h3>
-              <ParamControls maxN={activePhase.kind === 'convergence-sweep' ? 100 : activePhase.kind === 'path-explorer' ? 5 : 6} />
+              <ParamControls maxN={activePhase.kind === 'convergence-sweep' ? 100 : activePhase.kind === 'path-explorer' ? 5 : (activePhase.isAmerican ? 4 : 6)} />
             </div>
           )}
         </div>

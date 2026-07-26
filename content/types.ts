@@ -14,7 +14,10 @@ export interface LessonPhase {
   reveals?: 'stock_tree' | 'option_tree' | 'delta_tree';
   direction?: 'forward' | 'backward';
   showParamControls?: boolean;
+  showAllInstantly?: boolean;
+  visibleParams?: string[];
   optionType?: 'call' | 'put';
+  overrideParams?: Partial<TreeParams>;
 }
 
 export interface Lesson {

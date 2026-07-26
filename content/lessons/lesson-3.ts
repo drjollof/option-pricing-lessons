@@ -12,6 +12,8 @@ export const lesson3: Lesson = {
       description: "Before diving into the math, let's understand what Delta (Δ) represents. Delta is the probability-weighted exposure you have to the underlying stock. A Delta of 0.5 means your option position behaves exactly like owning half a share of the actual stock.",
       kind: 'static-slides',
       showParamControls: false,
+      showAllInstantly: true,
+      visibleParams: [],
       stepTexts: [
         "Step 0: If you buy 100 shares of stock, and the stock goes up $1, you make $100. Your delta is exactly 1.0 per share.",
         "Step 1: If you buy a Call option with a Delta of 0.5, and the stock goes up $1, the option's value goes up by $0.50.",
@@ -29,7 +31,9 @@ export const lesson3: Lesson = {
       id: 'delta-derivation',
       title: 'The Hedging Ratio (Delta)',
       description: "Delta (Δ) measures how much an option's price changes when the underlying stock moves by $1. By shorting exactly Δ shares of stock for every option held, a market maker can construct a 'delta-neutral' portfolio that is completely insulated from small market movements.",
-      kind: 'derivation-steps',
+      kind: 'tree-reveal',
+      reveals: 'option_tree',
+      direction: 'forward',
       showParamControls: false,
       stepTexts: [
         "Step 0: We want to eliminate risk by creating a portfolio that is immune to stock movements.",
@@ -87,6 +91,8 @@ export const lesson3: Lesson = {
       description: "You might be wondering: 'If I delta-hedge my portfolio at day 1, can I just walk away and be safe?' The answer is NO. This is the difference between static and dynamic hedging.",
       kind: 'static-slides',
       showParamControls: false,
+      showAllInstantly: true,
+      visibleParams: [],
       stepTexts: [
         "Step 0: A static hedge (like buying insurance) protects you permanently once purchased.",
         "Step 1: Delta hedging is DYNAMIC. As the stock moves up and down through the tree, the delta changes constantly.",

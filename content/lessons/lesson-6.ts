@@ -45,7 +45,7 @@ export const lesson6: Lesson = {
       direction: 'forward',
       optionType: 'put',
       isAmerican: true,
-      showParamControls: true,
+      showParamControls: false,
       stepTexts: [
         "Step 0: The root delta is slightly more negative (-0.43) than the European put because the option is fundamentally more valuable.",
         "Step 1: If the stock drops (Node 1,0), the delta instantly slams to -1.00!",

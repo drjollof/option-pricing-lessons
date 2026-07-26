@@ -32,25 +32,6 @@ export const lesson5: Lesson = {
       ]
     },
     {
-      id: 'american-premium',
-      title: 'The American Premium',
-      description: "Because an American option gives you strictly MORE rights than a European option (the right to exercise early), its fair value must be greater than or equal to the European option. The difference in price is known as the 'Early Exercise Premium'.",
-      kind: 'static-slides',
-      showParamControls: false,
-      stepTexts: [
-        "Step 0: Let's compare the European Put and American Put prices we calculated.",
-        "Step 1: The European Put (Lesson 2) was worth $8.50 today.",
-        "Step 2: The American Put is worth $8.80 today.",
-        "Step 3: Therefore, the market is pricing the 'Early Exercise Premium' at $0.30. This is exactly how much you are paying for the privilege to exercise early if the stock crashes."
-      ],
-      formulas: [
-        [ `P_{European} = 8.50` ],
-        [ `P_{American} = 8.80` ],
-        [ `\\text{Premium} = P_{American} - P_{European}` ],
-        [ `\\text{Premium} = 8.80 - 8.50 = \\$0.30` ]
-      ]
-    },
-    {
       id: 'american-put',
       title: 'Optimal Early Exercise (Put)',
       description: "Let's price an American Put. Watch the tree carefully! Nodes highlighted in RED indicate points where the intrinsic payoff exceeds the continuation value. If the stock drops significantly, it becomes optimal to exercise early to capture the guaranteed payoff now rather than waiting and risking a rebound.",
@@ -59,7 +40,7 @@ export const lesson5: Lesson = {
       direction: 'backward',
       optionType: 'put',
       isAmerican: true,
-      showParamControls: true,
+      showParamControls: false,
       stepTexts: [
         "Step 0 (Terminal): Calculate intrinsic value at expiration. Payoff = max(0, K - S).",
         "Step 1 (Step 2): Step backward. Calculate continuation value. Compare to intrinsic. Note the red early exercise node at the bottom!",
@@ -113,6 +94,25 @@ export const lesson5: Lesson = {
             option_tree[i].append(max(continuation, intrinsic))
             
     return option_tree`
+    },
+    {
+      id: 'american-premium',
+      title: 'The American Premium',
+      description: "Because an American option gives you strictly MORE rights than a European option (the right to exercise early), its fair value must be greater than or equal to the European option. The difference in price is known as the 'Early Exercise Premium'.",
+      kind: 'static-slides',
+      showParamControls: false,
+      stepTexts: [
+        "Step 0: Let's compare the European Put and American Put prices we calculated.",
+        "Step 1: The European Put (Lesson 2) was worth $8.50 today.",
+        "Step 2: The American Put is worth $8.80 today.",
+        "Step 3: Therefore, the market is pricing the 'Early Exercise Premium' at $0.30. This is exactly how much you are paying for the privilege to exercise early if the stock crashes."
+      ],
+      formulas: [
+        [ `P_{European} = 8.50` ],
+        [ `P_{American} = 8.80` ],
+        [ `\\text{Premium} = P_{American} - P_{European}` ],
+        [ `\\text{Premium} = 8.80 - 8.50 = \\$0.30` ]
+      ]
     },
     {
       id: 'american-call-proof',
