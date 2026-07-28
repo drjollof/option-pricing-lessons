@@ -28,6 +28,10 @@ import { Copula3DVisualizer } from './Copula3DVisualizer';
 import { CorrelogramVisualizer } from './CorrelogramVisualizer';
 import { StochasticPathVisualizer } from './StochasticPathVisualizer';
 import { ArimaSignatureVisualizer } from './ArimaSignatureVisualizer';
+import { FactorAnalysisVisualizer } from './FactorAnalysisVisualizer';
+import { NetworkTheoryVisualizer } from './NetworkTheoryVisualizer';
+import { GrangerCausalityVisualizer } from './GrangerCausalityVisualizer';
+import { MachineLearningVisualizer } from './MachineLearningVisualizer';
 
 interface ThreePanePlayerProps {
   phase: LessonPhase;
@@ -61,6 +65,20 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
     if (isStaticVisualizer || phase.showAllInstantly) {
       setMaxFrames(0);
       setFrame((phase.stepTexts?.length || 1) - 1);
+      return;
+    }
+
+    const isStepTextAnimatedVisualizer = [
+      'factor-analysis', 'network-theory', 'granger-causality', 'machine-learning'
+    ].includes(phase.kind);
+
+    if (isStepTextAnimatedVisualizer) {
+      const maxF = Math.max(0, (phase.stepTexts?.length || 1) - 1);
+      setMaxFrames(maxF);
+      setFrame(0);
+      if (maxF > 0) {
+        setTimeout(() => play(), 100);
+      }
       return;
     }
 
@@ -199,6 +217,22 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
             ) : phase.kind === 'arima-signature' ? (
               <div className="lg:col-span-7 h-[400px] lg:h-[500px] order-3 lg:order-2">
                 <ArimaSignatureVisualizer currentFrame={currentFrame} />
+              </div>
+            ) : phase.kind === 'factor-analysis' ? (
+              <div className="lg:col-span-7 h-[400px] lg:h-[500px] order-3 lg:order-2">
+                <FactorAnalysisVisualizer currentFrame={currentFrame} />
+              </div>
+            ) : phase.kind === 'network-theory' ? (
+              <div className="lg:col-span-7 h-[400px] lg:h-[500px] order-3 lg:order-2">
+                <NetworkTheoryVisualizer currentFrame={currentFrame} />
+              </div>
+            ) : phase.kind === 'granger-causality' ? (
+              <div className="lg:col-span-7 h-[400px] lg:h-[500px] order-3 lg:order-2">
+                <GrangerCausalityVisualizer currentFrame={currentFrame} />
+              </div>
+            ) : phase.kind === 'machine-learning' ? (
+              <div className="lg:col-span-7 h-[400px] lg:h-[500px] order-3 lg:order-2">
+                <MachineLearningVisualizer currentFrame={currentFrame} params={phase.overrideParams as any} />
               </div>
             ) : (
               <>

@@ -21,6 +21,10 @@ import { Copula3DVisualizer } from './Copula3DVisualizer';
 import { CorrelogramVisualizer } from './CorrelogramVisualizer';
 import { StochasticPathVisualizer } from './StochasticPathVisualizer';
 import { ArimaSignatureVisualizer } from './ArimaSignatureVisualizer';
+import { FactorAnalysisVisualizer } from './FactorAnalysisVisualizer';
+import { NetworkTheoryVisualizer } from './NetworkTheoryVisualizer';
+import { GrangerCausalityVisualizer } from './GrangerCausalityVisualizer';
+import { MachineLearningVisualizer } from './MachineLearningVisualizer';
 import { ConvergenceChartPane } from './ConvergenceChartPane';
 import { PathExplorerPane } from './PathExplorerPane';
 import { MonteCarloPane } from './MonteCarloPane';
@@ -76,6 +80,14 @@ export const StaticPhaseVisualizer: React.FC<StaticPhaseVisualizerProps> = ({ ph
         return <StochasticPathVisualizer currentFrame={999} params={staticParams as any} />;
       case 'arima-signature':
         return <ArimaSignatureVisualizer currentFrame={999} />;
+      case 'factor-analysis':
+        return <FactorAnalysisVisualizer currentFrame={999} />;
+      case 'network-theory':
+        return <NetworkTheoryVisualizer currentFrame={999} />;
+      case 'granger-causality':
+        return <GrangerCausalityVisualizer currentFrame={999} />;
+      case 'machine-learning':
+        return <MachineLearningVisualizer currentFrame={999} params={phase.overrideParams as any} />;
       case 'convergence-sweep':
         return <ConvergenceChartPane />;
       case 'path-explorer':

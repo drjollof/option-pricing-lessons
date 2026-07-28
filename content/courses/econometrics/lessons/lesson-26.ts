@@ -9,9 +9,9 @@ export const lesson26: Lesson = {
   },
   phases: [
     {
-      id: 'l26-p1-latent-variables',
-      title: 'Latent vs Manifest Variables',
-      kind: 'static-slides',
+      id: 'fa-intuition',
+      title: 'Latent Factors vs Observed Variables',
+      kind: 'factor-analysis',
       visibleParams: [],
       stepTexts: [
         "In finance, we often talk about 'Market Sentiment' or 'Tech Momentum'. But you cannot measure these directly. They are **Latent Variables** (hidden).",

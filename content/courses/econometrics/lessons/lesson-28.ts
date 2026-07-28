@@ -9,9 +9,9 @@ export const lesson28: Lesson = {
   },
   phases: [
     {
-      id: 'l28-p1-what-is-granger',
+      id: 'l28-p1-granger-intuition',
       title: 'What is Granger Causality?',
-      kind: 'static-slides',
+      kind: 'granger-causality',
       visibleParams: [],
       stepTexts: [
         "First, a warning: **Granger Causality is NOT true philosophical causality.** Just because roosters crow before the sun rises doesn't mean roosters *cause* the sun to rise.",

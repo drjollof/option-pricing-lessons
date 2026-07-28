@@ -9,9 +9,9 @@ export const lesson27: Lesson = {
   },
   phases: [
     {
-      id: 'l27-p1-markets-as-networks',
+      id: 'nt-contagion',
       title: 'Markets as Networks',
-      kind: 'static-slides',
+      kind: 'network-theory',
       visibleParams: [],
       stepTexts: [
         "A financial market isn't just a list of isolated stocks; it is a complex **Network (or Graph)**.",
@@ -22,7 +22,8 @@ export const lesson27: Lesson = {
       formulas: [
         [ "\\text{Graph } G = (V, E)" ],
         [ "V = \\text{Vertices (Nodes)}" ],
-        [ "E = \\text{Edges (Connections)}" ]
+        [ "E = \\text{Edges (Connections)}" ],
+        null
       ]
     },
     {
@@ -39,7 +40,8 @@ export const lesson27: Lesson = {
       formulas: [
         [ "\\text{Adjacency Matrix } A_{i,j}" ],
         [ "\\text{If } A_{i,j} = 0 \\implies \\text{No direct connection}" ],
-        [ "\\text{If } A_{i,j} \\neq 0 \\implies \\text{Direct edge exists}" ]
+        [ "\\text{If } A_{i,j} \\neq 0 \\implies \\text{Direct edge exists}" ],
+        null
       ]
     },
     {
@@ -56,7 +58,8 @@ export const lesson27: Lesson = {
       formulas: [
         [ "\\text{Covariance Matrix: } \\Sigma" ],
         [ "\\text{Precision Matrix: } \\Theta = \\Sigma^{-1}" ],
-        [ "\\Theta_{i,j} \\implies \\text{Direct connection, controlling for all other nodes.}" ]
+        [ "\\Theta_{i,j} \\implies \\text{Direct connection, controlling for all other nodes.}" ],
+        null
       ]
     },
     {

@@ -26,7 +26,8 @@ export const lesson29: Lesson = {
     {
       id: 'l29-p2-lda',
       title: 'Linear Discriminant Analysis (LDA)',
-      kind: 'static-slides',
+      kind: 'machine-learning',
+      overrideParams: { mode: 'lda' } as any,
       visibleParams: [],
       stepTexts: [
         "**LDA** is a Supervised classification method.",
@@ -36,13 +37,16 @@ export const lesson29: Lesson = {
       ],
       formulas: [
         [ "\\text{LDA Objective:}" ],
-        [ "\\max \\frac{\\text{Variance Between Classes}}{\\text{Variance Within Classes}}" ]
+        [ "\\max \\frac{\\text{Variance Between Classes}}{\\text{Variance Within Classes}}" ],
+        null,
+        null
       ]
     },
     {
       id: 'l29-p3-kmeans',
       title: 'K-Means Clustering',
-      kind: 'static-slides',
+      kind: 'machine-learning',
+      overrideParams: { mode: 'kmeans' } as any,
       visibleParams: [],
       stepTexts: [
         "**K-Means** is an Unsupervised method. You must tell the algorithm how many clusters ($K$) you want to find.",
@@ -54,7 +58,11 @@ export const lesson29: Lesson = {
       ],
       formulas: [
         [ "\\text{Minimize: } \\sum_{i=1}^{K} \\sum_{x \\in C_i} ||x - \\mu_i||^2" ],
-        [ "\\text{Where } \\mu_i \\text{ is the mean of cluster } C_i" ]
+        [ "\\text{Where } \\mu_i \\text{ is the mean of cluster } C_i" ],
+        null,
+        null,
+        null,
+        null
       ]
     },
     {
