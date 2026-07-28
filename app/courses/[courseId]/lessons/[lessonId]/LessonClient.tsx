@@ -10,14 +10,28 @@ import { DarkModeToggle } from '@/components/DarkModeToggle';
 import Link from 'next/link';
 
 export const LessonClient: React.FC<{ lesson: Lesson, courseId: string }> = ({ lesson, courseId }) => {
-  const [activePhaseIndex, setActivePhaseIndex] = useState(0);
+  const storageKey = `lesson-phase-${courseId}-${lesson.id}`;
+
+  const [activePhaseIndex, setActivePhaseIndex] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(storageKey);
+      if (saved !== null) {
+        const parsed = parseInt(saved, 10);
+        if (!isNaN(parsed) && parsed >= 0 && parsed < lesson.phases.length) {
+          return parsed;
+        }
+      }
+    }
+    return 0;
+  });
+
   const activePhase = lesson.phases[activePhaseIndex];
   const { updateParams } = useLessonStore();
   const { markComplete } = useProgressStore();
   const phaseContainerRef = React.useRef<HTMLDivElement>(null);
 
+  // Smoothly scroll to the phase container when phase changes or on first load
   useEffect(() => {
-    // Smoothly scroll to the phase container when phase changes or on first load
     const timeout = setTimeout(() => {
       if (phaseContainerRef.current) {
         phaseContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -26,9 +40,23 @@ export const LessonClient: React.FC<{ lesson: Lesson, courseId: string }> = ({ l
     return () => clearTimeout(timeout);
   }, [activePhaseIndex]);
 
+  // Save to localStorage whenever phase changes
   useEffect(() => {
+    localStorage.setItem(storageKey, activePhaseIndex.toString());
+  }, [activePhaseIndex, storageKey]);
+
+  useEffect(() => {
+    // Re-initialize when lesson.id changes if the component doesn't remount
+    const saved = localStorage.getItem(storageKey);
+    if (saved !== null) {
+      const parsed = parseInt(saved, 10);
+      if (!isNaN(parsed) && parsed >= 0 && parsed < lesson.phases.length) {
+        setActivePhaseIndex(parsed);
+        return;
+      }
+    }
     setActivePhaseIndex(0);
-  }, [lesson.id]);
+  }, [lesson.id, lesson.phases.length, storageKey]);
 
   useEffect(() => {
     updateParams({ ...lesson.defaultParams, ...(activePhase.overrideParams || {}) });

@@ -15,16 +15,16 @@ export const lesson7: Lesson = {
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
-        "In machine learning and econometrics, adding more variables to a model always increases $R^2$ (in-sample fit).",
-        "However, too many variables lead to **overfitting**. The model begins to memorize the noise in the training data rather than the underlying signal.",
-        "As a result, the model performs terribly on new, unseen data (out-of-sample).",
-        "To prevent this, we introduce **Regularization** (or Penalization). We add a penalty term to the OLS loss function that punishes the model for having large coefficients."
+        "Imagine we predict a stock's return using just one variable ($X_1$). OLS finds a reasonable, stable slope of $\\beta_1 = 2.0$.",
+        "Now, a data scientist adds 50 highly correlated, noisy variables. Because OLS tries to perfectly fit every historical data point, it assigns massive, unstable coefficients to these new variables (e.g., $\\beta_{50} = 400.0, \\beta_{51} = -398.0$).",
+        "These massive, offsetting coefficients mean the model has memorized the training noise. When applied to new out-of-sample data, the $400.0$ coefficient will cause the predictions to wildly explode.",
+        "To prevent this, we introduce **Regularization**. We add a mathematical penalty to the OLS loss function that punishes the model for having excessively large coefficients."
       ],
       formulas: [
-        [ "\\text{OLS Loss: } \\sum_{i=1}^n (Y_i - \\hat{Y}_i)^2" ],
-        [ "\\text{If coefficients } \\beta_j \\text{ grow too large, variance explodes.}" ],
-        [ "\\text{Overfitting: Memorizing noise instead of signal.}" ],
-        [ "\\text{Solution: Regularization (Penalties).}" ]
+        [ "\\text{Stable OLS: } \\beta_1 = 2.0" ],
+        [ "\\text{Overfit OLS: } \\beta_{50} = 400.0, \\beta_{51} = -398.0" ],
+        null,
+        [ "\\text{OLS Loss: } \\sum_{i=1}^n (Y_i - \\hat{Y}_i)^2" ]
       ]
     },
     {
@@ -34,16 +34,16 @@ export const lesson7: Lesson = {
       kind: 'penalty-path',
       visibleParams: ['sigma'],
       stepTexts: [
-        "**Ridge Regression** adds an L2 penalty to the loss function: the sum of the *squared* coefficients.",
-        "This penalty forces the model to shrink all coefficients towards zero. The strength of the shrinkage is controlled by a tuning parameter, $\\lambda$.",
-        "Look at the visualizer (simulate Ridge by setting `sigma < 0.2`). As $\\lambda$ (the penalty) increases, the coefficients decay asymptotically towards zero, but they never *exactly* reach zero.",
-        "Ridge is excellent for dealing with severe multicollinearity, as it shrinks correlated variables together."
+        "**Ridge Regression** adds an L2 penalty: a tuning parameter $\\lambda$ multiplied by the *squared* coefficients.",
+        "Suppose OLS wants $\\beta = 400.0$. The Ridge penalty for this coefficient is $\\lambda \\times (400)^2 = 160,000 \\lambda$.",
+        "To avoid this massive $160,000$ penalty, the algorithm is mathematically forced to shrink the coefficient. If it shrinks it down to $4.0$, the penalty drops to a tiny $16 \\lambda$.",
+        "Look at the visualizer. As the penalty $\\lambda$ increases, the coefficients decay asymptotically. They get incredibly small (like $0.001$), but they mathematically never reach exactly zero."
       ],
       formulas: [
         [ "\\text{Ridge Loss: } \\text{OLS} + \\lambda \\sum_{j=1}^p \\beta_j^2" ],
-        [ "\\text{Shrinkage controlled by } \\lambda." ],
-        [ "\\lambda \\to \\infty \\implies \\beta_j \\to 0" ],
-        [ "\\text{Good for handling Multicollinearity.}" ]
+        [ "\\text{Penalty at 400: } 400^2 = 160,000" ],
+        [ "\\text{Penalty at 4: } 4^2 = 16" ],
+        [ "\\lambda \\to \\infty \\implies \\beta_j \\to 0.001" ]
       ]
     },
     {
@@ -53,16 +53,16 @@ export const lesson7: Lesson = {
       kind: 'penalty-path',
       visibleParams: ['sigma'],
       stepTexts: [
-        "**Lasso Regression** (Least Absolute Shrinkage and Selection Operator) adds an L1 penalty: the sum of the *absolute values* of the coefficients.",
-        "Because of the geometry of the absolute value function, Lasso does something Ridge cannot do: it forces some coefficients to become *exactly zero*.",
-        "Look at the visualizer (simulate Lasso by setting `sigma > 0.2`). Notice how the paths hit exactly zero and stay there.",
-        "This makes Lasso a powerful tool for **feature selection**. If you have 1,000 variables but only 10 are useful, Lasso will zero out the other 990."
+        "**Lasso Regression** adds an L1 penalty instead: the *absolute value* of the coefficients.",
+        "For $\\beta = 400$, the Lasso penalty is $\\lambda \\times |400| = 400\\lambda$. For $\\beta = 4$, it is $4\\lambda$.",
+        "Because the absolute value function creates a sharp, linear geometric constraint (a diamond shape, unlike Ridge's smooth circle), Lasso does something Ridge cannot do.",
+        "Lasso forces useless coefficients to become *exactly zero*. If you feed Lasso 1,000 variables, it might shrink 990 of them to strictly $0.0$, acting as an automated feature selector."
       ],
       formulas: [
         [ "\\text{Lasso Loss: } \\text{OLS} + \\lambda \\sum_{j=1}^p |\\beta_j|" ],
-        [ "\\text{Geometry causes sparse solutions (many } \\beta_j = 0 \\text{).}" ],
-        [ "\\text{Some paths hit exactly zero.}" ],
-        [ "\\text{Lasso performs Feature Selection.}" ]
+        [ "\\text{Penalty at 400: } |400| = 400" ],
+        [ "\\text{Penalty at 4: } |4| = 4" ],
+        [ "\\text{Lasso shrinks completely to } 0.0" ]
       ]
     },
     {
@@ -72,15 +72,15 @@ export const lesson7: Lesson = {
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
-        "Because regularized models penalize coefficient size, **you must standardize your data first**. Otherwise, variables with small scales (and thus large coefficients) will be unfairly penalized.",
+        "Because regularized models mathematically penalize the absolute size of the coefficients, **you must standardize your data first**. Otherwise, variables with naturally small scales (like interest rates in decimals) will be unfairly penalized compared to large scales (like Market Cap).",
         "We use `scikit-learn` to fit `Ridge` and `Lasso` models.",
-        "The hyperparameter $\\alpha$ (equivalent to $\\lambda$ in our math) controls the penalty strength.",
-        "In practice, we use Cross-Validation (`RidgeCV`, `LassoCV`) to automatically find the optimal $\\alpha$ that minimizes out-of-sample error."
+        "The hyperparameter $\\alpha$ (equivalent to $\\lambda$ in our math) controls the exact strength of the penalty.",
+        "In practice, we use Cross-Validation (`RidgeCV`, `LassoCV`) to automatically test multiple penalties and find the optimal $\\alpha$ that minimizes out-of-sample error."
       ],
       codeSnippet: `from sklearn.linear_model import RidgeCV, LassoCV
 from sklearn.preprocessing import StandardScaler
 
-# 1. Standardize the features
+# 1. Standardize the features (CRITICAL for Penalized Regression)
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
@@ -94,7 +94,7 @@ print("Ridge Coefficients:", ridge.coef_)
 lasso = LassoCV(cv=5)
 lasso.fit(X_scaled, Y)
 print("Optimal Lasso Alpha:", lasso.alpha_)
-print("Lasso Coefficients (Many are 0):", lasso.coef_)`
+print("Lasso Coefficients (Many are precisely 0.0):", lasso.coef_)`
     }
   ]
 };

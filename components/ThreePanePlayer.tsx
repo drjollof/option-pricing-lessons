@@ -24,6 +24,7 @@ import { DistributionVisualizer } from './DistributionVisualizer';
 import { QQPlotVisualizer } from './QQPlotVisualizer';
 import { RankCorrelationVisualizer } from './RankCorrelationVisualizer';
 import { CopulaVisualizer } from './CopulaVisualizer';
+import { Copula3DVisualizer } from './Copula3DVisualizer';
 import { CorrelogramVisualizer } from './CorrelogramVisualizer';
 import { StochasticPathVisualizer } from './StochasticPathVisualizer';
 import { ArimaSignatureVisualizer } from './ArimaSignatureVisualizer';
@@ -49,9 +50,21 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
 
   useEffect(() => {
     pause(); 
-    const maxF = (phase.kind === 'derivation-steps' || phase.kind === 'static-slides' || phase.kind === 'scatter-plot' || phase.kind === 'correlation-heatmap' || phase.kind === 'pca-scree' || phase.kind === 'mc-histogram' || phase.kind === 'residual-plot' || phase.kind === 'robust-regression' || phase.kind === 'penalty-path' || phase.kind === 'loess-plot' || phase.kind === 'distribution-curve' || phase.kind === 'qq-plot' || phase.kind === 'copula-plot' || phase.kind === 'rank-correlation' || phase.kind === 'correlogram' || phase.kind === 'stochastic-path' || phase.kind === 'arima-signature')
-      ? (phase.stepTexts?.length || 1) - 1 
-      : (phase.reveals === 'delta_tree' ? params.N - 1 : params.N);
+
+    const isStaticVisualizer = [
+      'scatter-plot', 'correlation-heatmap', 'pca-scree', 'mc-histogram', 
+      'residual-plot', 'robust-regression', 'penalty-path', 'loess-plot', 
+      'distribution-curve', 'qq-plot', 'copula-plot', 'copula-3d', 'rank-correlation', 
+      'correlogram', 'stochastic-path', 'arima-signature', 'static-slides', 'derivation-steps'
+    ].includes(phase.kind);
+
+    if (isStaticVisualizer || phase.showAllInstantly) {
+      setMaxFrames(0);
+      setFrame((phase.stepTexts?.length || 1) - 1);
+      return;
+    }
+
+    const maxF = phase.reveals === 'delta_tree' ? params.N - 1 : params.N;
     setMaxFrames(maxF);
     
     // Always start from 0 and autoplay (user preference)
@@ -166,6 +179,10 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
             ) : phase.kind === 'copula-plot' ? (
               <div className="lg:col-span-7 h-[400px] lg:h-[500px] order-3 lg:order-2">
                 <CopulaVisualizer currentFrame={currentFrame} params={params} />
+              </div>
+            ) : phase.kind === 'copula-3d' ? (
+              <div className="lg:col-span-7 h-[400px] lg:h-[500px] order-3 lg:order-2">
+                <Copula3DVisualizer currentFrame={currentFrame} />
               </div>
             ) : phase.kind === 'rank-correlation' ? (
               <div className="lg:col-span-7 h-[400px] lg:h-[500px] order-3 lg:order-2">

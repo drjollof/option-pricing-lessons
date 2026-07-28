@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface MathConsolePaneProps {
   stepText: string[];
-  formulas: (string | string[])[];
+  formulas: (string | string[] | null)[];
   codeSnippet?: string;
 }
 

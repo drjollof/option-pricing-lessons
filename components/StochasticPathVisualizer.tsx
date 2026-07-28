@@ -27,7 +27,7 @@ export const StochasticPathVisualizer: React.FC<StochasticPathVisualizerProps> =
     // but React strict mode might regenerate. That's fine for conceptual visualization.)
     const shocks = Array.from({ length: totalSteps }, () => (Math.random() + Math.random() + Math.random() - 1.5) * sigma * 2);
     
-    let path: Array<{t: number, wn: number, rw: number, rwd: number, ma1: number, ar1: number}> = [];
+    let path: Array<{t: number, wn: number, rw: number, rwd: number, ma1: number, ar1: number, arch1: number, garch11: number, arch_shock: number, garch_shock: number, h_t_garch_val: number}> = [];
     let rw = 100;
     let rwd = 100;
     
@@ -49,14 +49,34 @@ export const StochasticPathVisualizer: React.FC<StochasticPathVisualizerProps> =
       const phi = 0.8;
       const ar1 = t === 0 ? e_t : (path[t-1].ar1 * phi + e_t);
 
+      // ARCH(1) Returns
+      const omega = 1.0;
+      const alpha_arch = 0.8; // High ARCH effect
+      const z_t = e_t / (sigma * 2); // Standard normal roughly
+      const h_t_arch = t === 0 ? omega : omega + alpha_arch * (path[t-1].arch_shock * path[t-1].arch_shock);
+      const arch_shock = Math.sqrt(h_t_arch) * z_t;
+      const arch1 = arch_shock;
+
+      // GARCH(1,1) Returns
+      const beta_garch = 0.6;
+      const alpha_garch = 0.3; // alpha + beta < 1
+      const h_t_garch = t === 0 ? omega : omega + alpha_garch * (path[t-1].garch_shock * path[t-1].garch_shock) + beta_garch * path[t-1].h_t_garch_val;
+      const garch_shock = Math.sqrt(h_t_garch) * z_t;
+      const garch11 = garch_shock;
+
       path.push({
         t,
         wn: e_t,
         rw: rw,
         rwd: rwd,
         ma1: ma1,
-        ar1: ar1
-      });
+        ar1: ar1,
+        arch1: arch1,
+        garch11: garch11,
+        arch_shock: arch_shock,
+        garch_shock: garch_shock,
+        h_t_garch_val: h_t_garch
+      } as any);
     }
     return path;
   }, [u, sigma]);
@@ -67,7 +87,8 @@ export const StochasticPathVisualizer: React.FC<StochasticPathVisualizerProps> =
   // u = 1 -> Random Walk
   // u = 2 -> Random Walk with Drift
   // u = 3 -> MA(1)
-  // u = 4 -> AR(1)
+  // u = 5 -> ARCH(1)
+  // u = 6 -> GARCH(1,1)
   
   const processType = Math.floor(u);
   
@@ -77,6 +98,8 @@ export const StochasticPathVisualizer: React.FC<StochasticPathVisualizerProps> =
     { key: 'rwd', name: 'Random Walk w/ Drift', color: '#f59e0b', domain: ['auto', 'auto'] },
     { key: 'ma1', name: 'MA(1) Process', color: '#10b981', domain: ['auto', 'auto'] },
     { key: 'ar1', name: 'AR(1) Process', color: '#8b5cf6', domain: ['auto', 'auto'] },
+    { key: 'arch1', name: 'ARCH(1) Returns', color: '#ef4444', domain: ['auto', 'auto'] },
+    { key: 'garch11', name: 'GARCH(1,1) Returns', color: '#ec4899', domain: ['auto', 'auto'] },
   ];
 
   const activeConfig = processConfigs[processType] || processConfigs[0];

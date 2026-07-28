@@ -2,7 +2,7 @@ import { Lesson } from '@/content/types';
 
 export const lesson15: Lesson = {
   id: 'lesson-15',
-  title: 'Lesson 15: Autoregressive Model',
+  title: 'Autoregressive Model',
   description: 'Learn how to model time series data by regressing a variable against its own past values, and understand the critical constraints for stationarity.',
   defaultParams: {
     S0: 100, K: 100, r: 0.05, sigma: 0.2, u: 0, d: 3, N: 3, T: 1
@@ -10,7 +10,7 @@ export const lesson15: Lesson = {
   phases: [
     {
       id: 'l15-p1-ar-theory',
-      title: 'Phase 1: The Autoregressive AR(p) Model',
+      title: 'The Autoregressive AR(p) Model',
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
@@ -29,7 +29,7 @@ export const lesson15: Lesson = {
     },
     {
       id: 'l15-p2-stationarity',
-      title: 'Phase 2: Stationarity Constraints',
+      title: 'Stationarity Constraints',
       kind: 'stochastic-path',
       visibleParams: [],
       overrideParams: { u: 4 }, // AR(1) mode
@@ -47,7 +47,7 @@ export const lesson15: Lesson = {
     },
     {
       id: 'l15-p3-invertibility',
-      title: 'Phase 3: AR/MA Invertibility',
+      title: 'AR/MA Invertibility',
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
@@ -67,7 +67,7 @@ export const lesson15: Lesson = {
     },
     {
       id: 'l15-p4-yule-walker',
-      title: 'Phase 4: Yule-Walker Estimators',
+      title: 'Yule-Walker Estimators',
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
@@ -84,7 +84,7 @@ export const lesson15: Lesson = {
     },
     {
       id: 'l15-p5-acf-pacf-signatures',
-      title: 'Phase 5: Reading AR/MA Signatures',
+      title: 'Reading AR/MA Signatures',
       kind: 'arima-signature',
       visibleParams: [],
       stepTexts: [

@@ -2,7 +2,7 @@ import { Lesson } from '@/content/types';
 
 export const lesson14: Lesson = {
   id: 'lesson-14',
-  title: 'Lesson 14: Time Series Statistical Models',
+  title: 'Time Series Statistical Models',
   description: 'Understand the foundational models of time series analysis: White Noise, Random Walks, and Moving Average (MA) processes.',
   defaultParams: {
     S0: 100, K: 100, r: 0.05, sigma: 0.2, u: 0, d: 3, N: 3, T: 1
@@ -10,32 +10,33 @@ export const lesson14: Lesson = {
   phases: [
     {
       id: 'l14-p1-differencing',
-      title: 'Phase 1: Differencing & Detrending',
+      title: 'Differencing & Detrending',
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
-        "If a time series is non-stationary (e.g., a stock price that generally drifts upward over time), we cannot model it reliably. We must make it stationary first.",
-        "One common method is **Detrending**, where we fit a linear regression line to the data and subtract the line away, analyzing only the residuals.",
-        "A more robust method for financial data is **Differencing**. Instead of looking at the raw price, we look at the change in price from yesterday to today.",
-        "**Calculation Example:** If a stock closes at 100, 102, 101, and 105 dollars, we calculate the First Difference by subtracting yesterday's price from today's. See the math panel below for the result."
+        "If a time series is non-stationary, we cannot model it reliably. We must force it to become stationary.",
+        "One method is **Detrending**, where we fit a linear regression line to the data and subtract the line away, analyzing only the residuals.",
+        "A more robust method for financial data is **Differencing**. Instead of modeling the raw price, we model the change in price from yesterday to today.",
+        "**Calculation Example:** If a stock closes at 100, 102, 101, and 105, we calculate the First Difference by subtracting yesterday's price from today's. See the math panel below for the exact differences."
       ],
       formulas: [
         [ "\\text{First Difference: } \\Delta Y_t = Y_t - Y_{t-1}" ],
-        [ "\\text{Example Prices: } [100, 102, 101, 105]" ],
+        [ "\\text{Example Prices: } Y = [100, 102, 101, 105]" ],
         [ "\\text{First Difference Series: } [(102-100), (101-102), (105-101)]" ],
         [ "\\Delta Y_t = [2, -1, 4]" ]
       ]
     },
     {
       id: 'l14-p2-white-noise',
-      title: 'Phase 2: White Noise',
+      title: 'White Noise',
       kind: 'stochastic-path',
-      visibleParams: ['sigma'], // selectively show sigma (volatility)
+      visibleParams: ['sigma'],
       overrideParams: { u: 0, sigma: 1 }, 
       stepTexts: [
-        "The most basic time series process is **White Noise**. It represents pure, unpredictable randomness.",
-        "White Noise is strictly stationary. It has a constant mean of 0, a constant variance, and absolutely zero autocorrelation at any lag. Yesterday's shock tells you nothing about today's shock.",
-        "Look at the visualizer. The path jumps violently up and down around zero. If your final econometric model's residuals look like this, it means you have successfully captured all the predictable signal, and only pure noise remains!"
+        "The foundational building block of time series is **White Noise**. It represents pure, unpredictable randomness.",
+        "White Noise is strictly stationary. It has a constant mean of 0, a constant variance, and exactly zero autocorrelation at any lag.",
+        "For example, if yesterday's white noise shock was $+5.0$, today's mathematical expectation is strictly $0.0$. There is zero memory.",
+        "If your final econometric model's residuals look like this visualizer—violently jumping around zero with no pattern—it means you have successfully captured all the predictable signal!"
       ],
       formulas: [
         [ "\\epsilon_t \\sim \\text{White Noise (WN)}" ],
@@ -46,18 +47,19 @@ export const lesson14: Lesson = {
     },
     {
       id: 'l14-p3-random-walk',
-      title: 'Phase 3: Random Walk',
+      title: 'Random Walk',
       kind: 'stochastic-path',
       visibleParams: ['sigma'],
-      overrideParams: { u: 1, sigma: 1 }, // u=1 for RW
+      overrideParams: { u: 1, sigma: 1 },
       stepTexts: [
         "A **Random Walk** occurs when today's value is simply yesterday's value plus a random White Noise shock.",
-        "Because it accumulates every single past shock, it has 'infinite memory'. This means its variance grows infinitely over time, making it highly **non-stationary**.",
-        "**Calculation Example:** Let the starting value be 100. We add a series of random shocks to simulate a random walk. See the step-by-step math below."
+        "Because it accumulates every single past shock, it has 'infinite memory'. Its variance grows infinitely over time, meaning it is severely **non-stationary**.",
+        "**Calculation Example:** Let the starting value be 100. We add a sequence of random shocks: $+2$, $-1$, $+3$.",
+        "The values step from 102, to 101, to 104. See the exact calculations below."
       ],
       formulas: [
         [ "Y_t = Y_{t-1} + \\epsilon_t" ],
-        [ "\\text{Example Shocks: } [+2, -1, +3]" ],
+        [ "\\text{Example Shocks: } \\epsilon = [+2, -1, +3]" ],
         [ "Y_1 = 100 + 2 = 102" ],
         [ "Y_2 = 102 - 1 = 101" ],
         [ "Y_3 = 101 + 3 = 104" ],
@@ -66,32 +68,34 @@ export const lesson14: Lesson = {
     },
     {
       id: 'l14-p4-random-walk-drift',
-      title: 'Phase 4: Random Walk with Drift',
+      title: 'Random Walk with Drift',
       kind: 'stochastic-path',
       visibleParams: ['sigma'],
-      overrideParams: { u: 2, sigma: 1 }, // u=2 for RWD
+      overrideParams: { u: 2, sigma: 1 },
       stepTexts: [
         "If we add a constant term (or drift) to the random walk, we get a **Random Walk with Drift**.",
-        "This is the standard baseline model for long-term equity markets: they wander randomly day-to-day, but have an underlying upward drift over the decades.",
-        "Look at the visualizer. The random shocks are exactly the same as the previous phase, but the constant drift parameter slowly pulls the entire path upwards."
+        "This is the baseline model for long-term equity markets: they wander randomly day-to-day, but have an underlying upward drift.",
+        "**Calculation Example:** Suppose the drift is $c = 0.5$ and the starting price is $100$. Over $10$ days, the expected baseline price is $100 + (10 \\times 0.5) = 105$.",
+        "Because the mean explicitly grows linearly over time ($c \\cdot t$), it violates the constant mean requirement of stationarity."
       ],
       formulas: [
         [ "Y_t = c + Y_{t-1} + \\epsilon_t" ],
         [ "E(Y_t) = Y_0 + c \\cdot t" ],
-        [ "\\text{The mean grows linearly with time, so it is strictly non-stationary.}" ]
+        [ "\\text{Example: } c = 0.5, \\quad E(Y_{10}) = 100 + 10(0.5) = 105" ],
+        [ "\\text{The mean grows with time (Non-stationary).}" ]
       ]
     },
     {
       id: 'l14-p5-ma-model',
-      title: 'Phase 5: Moving Average (MA) Model',
+      title: 'Moving Average (MA) Model',
       kind: 'stochastic-path',
       visibleParams: [],
-      overrideParams: { u: 3 }, // u=3 for MA(1)
+      overrideParams: { u: 3 },
       stepTexts: [
         "The **Moving Average (MA)** model attempts to predict today's value using *past errors* (shocks), rather than past prices.",
-        "An MA(1) model uses only today's shock and yesterday's shock. Because it only remembers one day into the past, its 'memory' instantly dies after lag 1.",
-        "**Calculation Example:** We want to calculate today's value for an MA(1) model given yesterday's shock and today's shock.",
-        "Follow the exact calculation in the math panel below. If we look at a correlogram for this data, the ACF will have a single spike at Lag 1 and then immediately cut off to zero!"
+        "An MA(1) model uses only today's shock and yesterday's shock. Because it only remembers one day into the past, its memory instantly dies after lag 1.",
+        "**Calculation Example:** We want to calculate today's value for an MA(1) model. The long-term mean is $\\mu = 0$, the lag coefficient is $\\theta_1 = 0.8$.",
+        "If yesterday's shock was $-2$ and today's shock is $+3$, today's exact value is $0 + 3 + (0.8 \\times -2) = 1.4$. See the math panel."
       ],
       formulas: [
         [ "\\text{MA}(q) \\text{ Model:}" ],

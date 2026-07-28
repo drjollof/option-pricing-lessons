@@ -16,15 +16,17 @@ export const lesson2: Lesson = {
       visibleParams: ['sigma'],
       stepTexts: [
         "Before fitting a multiple regression model, we must check if our exogenous variables (X) are highly related to each other.",
-        "**Covariance** measures the directional relationship between two variables. However, its scale is arbitrary, making it hard to interpret.",
-        "**Correlation ($r$)** standardizes covariance by dividing it by the product of the variables' standard deviations. It always ranges from -1 to 1.",
-        "**Example Calculation**: If $X$ and $Y$ have a covariance of $0.08$, with $\\sigma_X = 0.2$, and $\\sigma_Y = 0.5$, we can solve for $r$.",
-        "This $0.80$ is a strong positive correlation. Notice the heatmap: adjust the noise (`sigma`) to see the correlations change visually."
+        "**Covariance** measures the directional relationship between two variables. For example, during an economic boom, we might observe that both Tech Stocks and Luxury Goods rise together, indicating a positive covariance. Conversely, Tech Stocks and Gold might move in opposite directions, showing negative covariance.",
+        "However, the raw number produced by covariance is arbitrary and depends on the units of the variables, making it very hard to interpret.",
+        "**Correlation ($r$)** solves this by standardizing covariance (dividing it by the product of the variables' standard deviations). It bounds the relationship to a strictly standardized scale ranging from -1 to 1.",
+        "If Tech Stocks ($X$) and Luxury Goods ($Y$) have a covariance of $0.08$, with $\\sigma_X = 0.2$, and $\\sigma_Y = 0.5$, we can solve for $r$.",
+        "The resulting $0.80$ indicates a strong positive correlation, meaning these two assets move together quite closely."
       ],
       formulas: [
+        null,
         [ "\\text{Cov}(X,Y) = \\frac{\\sum (X_i - \\bar{X})(Y_i - \\bar{Y})}{n-1}" ],
-        [ "r = \\frac{\\text{Cov}(X,Y)}{\\sigma_X \\sigma_Y}" ],
-        [ "-1 \\le r \\le 1" ],
+        null,
+        [ "r = \\frac{\\text{Cov}(X,Y)}{\\sigma_X \\sigma_Y}", "-1 \\le r \\le 1" ],
         [ "r = \\frac{0.08}{0.2 \\times 0.5} = \\frac{0.08}{0.10} = 0.80" ],
         [ "\\text{Strong Positive Correlation}" ]
       ]
@@ -36,14 +38,21 @@ export const lesson2: Lesson = {
       kind: 'correlation-heatmap',
       visibleParams: ['sigma'],
       stepTexts: [
-        "**Multicollinearity** occurs when two or more independent variables are highly correlated (e.g., $X_1$ and $X_2$ in the heatmap).",
-        "Why is this a problem? If $X_1$ and $X_2$ move together perfectly, the OLS model cannot distinguish the individual effect of $X_1$ on $Y$ from the effect of $X_2$.",
-        "Mathematically, this causes the standard errors of the $\\beta$ coefficients to inflate.",
-        "Inflated standard errors lead to wider confidence intervals and lower t-statistics, making significant variables appear statistically insignificant."
+        "**Multicollinearity** occurs when two or more independent variables are highly correlated with each other. Look at the correlation matrix visualization on the right.",
+        "Notice the intersection between $X_1$ and $X_2$. They have an extremely high correlation (approaching 0.95). In a real-world scenario, $X_1$ could be a company's 'Gross Revenue' and $X_2$ could be their 'Net Sales'.",
+        "Why is this a problem for OLS? If $X_1$ and $X_2$ move together in lockstep, the OLS algorithm becomes mathematically confused. It cannot distinguish the isolated, individual effect of $X_1$ on the dependent variable from the effect of $X_2$.",
+        "This confusion manifests mathematically as **Variance Inflation**. The variance (and thus standard errors) of the $\\beta$ coefficients artificially inflates because the denominator shrinks as the correlation between predictors ($R_j^2$) approaches 1.",
+        "Inflated standard errors are disastrous. They lead to massive confidence intervals and artificially low t-statistics, making truly important variables appear completely statistically insignificant."
       ],
       formulas: [
-        "\\text{Var}(\\hat{\\beta}_j) = \\frac{\\sigma^2}{\\sum (X_{ij} - \\bar{X}_j)^2 (1 - R_j^2)}",
-        "\\text{Where } R_j^2 \\text{ is the } R^2 \\text{ from regressing } X_j \\text{ on all other X variables.}"
+        null,
+        null,
+        null,
+        [
+          "\\text{Var}(\\hat{\\beta}_j) = \\frac{\\sigma^2}{\\sum (X_{ij} - \\bar{X}_j)^2 (1 - R_j^2)}",
+          "\\text{Where } R_j^2 \\text{ is the } R^2 \\text{ from regressing } X_j \\text{ on all other X variables.}"
+        ],
+        null
       ]
     },
     {
@@ -54,15 +63,15 @@ export const lesson2: Lesson = {
       visibleParams: [],
       stepTexts: [
         "To detect multicollinearity, we calculate the **Variance Inflation Factor (VIF)** for each exogenous variable.",
-        "VIF measures how much the variance of an estimated regression coefficient increases when your predictors are correlated.",
-        "A VIF of 1 indicates no correlation. A VIF between 1 and 5 is moderate. A VIF > 5 (or 10) indicates high multicollinearity.",
-        "**Example Calculation**: If regressing $X_1$ on the other variables yields an $R^2$ of $0.90$, we can calculate the VIF.",
-        "Since $10 > 5$, $X_1$ suffers from severe multicollinearity. We typically drop one of the highly correlated variables to fix this."
+        "VIF measures exactly how much the variance of an estimated regression coefficient increases precisely because your predictors are correlated.",
+        "A VIF of 1 indicates absolutely zero correlation. A VIF between 1 and 5 is moderate. A VIF > 5 (or sometimes 10) indicates high, dangerous multicollinearity.",
+        "If regressing $X_1$ on the other variables yields an $R^2$ of $0.90$, we can calculate the VIF.",
+        "Since our calculated VIF of $10$ is greater than $5$, $X_1$ suffers from severe multicollinearity. Quants typically drop one of the highly correlated variables to fix this instability."
       ],
       formulas: [
         [ "\\text{VIF}_j = \\frac{1}{1 - R_j^2}" ],
-        [ "\\text{If } R_j^2 \\text{ is high, VIF explodes toward infinity.}" ],
-        [ "\\text{VIF} = 1 \\text{ (None), } > 5 \\text{ (High)}" ],
+        null,
+        null,
         [ "\\text{VIF} = \\frac{1}{1 - 0.90} = \\frac{1}{0.10} = 10" ],
         [ "10 > 5 \\implies \\text{Severe Multicollinearity}" ]
       ]

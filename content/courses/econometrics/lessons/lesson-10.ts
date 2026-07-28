@@ -2,7 +2,7 @@ import { Lesson } from '@/content/types';
 
 export const lesson10: Lesson = {
   id: 'lesson-10',
-  title: 'Lesson 10: Skew Normal and Skew-t Distribution',
+  title: 'Skew Normal and Skew-t Distribution',
   description: 'Understand higher moments like skewness and kurtosis, how they violate the normality assumption, and how to quantify them mathematically.',
   defaultParams: {
     S0: 100, K: 100, r: 0.05, sigma: 0.2, u: 4, d: 3, N: 3, T: 1
@@ -10,91 +10,93 @@ export const lesson10: Lesson = {
   phases: [
     {
       id: 'l10-p1-skewness-theory',
-      title: 'Phase 1: The Mathematics of Skewness',
+      title: 'The Mathematics of Skewness',
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
-        "Financial returns rarely follow a perfect bell curve. The third mathematical moment of a distribution is **Skewness**, which measures asymmetry.",
-        "To calculate skewness, we measure how far each data point is from the mean, divide by the standard deviation (to normalize it), and then **cube** the result.",
-        "Cubing the value is the secret! Unlike squaring (which makes everything positive), cubing preserves the sign (positive or negative).",
-        "See the LaTeX panel below for the formal mathematical equation defining Sample Skewness."
+        "Financial market returns rarely follow a symmetric bell curve. The third mathematical moment is **Skewness**, which measures structural asymmetry.",
+        "To calculate it, we measure how far each data point is from the mean, divide by the standard deviation (to normalize it), and then **cube** the result.",
+        "Imagine an upside outlier of $+3$ standard deviations. Cubing it gives $(+3)^3 = +27$. Now imagine a downside crash of $-3$ standard deviations. Cubing it gives $(-3)^3 = -27$.",
+        "This is the mathematical secret! Unlike squaring (which destroys negative signs, since $(-3)^2 = +9$), cubing perfectly preserves the directional sign, allowing us to mathematically isolate the direction of the extreme tail."
       ],
       formulas: [
-        [ "\\text{Sample Skewness } (\\gamma_1) = \\frac{n}{(n-1)(n-2)} \\sum_{i=1}^n \\left(\\frac{x_i - \\bar{x}}{s}\\right)^3" ],
-        [ "\\text{Normal Distribution: } \\gamma_1 = 0" ],
-        [ "\\text{Positive Skew: } \\gamma_1 > 0 \\text{ (Long Right Tail)}" ],
-        [ "\\text{Negative Skew: } \\gamma_1 < 0 \\text{ (Long Left Tail)}" ]
+        [ "\\text{Skewness } \\gamma_1 = \\frac{1}{n} \\sum_{i=1}^n \\left(\\frac{x_i - \\bar{x}}{s}\\right)^3" ],
+        [ "\\text{Upside: } (+3)^3 = +27" ],
+        [ "\\text{Downside: } (-3)^3 = -27" ],
+        null
       ]
     },
     {
       id: 'l10-p2-skewness-visual',
-      title: 'Phase 2: Divergence of the Mean and Median',
+      title: 'Divergence of the Mean and Median',
       kind: 'distribution-curve',
       visibleParams: [],
       overrideParams: { sigma: 0.2, u: 4 }, // High positive skew
       stepTexts: [
-        "Let's look at a **Positively Skewed** distribution. Notice how the long tail stretches out to the right.",
-        "The peak of the curve is the **Mode**. It represents the most frequent, common outcome.",
-        "Because the tail stretches right, the **Median** gets pulled slightly to the right to maintain exactly 50 percent of the area on either side.",
-        "The **Mean**, however, is highly sensitive to the magnitude of the extreme outliers in the tail, dragging it out the furthest."
+        "Let's look at a mathematically Positively Skewed distribution. Suppose 9 employees make 50,000 dollars, and the CEO makes 5,000,000 dollars.",
+        "The **Median** (the 50th percentile) is 50,000 dollars. The **Mode** (the highest peak) is also 50,000 dollars.",
+        "But because the **Mean** is mathematically sensitive to the massive magnitude of the 5,000,000 dollar outlier, the mean gets violently dragged all the way up to 545,000 dollars.",
+        "In a highly right-skewed distribution, the mean is always artificially inflated far beyond the typical outcome."
       ],
       formulas: [
-        [ "\\text{Mode = Highest Probability Density}" ],
-        [ "\\text{Median = 50th Percentile}" ],
-        [ "\\text{Right-Skewed: } \\text{Mean} > \\text{Median} > \\text{Mode}" ],
-        [ "\\text{Left-Skewed: } \\text{Mean} < \\text{Median} < \\text{Mode}" ]
+        [ "\\text{Salaries: } [50k, 50k, ..., 5m]" ],
+        [ "\\text{Median } = 50,000" ],
+        [ "\\text{Mean } = \\frac{(9 \\times 50k) + 5m}{10} = 545,000" ],
+        [ "\\text{Right-Skewed: } \\text{Mean} > \\text{Median} > \\text{Mode}" ]
       ]
     },
     {
       id: 'l10-p3-kurtosis',
-      title: 'Phase 3: Kurtosis & Fat Tails',
+      title: 'Kurtosis & Fat Tails',
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
-        "The fourth mathematical moment is **Kurtosis**. This measures the 'tailedness' of the distribution.",
-        "To calculate it, we raise the normalized distances to the **fourth power**. This places enormous weight on extreme outliers.",
-        "A standard Normal Distribution has a Kurtosis of 3. We often look at **Excess Kurtosis**, which simply subtracts 3 so that a normal distribution sits at 0.",
-        "Review the math panel below to see how Excess Kurtosis is calculated and how it defines fat tails."
+        "The fourth mathematical moment is **Kurtosis**. This raises the normalized distance to the **fourth power**, measuring the probability of extreme market crashes.",
+        "Take a massive 5 standard deviation market crash ($Z = -5$). If we squared it, the penalty is $(-5)^2 = 25$. But because Kurtosis uses the 4th power, the mathematical penalty explodes to $(-5)^4 = 625$.",
+        "This places an absolutely enormous mathematical weight on extreme outliers. A standard Normal Distribution has a baseline Kurtosis of 3.",
+        "We often calculate **Excess Kurtosis** (Kurtosis - 3). If Excess Kurtosis > 0, the distribution is **Leptokurtic** (fat-tailed), meaning extreme $Z=5$ events happen far more often than normally expected."
       ],
       formulas: [
-        [ "\\text{Sample Kurtosis } = \\frac{1}{n} \\sum_{i=1}^n \\left(\\frac{x_i - \\bar{x}}{s}\\right)^4" ],
+        [ "\\text{Squaring Penalty: } (-5)^2 = 25" ],
+        [ "\\text{Kurtosis Penalty: } (-5)^4 = 625" ],
         [ "\\text{Excess Kurtosis} = \\text{Kurtosis} - 3" ],
-        [ "\\text{Excess Kurtosis } > 0 \\implies \\text{Leptokurtic (Fat Tails)}" ],
-        [ "\\text{Excess Kurtosis } < 0 \\implies \\text{Platykurtic (Thin Tails)}" ]
+        [ "\\text{Excess Kurtosis } > 0 \\implies \\text{Leptokurtic}" ]
       ]
     },
     {
       id: 'l10-p4-kurtosis-visual',
-      title: 'Phase 4: Visualizing Fat Tails on a Q-Q Plot',
+      title: 'Visualizing Fat Tails on a Q-Q Plot',
       kind: 'qq-plot',
       visibleParams: [],
       overrideParams: { sigma: 0.2, u: 4 }, // Fat tails trigger
       stepTexts: [
-        "Let's see what a **Leptokurtic** (fat-tailed) distribution looks like on a Q-Q plot compared to a theoretical normal distribution (the red line).",
-        "Look at the center of the plot. The empirical data hugs the red line quite well. The middle 90 percent of trading days often look perfectly normal!",
-        "Now look at the extremes. The yellow sample points diverge sharply away from the red line. The actual losses (left side) and actual gains (right side) are much larger than the normal distribution mathematically expects."
+        "Let's see what a Leptokurtic (fat-tailed) distribution actually looks like on a Q-Q plot compared to a theoretical normal distribution (the red diagonal line).",
+        "Look at the absolute center. The empirical data points hug the red line incredibly well. The middle 90 percent of trading days mathematically look perfectly normal.",
+        "Now look at the extreme left tail. If the theoretical normal math expects a worst-case drop of $-3.00\\%$, but the actual empirical data crashes by $-8.00\\%$, the dot vividly breaks below the red line.",
+        "Because traditional finance models (like Black-Scholes) strictly assume normal distributions, they systematically underprice the true mathematical risk of these extreme $-8.00\\%$ Black Swan crashes."
       ],
       formulas: [
-        [ "\\text{Empirical Quantiles } < \\text{ Theoretical (Left Tail)}" ],
-        [ "\\text{Empirical Quantiles } > \\text{ Theoretical (Right Tail)}" ],
-        [ "\\implies \\text{Black Swan Events are systematically underpriced!}" ]
+        null,
+        null,
+        [ "\\text{Normal Expectation: } -3.00\\%" ],
+        [ "\\text{Actual Market Crash: } -8.00\\%" ]
       ]
     },
     {
       id: 'l10-p5-skew-t',
-      title: 'Phase 5: The Skew-t Distribution',
+      title: 'The Skew-t Distribution',
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
-        "If the normal distribution fails to capture skewness and kurtosis, what should we use instead?",
-        "The **Student's t-distribution** is naturally fat-tailed. The 'degrees of freedom' parameter controls how fat the tails are. As this parameter grows toward infinity, the t-distribution becomes a normal distribution.",
-        "To also capture asymmetry, quants use the **Skew-t Distribution**. It introduces a dedicated skew parameter.",
-        "See the math panel below for the formal mathematical definition of these complex distributions."
+        "If the normal distribution blindly predicts $-3.00\\%$ but the market repeatedly crashes $-8.00\\%$, what advanced distributions should Quants use?",
+        "The **Student's t-distribution** is naturally fat-tailed. The 'degrees of freedom' parameter (e.g. $\\nu = 3$) controls the fatness. As $\\nu \\to \\infty$, it mathematically converges exactly into a normal distribution.",
+        "However, the t-distribution is strictly symmetric. To simultaneously capture both the fat tails (the $-8.00\\%$ crash) and the asymmetry (Mean $\\neq$ Median), we use the **Skew-t Distribution**.",
+        "The Skew-t mathematically introduces a dedicated skew parameter ($\\lambda$), drastically improving the accuracy of Value-at-Risk (VaR) models in algorithmic trading."
       ],
       formulas: [
-        [ "\\text{Standard t-Distribution PDF } (\\text{symmetric, fat tails}):" ],
-        [ "f(x | \\nu) = \\frac{\\Gamma(\\frac{\\nu+1}{2})}{\\sqrt{\\nu\\pi}\\Gamma(\\frac{\\nu}{2})} \\left(1 + \\frac{x^2}{\\nu}\\right)^{-\\frac{\\nu+1}{2}}" ],
-        [ "\\text{Skew-t Distribution } (\\text{asymmetric, fat tails}):" ],
+        [ "\\text{t-distribution: Fat-tailed (controlled by } \\nu)" ],
+        [ "\\nu \\to \\infty \\implies \\text{Normal Distribution}" ],
+        [ "\\text{Skew-t: Adds asymmetry parameter } \\lambda" ],
         [ "f_{skew}(x) = 2 f(x | \\nu) F(\\lambda x | \\nu+1)" ]
       ],
       codeSnippet: `import numpy as np

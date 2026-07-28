@@ -1,9 +1,15 @@
 "use client";
 import React, { useMemo } from 'react';
 import { useLessonStore } from '@/store/lessonStore';
+import { TreeParams } from '@/lib/binomial';
 
-export const CorrelationHeatmapVisualizer: React.FC = () => {
-  const { params } = useLessonStore();
+interface CorrelationHeatmapVisualizerProps {
+  staticParams?: Partial<TreeParams>;
+}
+
+export const CorrelationHeatmapVisualizer: React.FC<CorrelationHeatmapVisualizerProps> = ({ staticParams }) => {
+  const storeParams = useLessonStore(state => state.params);
+  const params = staticParams || storeParams;
   
   // Create a synthetic correlation matrix based on params.
   // We'll have 4 variables: Y, X1, X2, X3
@@ -26,55 +32,70 @@ export const CorrelationHeatmapVisualizer: React.FC = () => {
   }, [params.sigma]);
 
   const getColor = (value: number) => {
-    // value ranges from -1 to 1
-    // Color scale: Red (-1) to White (0) to Blue (1)
+    // Red-Blue diverging scale. Red = -1, White = 0, Blue = 1
+    // More vibrant colors!
+    if (value === 1) return `rgb(37, 99, 235)`; // Tailwind blue-600 for max correlation
+    if (value === -1) return `rgb(220, 38, 38)`; // Tailwind red-600 for min correlation
+    
     if (value > 0) {
+      // White to Blue
       const intensity = Math.round(value * 255);
-      return `rgb(${255 - intensity}, ${255 - (intensity/2)}, 255)`;
+      return `rgb(${255 - intensity}, ${255 - Math.round(intensity * 0.6)}, 255)`;
     } else {
+      // White to Red
       const intensity = Math.round(Math.abs(value) * 255);
       return `rgb(255, ${255 - intensity}, ${255 - intensity})`;
     }
   };
 
   const getDarkColor = (value: number) => {
+    // Dark mode diverging scale
+    if (value === 1) return `rgb(59, 130, 246)`; // Tailwind blue-500
+    if (value === -1) return `rgb(239, 68, 68)`; // Tailwind red-500
+
     if (value > 0) {
-      const intensity = Math.max(20, Math.round(value * 150));
-      return `rgb(10, 30, ${intensity + 50})`;
+      const intensity = Math.max(30, Math.round(value * 200));
+      return `rgb(15, 23, ${intensity + 55})`;
     } else {
-      const intensity = Math.max(20, Math.round(Math.abs(value) * 150));
-      return `rgb(${intensity + 50}, 20, 20)`;
+      const intensity = Math.max(30, Math.round(Math.abs(value) * 200));
+      return `rgb(${intensity + 55}, 15, 23)`;
     }
   };
 
+  const getTextColor = (value: number) => {
+    // Return white text for extreme values to ensure readability, dark text for values near 0
+    return Math.abs(value) > 0.6 ? 'text-white' : 'text-slate-800 dark:text-slate-200';
+  };
+
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-slate-800">
+    <div className="w-full h-full flex flex-col items-center justify-center bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden relative">
       <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-6">Correlation Matrix Heatmap</h3>
-      <div className="grid grid-cols-5 gap-2 w-full max-w-md">
+      <div className="grid grid-cols-5 gap-3 w-full max-w-md">
         <div className="col-span-1"></div>
         {variables.map(v => (
-          <div key={v} className="col-span-1 text-center font-semibold text-slate-600 dark:text-slate-400">
+          <div key={v} className="col-span-1 text-center font-bold text-slate-700 dark:text-slate-300">
             {v}
           </div>
         ))}
 
         {variables.map((rowVar, i) => (
-          <React.Fragment key={rowVar}>
-            <div className="col-span-1 flex items-center justify-end pr-4 font-semibold text-slate-600 dark:text-slate-400">
+          <React.Fragment key={`row-${rowVar}`}>
+            <div className="col-span-1 flex items-center justify-end pr-4 font-bold text-slate-700 dark:text-slate-300">
               {rowVar}
             </div>
             {variables.map((colVar, j) => {
               const val = matrix[i][j];
-              const isHighCorr = Math.abs(val) > 0.8 && i !== j;
               return (
                 <div 
                   key={`${rowVar}-${colVar}`} 
-                  className={`col-span-1 aspect-square rounded-xl flex items-center justify-center font-mono text-sm font-medium transition-all ${isHighCorr ? 'ring-2 ring-red-500 scale-105 shadow-md z-10' : ''}`}
+                  className="col-span-1 aspect-square rounded-2xl flex flex-col items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:z-10 shadow-sm border border-slate-200/50 dark:border-slate-700/50"
                   style={{
-                    backgroundColor: getColor(val),
+                    backgroundColor: typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches 
+                      ? getDarkColor(val) 
+                      : getColor(val)
                   }}
                 >
-                  <span className={`drop-shadow-sm ${Math.abs(val) > 0.6 ? 'text-white' : 'text-slate-900'}`}>
+                  <span className={`text-sm md:text-base font-extrabold ${getTextColor(val)}`}>
                     {val.toFixed(2)}
                   </span>
                 </div>
@@ -82,12 +103,6 @@ export const CorrelationHeatmapVisualizer: React.FC = () => {
             })}
           </React.Fragment>
         ))}
-      </div>
-      <div className="mt-8 text-sm text-slate-500 dark:text-slate-400 flex items-center gap-4">
-        <span>Legend:</span>
-        <div className="flex items-center gap-2"><div className="w-4 h-4 bg-red-200 rounded"></div> Negative</div>
-        <div className="flex items-center gap-2"><div className="w-4 h-4 bg-white border border-slate-200 rounded"></div> Zero</div>
-        <div className="flex items-center gap-2"><div className="w-4 h-4 bg-blue-200 rounded"></div> Positive</div>
       </div>
     </div>
   );

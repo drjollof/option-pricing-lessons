@@ -1,6 +1,6 @@
 import { TreeParams } from '@/lib/binomial';
 
-export type PhaseKind = 'static-slides' | 'tree-reveal' | 'derivation-steps' | 'parity-check' | 'hedge-rebalance-animation' | 'convergence-sweep' | 'calibration-form' | 'path-explorer' | 'monte-carlo' | 'placeholder' | 'scatter-plot' | 'correlation-heatmap' | 'pca-scree' | 'mc-histogram' | 'residual-plot' | 'robust-regression' | 'penalty-path' | 'loess-plot' | 'distribution-curve' | 'qq-plot' | 'copula-plot' | 'rank-correlation' | 'correlogram' | 'stochastic-path' | 'arima-signature';
+export type PhaseKind = 'static-slides' | 'tree-reveal' | 'derivation-steps' | 'parity-check' | 'hedge-rebalance-animation' | 'convergence-sweep' | 'calibration-form' | 'path-explorer' | 'monte-carlo' | 'placeholder' | 'scatter-plot' | 'correlation-heatmap' | 'pca-scree' | 'mc-histogram' | 'residual-plot' | 'robust-regression' | 'penalty-path' | 'loess-plot' | 'distribution-curve' | 'qq-plot' | 'copula-plot' | 'copula-3d' | 'rank-correlation' | 'correlogram' | 'stochastic-path' | 'arima-signature';
 
 export interface LessonPhase {
   id: string;
@@ -8,7 +8,7 @@ export interface LessonPhase {
   description?: string;
   kind: PhaseKind;
   stepTexts?: string[];
-  formulas?: (string | string[])[];
+  formulas?: (string | string[] | null)[];
   codeSnippet?: string;
   isAmerican?: boolean;
   reveals?: 'stock_tree' | 'option_tree' | 'delta_tree';

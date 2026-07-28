@@ -15,19 +15,16 @@ export const lesson5: Lesson = {
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
-        "For Ordinary Least Squares (OLS) to be the Best Linear Unbiased Estimator (BLUE), a strict set of assumptions (the Gauss-Markov theorem) must hold.",
-        "1. **Linearity**: The parameters must be linear.",
-        "2. **Random Sampling**: The data must be a random sample from the population.",
-        "3. **No Perfect Multicollinearity**: Independent variables cannot be perfectly correlated (which we solved with PCA in earlier lessons).",
-        "4. **Zero Conditional Mean**: The error term $\\epsilon$ has an expected value of 0 given any value of $X$.",
-        "5. **Homoskedasticity**: The variance of the error term is constant."
+        "For Ordinary Least Squares (OLS) to be statistically valid, a strict mathematical framework called the **Gauss-Markov Theorem** must hold.",
+        "The most critical assumption is **Zero Conditional Mean**, meaning our model's errors are perfectly random and have no hidden patterns. The expected value of the error is exactly 0.",
+        "The final assumption is **Homoskedasticity**. This strictly requires that the variance (spread) of our errors remains mathematically constant across all data points.",
+        "If we predict $Y$ when $X=10$, and our errors fall within $\\pm 2$, Homoskedasticity demands that when $X=100$, our errors must also fall within exactly $\\pm 2$."
       ],
       formulas: [
-        [ "\\text{BLUE: Best Linear Unbiased Estimator}" ],
-        [ "\\text{Linearity, Random Sampling}" ],
-        [ "\\text{No Perfect Multicollinearity}" ],
+        null,
         [ "E(\\epsilon_i | X) = 0" ],
-        [ "\\text{Var}(\\epsilon_i | X) = \\sigma^2" ]
+        [ "\\text{Var}(\\epsilon_i | X) = \\sigma^2" ],
+        null
       ]
     },
     {
@@ -35,18 +32,18 @@ export const lesson5: Lesson = {
       title: 'Heteroskedasticity',
       description: 'When the variance of the errors is not constant.',
       kind: 'residual-plot',
-      visibleParams: ['sigma'],
+      visibleParams: [],
       stepTexts: [
-        "When Assumption 5 fails, we have **Heteroskedasticity**. This means the spread of the residuals changes as the independent variable changes.",
-        "Notice the Residual Plot. As X increases, the spread of the errors (residuals) fans out. Adjust the `sigma` slider to increase or decrease this fanning effect.",
-        "Heteroskedasticity does *not* make OLS biased, but it makes it **inefficient**. The standard errors are calculated incorrectly, which invalidates our p-values and confidence intervals.",
-        "We can test for this using the Breusch-Pagan or White tests."
+        "When the constant variance assumption fails, we suffer from **Heteroskedasticity**. This means the spread of our errors dynamically changes depending on the independent variable.",
+        "Look at the Residual Plot visualization. As $X$ increases, the spread of the errors violently fans out into a massive cone shape.",
+        "A classic example is predicting spending based on income: low-income earners have highly predictable spending, while billionaires' spending can vary by millions of dollars.",
+        "If the true variance for $X=100$ explodes to $2500$, but OLS blindly assumes a constant average variance of just $400$, the model will falsely report that its predictions are highly accurate. Our confidence intervals are completely ruined."
       ],
       formulas: [
-        [ "\\text{Assumption 5 Fails.}" ],
         [ "\\text{Var}(\\epsilon_i | X_i) = \\sigma_i^2" ],
-        [ "\\text{Note the subscript } i \\text{ on } \\sigma, \\text{ meaning variance changes per observation.}" ],
-        [ "\\text{Breusch-Pagan Test}" ]
+        null,
+        null,
+        null
       ]
     },
     {
@@ -56,16 +53,16 @@ export const lesson5: Lesson = {
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
-        "To fix Heteroskedasticity, we can use robust standard errors (like White's standard errors) which adjust the standard error calculation without changing the coefficients.",
-        "Alternatively, we can use **Weighted Least Squares (WLS)**. WLS assigns a weight to each observation, inversely proportional to its variance.",
-        "Points with high variance (lots of noise) are given less weight, and points with low variance (highly accurate) are given more weight.",
-        "This transforms the model back into a homoskedastic one, restoring the BLUE property."
+        "To salvage our model, we use an aggressive mathematical solution called **Weighted Least Squares (WLS)**. WLS assigns a unique weight to every single data point.",
+        "This weight is strictly inversely proportional to the variance. For a low-income point where variance is $4$, the weight is high: $w_1 = 1/4 = 0.25$.",
+        "For a billionaire where the variance is massive ($2500$), the weight is mathematically crushed: $w_2 = 1/2500 = 0.0004$.",
+        "By penalizing the noisy points and heavily rewarding the stable points, WLS mathematically transforms the data back into a homoskedastic state, restoring our valid confidence intervals."
       ],
       formulas: [
-        [ "\\text{Robust Standard Errors (HC1, HC3)}" ],
-        [ "\\text{Weight: } w_i = \\frac{1}{\\sigma_i^2}" ],
-        [ "\\text{Minimize: } \\sum_{i=1}^n w_i (Y_i - \\hat{Y}_i)^2" ],
-        [ "\\hat{\\beta}_{WLS} = (X^T W X)^{-1} X^T W Y" ]
+        [ "w_i = \\frac{1}{\\sigma_i^2}" ],
+        [ "\\text{Low Variance: } w_1 = \\frac{1}{4} = 0.25" ],
+        [ "\\text{High Variance: } w_2 = \\frac{1}{2500} = 0.0004" ],
+        [ "\\text{Minimize: } \\sum_{i=1}^n w_i (Y_i - \\hat{Y}_i)^2" ]
       ]
     },
     {
@@ -76,8 +73,9 @@ export const lesson5: Lesson = {
       visibleParams: [],
       stepTexts: [
         "In Python with `statsmodels`, we first run a standard OLS regression.",
-        "We then extract the residuals and use `het_breuschpagan` to test for heteroskedasticity. A low p-value means we reject the null of homoskedasticity.",
-        "To correct it, we can either re-fit the OLS model using `cov_type='HC3'` (robust standard errors) or fit a `sm.WLS` model by passing in an array of weights."
+        "We then extract the residuals and use `het_breuschpagan` to test for heteroskedasticity. A low p-value (under 0.05) mathematically proves heteroskedasticity exists.",
+        "To correct it, we can either re-fit the OLS model using `cov_type='HC3'` (robust standard errors) or fit a dedicated `sm.WLS` model by passing in an array of mathematical weights.",
+        "Running the robust model fixes the standard errors and p-values so they are statistically trustworthy again."
       ],
       codeSnippet: `import statsmodels.api as sm
 from statsmodels.stats.diagnostic import het_breuschpagan

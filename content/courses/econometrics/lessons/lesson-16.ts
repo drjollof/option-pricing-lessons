@@ -2,7 +2,7 @@ import { Lesson } from '@/content/types';
 
 export const lesson16: Lesson = {
   id: 'lesson-16',
-  title: 'Lesson 16: ARIMA Model',
+  title: 'ARIMA Model',
   description: 'Synthesize AR and MA models into the powerful ARIMA framework, and master the Box-Jenkins methodology for model selection.',
   defaultParams: {
     S0: 100, K: 100, r: 0.05, sigma: 0.2, u: 0, d: 3, N: 3, T: 1
@@ -10,7 +10,7 @@ export const lesson16: Lesson = {
   phases: [
     {
       id: 'l16-p1-arma-model',
-      title: 'Phase 1: ARMA(p,q) and Parsimony',
+      title: 'ARMA(p,q) and Parsimony',
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
@@ -25,7 +25,7 @@ export const lesson16: Lesson = {
     },
     {
       id: 'l16-p2-arima-integration',
-      title: 'Phase 2: ARIMA(p,d,q) and Integration',
+      title: 'ARIMA(p,d,q) and Integration',
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
@@ -43,7 +43,7 @@ export const lesson16: Lesson = {
     },
     {
       id: 'l16-p3-model-selection',
-      title: 'Phase 3: Model Selection (AIC vs BIC)',
+      title: 'Model Selection (AIC vs BIC)',
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
@@ -62,7 +62,7 @@ export const lesson16: Lesson = {
     },
     {
       id: 'l16-p4-box-jenkins',
-      title: 'Phase 4: The Box-Jenkins Methodology',
+      title: 'The Box-Jenkins Methodology',
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
@@ -80,7 +80,7 @@ export const lesson16: Lesson = {
     },
     {
       id: 'l16-p5-ljung-box',
-      title: 'Phase 5: Residual Diagnostics (Ljung-Box Test)',
+      title: 'Residual Diagnostics (Ljung-Box Test)',
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [

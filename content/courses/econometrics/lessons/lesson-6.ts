@@ -15,16 +15,16 @@ export const lesson6: Lesson = {
       kind: 'robust-regression',
       visibleParams: [],
       stepTexts: [
-        "In Lesson 1, we learned that Ordinary Least Squares (OLS) minimizes the *sum of squared residuals*.",
-        "Because errors are squared ($e_i^2$), an outlier that is far from the line receives a massive penalty. To minimize this penalty, OLS heavily tilts the regression line toward the outlier.",
-        "Look at the visualizer. A single extreme outlier (the red triangle) completely skews the OLS line (red dashed line) away from the true trend of the data.",
-        "In finance, markets often exhibit 'fat tails'—extreme events that are more common than a normal distribution predicts. OLS is highly vulnerable to these events."
+        "Imagine we have 5 data points that perfectly form the line $Y = X$. The true slope is exactly 1.0.",
+        "Now, a data entry error occurs: a 6th point is recorded as $X=10, Y=1000$ (a massive outlier). The error for this point is $e = 1000 - 10 = 990$.",
+        "Because OLS minimizes the *sum of squared residuals*, this single point generates a massive mathematical penalty of $990^2 = 980,100$!",
+        "To minimize this apocalyptic penalty, OLS is forced to violently tilt the regression line toward the outlier, destroying the true slope. In finance, where extreme 'fat tail' crashes happen constantly, OLS is highly vulnerable."
       ],
       formulas: [
-        [ "\\text{OLS Loss Function: } \\rho(e_i) = e_i^2" ],
-        [ "\\text{Derivative (Influence): } \\psi(e_i) = 2e_i" ],
-        [ "\\text{Influence grows linearly with error size without bound.}" ],
-        [ "\\text{Fat tails cause OLS to fail.}" ]
+        [ "\\text{True Slope } \beta = 1.0" ],
+        [ "\\text{Error: } e = 1000 - 10 = 990" ],
+        [ "\\text{OLS Penalty} = 990^2 = 980,100" ],
+        null
       ]
     },
     {
@@ -34,16 +34,16 @@ export const lesson6: Lesson = {
       kind: 'robust-regression',
       visibleParams: [],
       stepTexts: [
-        "**Robust Regression** techniques, like M-Estimation, replace the squared loss function of OLS with a different function that is less sensitive to extreme values.",
-        "The **Huber Loss** function behaves like OLS for small errors (it squares them), but for large errors (beyond a threshold $c$), it switches to absolute value.",
-        "This means the influence of an outlier is capped. It can only pull the line so much.",
-        "Notice how the green Robust line ignores the extreme pull of the outlier and stays true to the majority of the data."
+        "**Robust Regression** (M-Estimation) fixes this by replacing the strict squared penalty. The **Huber Loss** function is a brilliant hybrid.",
+        "For small, normal errors (e.g., $e \\le 2$), Huber acts exactly like OLS and squares them ($2^2 = 4$).",
+        "But for our extreme error $e = 990$, it crosses a mathematical threshold. Instead of squaring it to 980,100, Huber switches to a linear penalty (e.g., $2 \\times 990 = 1,980$).",
+        "By mathematically capping the *influence* of the outlier ($1,980 \\ll 980,100$), the green Robust line in the visualizer can safely ignore the extreme pull and maintain the true slope."
       ],
       formulas: [
-        [ "\\text{Replace squared loss with M-Estimators.}" ],
-        [ "\\text{Huber Loss: } \\rho(e) = \\begin{cases} \\frac{1}{2} e^2 & \\text{for } |e| \\le c \\\\ c|e| - \\frac{1}{2} c^2 & \\text{for } |e| > c \\end{cases}" ],
-        [ "\\text{Influence } \\psi(e) \\text{ is bounded by } \\pm c." ],
-        [ "\\text{Robust line ignores extreme pull.}" ]
+        [ "\\text{Huber (Small } e): \\frac{1}{2} e^2" ],
+        [ "\\text{Huber (Extreme } e): c|e| - \\frac{1}{2} c^2" ],
+        [ "\\text{Huber Penalty} \\approx 1,980" ],
+        [ "1980 \\ll 980100" ]
       ]
     },
     {
@@ -53,16 +53,16 @@ export const lesson6: Lesson = {
       kind: 'static-slides',
       visibleParams: [],
       stepTexts: [
-        "While Huber Loss limits the influence of an outlier, it still gives it *some* influence.",
-        "The **Tukey Biweight** (or Bisquare) loss function goes a step further. If an error is beyond a certain threshold, its influence drops entirely to zero.",
-        "This means extreme outliers are completely ignored by the model, as if they were removed from the dataset.",
-        "Robust regression is iteratively reweighted (IRLS); the algorithm assigns weights to points based on their errors, updates the line, and repeats until convergence."
+        "While Huber Loss limits the influence of our 990 outlier, it still forces the line to pay *some* attention to it (a penalty of 1,980).",
+        "The **Tukey Biweight** loss function goes a radical step further. If a data point's error is beyond a certain extreme threshold, its mathematical weight drops to exactly zero.",
+        "This means truly extreme market outliers are completely deleted by the algorithm in real-time, effectively automating outlier removal without any manual data scrubbing.",
+        "These robust models are solved using Iteratively Reweighted Least Squares (IRLS). The algorithm fits a line, dynamically calculates the robust weights, and repeats until the line perfectly stabilizes on the true slope of 1.0."
       ],
       formulas: [
-        [ "\\text{Huber still allows some influence.}" ],
-        [ "\\text{Tukey Influence: } \\psi(e) = e \\left(1 - \\left(\\frac{e}{c}\\right)^2\\right)^2 \\text{ for } |e| \\le c" ],
-        [ "\\psi(e) = 0 \\text{ for } |e| > c" ],
-        [ "\\text{Iteratively Reweighted Least Squares (IRLS)}" ]
+        null,
+        [ "\\text{Tukey Weight (Extreme } e=990) = 0" ],
+        [ "\\text{Outlier Influence} = 0" ],
+        null
       ]
     },
     {
@@ -73,21 +73,21 @@ export const lesson6: Lesson = {
       visibleParams: [],
       stepTexts: [
         "We can easily fit robust models using `statsmodels` via `sm.RLM` (Robust Linear Models).",
-        "By default, `sm.RLM` uses the Huber norm.",
-        "We can specify the Tukey Biweight norm by passing `M=sm.robust.norms.TukeyBiweight()`.",
-        "This allows us to rapidly compare OLS coefficients against Robust coefficients to check for outlier influence."
+        "By default, `sm.RLM` uses the Huber norm, capping the penalty of extreme errors.",
+        "We can specify the Tukey Biweight norm by passing `M=sm.robust.norms.TukeyBiweight()`, forcing the model to assign a weight of exactly 0 to extreme anomalies.",
+        "This allows us to rapidly compare OLS coefficients against Robust coefficients to check how much our data is being manipulated by outliers."
       ],
       codeSnippet: `import statsmodels.api as sm
 
-# Fit standard OLS for comparison
+# Fit standard OLS for comparison (highly vulnerable)
 ols_model = sm.OLS(Y, X).fit()
 print("OLS Beta:", ols_model.params)
 
-# Fit Robust Regression (Huber by default)
+# Fit Robust Regression (Huber by default, caps influence)
 rlm_huber = sm.RLM(Y, X, M=sm.robust.norms.HuberT()).fit()
 print("Huber Beta:", rlm_huber.params)
 
-# Fit Robust Regression (Tukey Biweight)
+# Fit Robust Regression (Tukey Biweight, zeroes influence)
 rlm_tukey = sm.RLM(Y, X, M=sm.robust.norms.TukeyBiweight()).fit()
 print("Tukey Beta:", rlm_tukey.params)`
     }
