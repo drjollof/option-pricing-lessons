@@ -2,57 +2,88 @@
 import React from 'react';
 import { useLessonStore } from '@/store/lessonStore';
 
-export const EconometricsParamControls: React.FC = () => {
+interface EconometricsParamControlsProps {
+  visualizer: string;
+}
+
+export const EconometricsParamControls: React.FC<EconometricsParamControlsProps> = ({ visualizer }) => {
   const { params, updateParams } = useLessonStore();
 
   const handleSlider = (key: keyof typeof params, value: number) => {
     updateParams({ [key]: value });
   };
 
+  const renderSlider = (key: keyof typeof params, label: string, min: number, max: number, step: number, value: number, displayValue: string | number) => (
+    <div className="flex flex-col gap-2">
+      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex justify-between">
+        <span>{label}</span>
+        <span className="text-blue-600 dark:text-blue-400">{displayValue}</span>
+      </label>
+      <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => handleSlider(key, parseFloat(e.target.value))} className="accent-blue-600" />
+    </div>
+  );
+
+  let controls = null;
+
+  switch (visualizer) {
+    case 'scatter-plot':
+      controls = (
+        <>
+          {renderSlider('N', 'Sample Size', 10, 500, 10, Math.min(500, Math.max(10, params.N)), params.N)}
+          {renderSlider('sigma', 'Noise Variance', 0.05, 3.00, 0.05, params.sigma || 0.2, (params.sigma || 0.2).toFixed(2))}
+          {renderSlider('u', 'True Beta (Slope)', -5, 5, 0.1, params.u, params.u.toFixed(2))}
+          {renderSlider('S0', 'True Alpha (Intercept)', -50, 150, 5, params.S0, params.S0)}
+        </>
+      );
+      break;
+    case 'distribution-curve':
+      controls = (
+        <>
+          {renderSlider('u', 'Skewness', -5, 5, 0.1, params.u, params.u.toFixed(2))}
+          {renderSlider('d', 'Kurtosis', -5, 5, 0.1, params.d, params.d.toFixed(2))}
+          {renderSlider('sigma', 'Standard Deviation', 0.05, 3.00, 0.05, params.sigma || 0.2, (params.sigma || 0.2).toFixed(2))}
+        </>
+      );
+      break;
+    case 'machine-learning':
+      controls = (
+        <>
+          {renderSlider('N', 'Data Points', 10, 100, 10, Math.min(100, Math.max(10, params.N)), params.N)}
+          {renderSlider('sigma', 'Cluster Spread', 0.05, 1.00, 0.05, params.sigma || 0.2, (params.sigma || 0.2).toFixed(2))}
+        </>
+      );
+      break;
+    case 'arima-signature':
+      controls = (
+        <>
+          {renderSlider('r', 'AR(1) Coefficient', -0.99, 0.99, 0.01, params.r, params.r.toFixed(2))}
+          {renderSlider('u', 'MA(1) Coefficient', -5, 5, 0.1, params.u, (params.u / 5).toFixed(2))}
+        </>
+      );
+      break;
+    case 'copula-3d':
+      controls = (
+        <>
+          {renderSlider('r', 'Correlation (Dependence)', -0.99, 0.99, 0.01, params.r, params.r.toFixed(2))}
+        </>
+      );
+      break;
+    case 'stochastic-path':
+    case 'qq-plot':
+    case 'pca-scree':
+    case 'network-theory':
+    case 'correlation-heatmap':
+      // Some visualizers might not have tunable parameters yet, or they don't need them.
+      controls = <div className="col-span-full text-slate-500 text-sm italic py-4">No tunable parameters for this visualizer yet.</div>;
+      break;
+    default:
+      controls = <div className="col-span-full text-slate-500 text-sm italic py-4">Select a visualizer.</div>;
+      break;
+  }
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 p-5 border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 shadow-sm mb-8">
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex justify-between">
-          <span>Sample Size (N)</span>
-          <span className="text-emerald-600 dark:text-emerald-400">{params.N}</span>
-        </label>
-        <input type="range" min="10" max="500" step="10" value={Math.min(500, Math.max(10, params.N))} onChange={(e) => handleSlider('N', parseFloat(e.target.value))} className="accent-emerald-600" />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex justify-between">
-          <span>Noise / Vol (σ)</span>
-          <span className="text-emerald-600 dark:text-emerald-400">{(params.sigma || 0.2).toFixed(2)}</span>
-        </label>
-        <input type="range" min="0.05" max="3.00" step="0.05" value={params.sigma || 0.2} onChange={(e) => handleSlider('sigma', parseFloat(e.target.value))} className="accent-emerald-600" />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex justify-between">
-          <span title="Used for Slope, Skewness, or AR1">Param 1 (u)</span>
-          <span className="text-emerald-600 dark:text-emerald-400">{params.u.toFixed(2)}</span>
-        </label>
-        <input type="range" min="-5" max="5" step="0.1" value={params.u} onChange={(e) => handleSlider('u', parseFloat(e.target.value))} className="accent-emerald-600" />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex justify-between">
-          <span title="Used for Spread, Kurtosis, or MA1">Param 2 (d)</span>
-          <span className="text-emerald-600 dark:text-emerald-400">{params.d.toFixed(2)}</span>
-        </label>
-        <input type="range" min="-5" max="5" step="0.1" value={params.d} onChange={(e) => handleSlider('d', parseFloat(e.target.value))} className="accent-emerald-600" />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex justify-between">
-          <span title="Used for Intercept or Base Level">Base Level (S₀)</span>
-          <span className="text-emerald-600 dark:text-emerald-400">{params.S0}</span>
-        </label>
-        <input type="range" min="-50" max="150" step="5" value={params.S0} onChange={(e) => handleSlider('S0', parseFloat(e.target.value))} className="accent-emerald-600" />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex justify-between">
-          <span title="Used for Correlation or Dependency">Correlation (r)</span>
-          <span className="text-emerald-600 dark:text-emerald-400">{params.r.toFixed(2)}</span>
-        </label>
-        <input type="range" min="-0.99" max="0.99" step="0.01" value={params.r} onChange={(e) => handleSlider('r', parseFloat(e.target.value))} className="accent-emerald-600" />
-      </div>
+      {controls}
     </div>
   );
 };

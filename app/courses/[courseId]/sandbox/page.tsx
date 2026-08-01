@@ -195,7 +195,7 @@ export default function SandboxPage({ params }: { params: Promise<{ courseId: st
         {!isEconometrics ? (
           <ParamControls maxN={visualizer === 'convergence-sweep' ? 100 : visualizer === 'path-explorer' ? 5 : 6} />
         ) : (
-          <EconometricsParamControls />
+          <EconometricsParamControls visualizer={visualizer} />
         )}
         
         <div className="mt-8">
