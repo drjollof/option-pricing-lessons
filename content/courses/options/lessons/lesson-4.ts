@@ -13,10 +13,10 @@ export const lesson4: Lesson = {
       kind: 'static-slides',
       showParamControls: false,
       stepTexts: [
-        "Step 0: A real stock price moves continuously, modeled by Geometric Brownian Motion.",
-        "Step 1: The two key parameters of this motion are Drift (μ) and Volatility (σ).",
-        "Step 2: If we slice time into very small steps (Δt), we can force our discrete binomial tree to perfectly match the continuous volatility (σ) of the stock.",
-        "Step 3: This process is called 'Calibration'."
+        "A real stock price moves continuously, modeled by Geometric Brownian Motion.",
+        "The two key parameters of this motion are Drift (μ) and Volatility (σ).",
+        "If we slice time into very small steps (Δt), we can force our discrete binomial tree to perfectly match the continuous volatility (σ) of the stock.",
+        "This process is called 'Calibration'."
       ],
       formulas: [
         [ `u = 1.15, d = 0.85 \\quad (\\text{Arbitrary!})` ],
@@ -35,10 +35,10 @@ export const lesson4: Lesson = {
       showParamControls: false,
       overrideParams: { N: 3, u: 1.1224, d: 0.8910 },
       stepTexts: [
-        "Step 0: We assume a stock volatility of σ = 20% (0.20) and T = 1 year.",
-        "Step 1: If N = 3 steps, then Δt = 1/3 = 0.3333.",
-        "Step 2: We calculate the up factor: u = e^(0.20 * √0.3333).",
-        "Step 3: This guarantees that our discrete binomial tree statistically matches the continuous real-world volatility of the stock!"
+        "We assume a stock volatility of σ = 20% (0.20) and T = 1 year.",
+        "If N = 3 steps, then Δt = 1/3 = 0.3333.",
+        "We calculate the up factor: u = e^(0.20 * √0.3333).",
+        "This guarantees that our discrete binomial tree statistically matches the continuous real-world volatility of the stock!"
       ],
       formulas: [
         [
@@ -63,10 +63,10 @@ export const lesson4: Lesson = {
       kind: 'static-slides',
       showParamControls: false,
       stepTexts: [
-        "Step 0: At N=3, there are only 4 possible final stock prices. The distribution is very jagged.",
-        "Step 1: At N=50, there are 51 possible final stock prices.",
-        "Step 2: Because u = 1/d, the tree recombines beautifully. The middle nodes have vastly more paths leading to them than the extreme edge nodes.",
-        "Step 3: This path-counting naturally generates a bell curve (Normal distribution) in log-space, yielding a Lognormal distribution of prices."
+        "At N=3, there are only 4 possible final stock prices. The distribution is very jagged.",
+        "At N=50, there are 51 possible final stock prices.",
+        "Because u = 1/d, the tree recombines beautifully. The middle nodes have vastly more paths leading to them than the extreme edge nodes.",
+        "This path-counting naturally generates a bell curve (Normal distribution) in log-space, yielding a Lognormal distribution of prices."
       ],
       formulas: [
         [ `N=3 \\implies 4 \\text{ terminal nodes}` ],

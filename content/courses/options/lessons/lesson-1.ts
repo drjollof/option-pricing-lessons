@@ -15,10 +15,10 @@ export const lesson1: Lesson = {
       showAllInstantly: true,
       visibleParams: ['K'],
       stepTexts: [
-        "Step 0: If you buy a Call option, you are betting the stock goes UP.",
-        "Step 1: If the stock is above K at expiration, your payoff is S - K.",
-        "Step 2: If the stock is below K, the option expires worthless (payoff = 0).",
-        "Step 3: Because the future is uncertain, how much should you pay for this contract today? That is the core problem of quantitative finance."
+        "If you buy a Call option, you are betting the stock goes UP.",
+        "If the stock is above K at expiration, your payoff is S - K.",
+        "If the stock is below K, the option expires worthless (payoff = 0).",
+        "Because the future is uncertain, how much should you pay for this contract today? That is the core problem of quantitative finance."
       ],
       formulas: [
         [ `\\text{Call Payoff} = \\max(0, S_T - K)` ],
@@ -37,10 +37,10 @@ export const lesson1: Lesson = {
       showParamControls: false,
       visibleParams: ['S0', 'u', 'd'],
       stepTexts: [
-        "Step 0: We begin with the initial stock price S₀ = 100. This is the root node of our binomial tree.",
-        "Step 1: At step 1, the stock can branch up (multiplied by u) or down (multiplied by d) from the root.",
-        "Step 2: At step 2, the stock continues to branch from each of the nodes in step 1.",
-        "Step 3: By step 3, we have 4 possible terminal stock prices at expiration."
+        "We begin with the initial stock price S₀ = 100. This is the root node of our binomial tree.",
+        "At step 1, the stock can branch up (multiplied by u) or down (multiplied by d) from the root.",
+        "At step 2, the stock continues to branch from each of the nodes in step 1.",
+        "By step 3, we have 4 possible terminal stock prices at expiration."
       ],
       formulas: [
         [
@@ -80,10 +80,10 @@ export const lesson1: Lesson = {
       showAllInstantly: true,
       visibleParams: [],
       stepTexts: [
-        "Step 0: A risk-averse investor might demand a huge discount to take on the risk of the option.",
-        "Step 1: A risk-seeking investor might pay a premium because they love the leverage.",
-        "Step 2: If price depends on individual risk tolerance, we can't find a single fair market value.",
-        "Step 3: So how do market makers price options consistently? By removing risk entirely from the equation."
+        "A risk-averse investor might demand a huge discount to take on the risk of the option.",
+        "A risk-seeking investor might pay a premium because they love the leverage.",
+        "If price depends on individual risk tolerance, we can't find a single fair market value.",
+        "So how do market makers price options consistently? By removing risk entirely from the equation."
       ],
       formulas: [
         [ `p_{real} = 0.60 \\quad (\\text{Your belief})` ],
@@ -101,10 +101,10 @@ export const lesson1: Lesson = {
       showAllInstantly: false,
       visibleParams: ['u', 'd', 'r', 'dt'],
       stepTexts: [
-        "Step 0: We want to price an option without knowing the true probability of the stock going up or down.",
-        "Step 1: By creating a risk-free portfolio (delta hedging), the expected return must equal the risk-free rate r.",
-        "Step 2: This implies a synthetic 'risk-neutral probability' q for the up state.",
-        "Step 3: We calculate q using the up factor, down factor, and risk-free rate."
+        "We want to price an option without knowing the true probability of the stock going up or down.",
+        "By creating a risk-free portfolio (delta hedging), the expected return must equal the risk-free rate r.",
+        "This implies a synthetic 'risk-neutral probability' q for the up state.",
+        "We calculate q using the up factor, down factor, and risk-free rate."
       ],
       formulas: [
         `q = \\frac{e^{r \\Delta t} - d}{u - d}`,
@@ -123,10 +123,10 @@ export const lesson1: Lesson = {
       showParamControls: false,
       visibleParams: ['S0', 'K', 'u', 'd', 'r', 'dt'],
       stepTexts: [
-        "Step 0 (Terminal): First, we calculate the intrinsic value of the Call option at expiration (Step 3). Payoff = max(0, S - K).",
-        "Step 1 (Step 2): Next, we step backward. For each node, the option value is the discounted expected value of the two future nodes.",
-        "Step 2 (Step 1): We continue discounting the expected values backward using the risk-neutral probability q.",
-        "Step 3 (Step 0): We arrive at the root node. This is the fair present value of the European Call option today."
+        "First, we calculate the intrinsic value of the Call option at expiration (Step 3). Payoff = max(0, S - K).",
+        "Next, we step backward. For each node, the option value is the discounted expected value of the two future nodes.",
+        "We continue discounting the expected values backward using the risk-neutral probability q.",
+        "We arrive at the root node. This is the fair present value of the European Call option today."
       ],
       formulas: [
         [

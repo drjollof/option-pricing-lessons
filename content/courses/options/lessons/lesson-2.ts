@@ -15,10 +15,10 @@ export const lesson2: Lesson = {
       direction: 'forward',
       showParamControls: false,
       stepTexts: [
-        "Step 0: If you buy a Put option, you are betting the stock goes DOWN.",
-        "Step 1: If the stock crashes below K, you can buy it cheaply in the market and sell it at K. Your payoff is K - S.",
-        "Step 2: If the stock is above K, the option expires worthless (payoff = 0).",
-        "Step 3: Just like the Call, we can price the Put by stepping backward through the binomial tree."
+        "If you buy a Put option, you are betting the stock goes DOWN.",
+        "If the stock crashes below K, you can buy it cheaply in the market and sell it at K. Your payoff is K - S.",
+        "If the stock is above K, the option expires worthless (payoff = 0).",
+        "Just like the Call, we can price the Put by stepping backward through the binomial tree."
       ],
       formulas: [
         [ `\\text{Put Payoff} = \\max(0, K - S_T)` ],
@@ -37,10 +37,10 @@ export const lesson2: Lesson = {
       optionType: 'put',
       showParamControls: false,
       stepTexts: [
-        "Step 0 (Terminal): Calculate the intrinsic value of the Put option at expiration (Step 3). Payoff = max(0, K - S).",
-        "Step 1 (Step 2): Step backward. The put value is the discounted expected value of the two future nodes.",
-        "Step 2 (Step 1): Continue discounting the expected values backward using the risk-neutral probability q.",
-        "Step 3 (Step 0): We arrive at the root node. This is the fair present value of the European Put option today."
+        "Calculate the intrinsic value of the Put option at expiration (Step 3). Payoff = max(0, K - S).",
+        "Step backward. The put value is the discounted expected value of the two future nodes.",
+        "Continue discounting the expected values backward using the risk-neutral probability q.",
+        "We arrive at the root node. This is the fair present value of the European Put option today."
       ],
       formulas: [
         [
@@ -72,10 +72,10 @@ export const lesson2: Lesson = {
       showAllInstantly: true,
       visibleParams: [],
       stepTexts: [
-        "Step 0: European Calls and Puts with the same strike (K) and expiration (T) are mathematically linked by Put-Call Parity.",
-        "Step 1: The relationship is C - P = S₀ - Ke^{-rT}.",
-        "Step 2: Let's verify this using our calculated prices from Lesson 1 (Call) and Lesson 2 (Put).",
-        "Step 3: The left side (C - P) equals the right side! The minor 0.02 difference is simply due to rounding intermediate steps."
+        "European Calls and Puts with the same strike (K) and expiration (T) are mathematically linked by Put-Call Parity.",
+        "The relationship is C - P = S₀ - Ke^{-rT}.",
+        "Let's verify this using our calculated prices from Lesson 1 (Call) and Lesson 2 (Put).",
+        "The left side (C - P) equals the right side! The minor 0.02 difference is simply due to rounding intermediate steps."
       ],
       formulas: [
         [
@@ -106,10 +106,10 @@ export const lesson2: Lesson = {
       showAllInstantly: true,
       visibleParams: [],
       stepTexts: [
-        "Step 0: The Call is overpriced at $15 (it should be $13.40). The Put is fairly priced at $8.50.",
-        "Step 1: The Arbitrageur SELLS the expensive Call, BUYS the fair Put, BUYS the Stock, and BORROWS the rest.",
-        "Step 2: At expiration, no matter what the stock price is, the portfolio's net value perfectly cancels out to zero.",
-        "Step 3: But today, the net cash flow is positive! This guarantees free money, forcing the market prices back in line."
+        "The Call is overpriced at $15 (it should be $13.40). The Put is fairly priced at $8.50.",
+        "The Arbitrageur SELLS the expensive Call, BUYS the fair Put, BUYS the Stock, and BORROWS the rest.",
+        "At expiration, no matter what the stock price is, the portfolio's net value perfectly cancels out to zero.",
+        "But today, the net cash flow is positive! This guarantees free money, forcing the market prices back in line."
       ],
       formulas: [
         [ `C_{market} = 15.00 \\quad P_{market} = 8.50` ],

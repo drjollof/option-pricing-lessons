@@ -17,9 +17,9 @@ export const lesson6: Lesson = {
       isAmerican: false,
       showParamControls: false,
       stepTexts: [
-        "Step 0: At the root node, the European Put delta is -0.40.",
-        "Step 1: If the stock drops, delta becomes more negative (-0.72) as the put moves into the money.",
-        "Step 2: If the stock crashes again, the delta approaches -1.00."
+        "At the root node, the European Put delta is -0.40.",
+        "If the stock drops, delta becomes more negative (-0.72) as the put moves into the money.",
+        "If the stock crashes again, the delta approaches -1.00."
       ],
       formulas: [
         [
@@ -47,9 +47,9 @@ export const lesson6: Lesson = {
       isAmerican: true,
       showParamControls: false,
       stepTexts: [
-        "Step 0: The root delta is slightly more negative (-0.43) than the European put because the option is fundamentally more valuable.",
-        "Step 1: If the stock drops (Node 1,0), the delta instantly slams to -1.00!",
-        "Step 2: Why? Because at step 2, BOTH the up and down scenarios trigger optimal early exercise. The option payoff is moving 1:1 inversely with the stock."
+        "The root delta is slightly more negative (-0.43) than the European put because the option is fundamentally more valuable.",
+        "If the stock drops (Node 1,0), the delta instantly slams to -1.00!",
+        "Why? Because at step 2, BOTH the up and down scenarios trigger optimal early exercise. The option payoff is moving 1:1 inversely with the stock."
       ],
       formulas: [
         [
@@ -73,10 +73,10 @@ export const lesson6: Lesson = {
       kind: 'static-slides',
       showParamControls: false,
       stepTexts: [
-        "Step 0: Market Makers delta-hedge to remove directional risk.",
-        "Step 1: American options have early exercise risk.",
-        "Step 2: This risk inflates the option's value and forces the delta toward -1.0 (or +1.0 for calls) much faster.",
-        "Step 3: Conclusion: You must ALWAYS use the American delta matrix when hedging American options."
+        "Market Makers delta-hedge to remove directional risk.",
+        "American options have early exercise risk.",
+        "This risk inflates the option's value and forces the delta toward -1.0 (or +1.0 for calls) much faster.",
+        "Conclusion: You must ALWAYS use the American delta matrix when hedging American options."
       ],
       formulas: [
         [
@@ -100,10 +100,10 @@ export const lesson6: Lesson = {
       kind: 'static-slides',
       showParamControls: false,
       stepTexts: [
-        "Step 0: Remember how the American Put Delta slammed from -0.43 to -1.00 in a single step?",
-        "Step 1: That violent jump in Delta means the option has extremely high Gamma.",
-        "Step 2: If a Market Maker is short this option, they are short Gamma. As the stock drops, they are forced to aggressively short MORE shares into a falling market.",
-        "Step 3: This creates a dangerous feedback loop. The threat of early exercise turns manageable risks into explosive, discontinuous jumps in exposure."
+        "Remember how the American Put Delta slammed from -0.43 to -1.00 in a single step?",
+        "That violent jump in Delta means the option has extremely high Gamma.",
+        "If a Market Maker is short this option, they are short Gamma. As the stock drops, they are forced to aggressively short MORE shares into a falling market.",
+        "This creates a dangerous feedback loop. The threat of early exercise turns manageable risks into explosive, discontinuous jumps in exposure."
       ],
       formulas: [
         [ `\\Gamma = \\frac{\\Delta_{up} - \\Delta_{down}}{S_{up} - S_{down}}` ],

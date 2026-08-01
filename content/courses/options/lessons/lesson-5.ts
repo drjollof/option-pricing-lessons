@@ -14,10 +14,10 @@ export const lesson5: Lesson = {
       showParamControls: false,
       visibleParams: [],
       stepTexts: [
-        "Step 0: We still calculate the terminal payoffs at maturity just like European options.",
-        "Step 1: As we step backward, we calculate the expected continuation value.",
-        "Step 2: We then calculate the immediate intrinsic payoff (S - K for calls, K - S for puts).",
-        "Step 3: The node value becomes the MAXIMUM of the continuation value and the intrinsic value."
+        "We still calculate the terminal payoffs at maturity just like European options.",
+        "As we step backward, we calculate the expected continuation value.",
+        "We then calculate the immediate intrinsic payoff (S - K for calls, K - S for puts).",
+        "The node value becomes the MAXIMUM of the continuation value and the intrinsic value."
       ],
       formulas: [
         [
@@ -47,10 +47,10 @@ export const lesson5: Lesson = {
       isAmerican: true,
       showParamControls: false,
       stepTexts: [
-        "Step 0 (Terminal): Calculate intrinsic value at expiration. Payoff = max(0, K - S).",
-        "Step 1 (Step 2): Step backward. Calculate continuation value. Compare to intrinsic. Note the red early exercise node at the bottom!",
-        "Step 2 (Step 1): Step backward again. The option value is the max of continuation and intrinsic.",
-        "Step 3 (Step 0): We arrive at the root node. This is the fair value of the American Put option today."
+        "Calculate intrinsic value at expiration. Payoff = max(0, K - S).",
+        "Step backward. Calculate continuation value. Compare to intrinsic. Note the red early exercise node at the bottom!",
+        "Step backward again. The option value is the max of continuation and intrinsic.",
+        "We arrive at the root node. This is the fair value of the American Put option today."
       ],
       formulas: [
         [
@@ -108,10 +108,10 @@ export const lesson5: Lesson = {
       showParamControls: false,
       visibleParams: [],
       stepTexts: [
-        "Step 0: Let's compare the European Put and American Put prices we calculated.",
-        "Step 1: The European Put (Lesson 2) was worth $8.50 today.",
-        "Step 2: The American Put is worth $8.80 today.",
-        "Step 3: Therefore, the market is pricing the 'Early Exercise Premium' at $0.30. This is exactly how much you are paying for the privilege to exercise early if the stock crashes."
+        "Let's compare the European Put and American Put prices we calculated.",
+        "The European Put (Lesson 2) was worth $8.50 today.",
+        "The American Put is worth $8.80 today.",
+        "Therefore, the market is pricing the 'Early Exercise Premium' at $0.30. This is exactly how much you are paying for the privilege to exercise early if the stock crashes."
       ],
       formulas: [
         [ `P_{European} = 8.50` ],
@@ -127,10 +127,10 @@ export const lesson5: Lesson = {
       kind: 'derivation-steps',
       showParamControls: false,
       stepTexts: [
-        "Step 0: Consider the intrinsic value of a Call: S - K.",
-        "Step 1: If we hold the option to maturity, the minimum value is S - K, but K is paid later. Since money today is worth more than money tomorrow, delaying the payment of strike K is beneficial.",
-        "Step 2: Furthermore, if the stock crashes below K, holding the option limits our loss to 0, whereas exercising early would lock in the loss.",
-        "Step 3: Therefore, Continuation Value > Intrinsic Value always, and an American Call is mathematically identical to a European Call (unless dividends are paid!)."
+        "Consider the intrinsic value of a Call: S - K.",
+        "If we hold the option to maturity, the minimum value is S - K, but K is paid later. Since money today is worth more than money tomorrow, delaying the payment of strike K is beneficial.",
+        "Furthermore, if the stock crashes below K, holding the option limits our loss to 0, whereas exercising early would lock in the loss.",
+        "Therefore, Continuation Value > Intrinsic Value always, and an American Call is mathematically identical to a European Call (unless dividends are paid!)."
       ],
       formulas: [
         [

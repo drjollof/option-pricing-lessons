@@ -13,10 +13,10 @@ export const lesson7: Lesson = {
       kind: 'static-slides',
       showParamControls: false,
       stepTexts: [
-        "Step 0: European Call Payoff = max(0, Final Price - K).",
-        "Step 1: Asian Call Payoff = max(0, Average Price - K).",
-        "Step 2: Why buy an Asian option? They are cheaper! Averaging smooths out volatility, making them less risky.",
-        "Step 3: They also prevent market manipulation. You can't just spike the stock price on expiration day to profit; you'd have to manipulate the price for the entire life of the option!"
+        "European Call Payoff = max(0, Final Price - K).",
+        "Asian Call Payoff = max(0, Average Price - K).",
+        "Why buy an Asian option? They are cheaper! Averaging smooths out volatility, making them less risky.",
+        "They also prevent market manipulation. You can't just spike the stock price on expiration day to profit; you'd have to manipulate the price for the entire life of the option!"
       ],
       formulas: [
         [ `\\text{European Call} = \\max(0, S_T - K)` ],
@@ -32,10 +32,10 @@ export const lesson7: Lesson = {
       kind: 'static-slides',
       showParamControls: false,
       stepTexts: [
-        "Step 0: Consider two paths: Path 1 (Up, Down) and Path 2 (Down, Up).",
-        "Step 1: In our tree, S0=100. Path 1: 100 → 115 → 97.7. Path 2: 100 → 85 → 97.7.",
-        "Step 2: Both end at 97.7. But Path 1 average is 104.2, and Path 2 average is 94.2!",
-        "Step 3: Because the averages are different, the payoffs are different. The tree no longer recombines! We must evaluate every single path."
+        "Consider two paths: Path 1 (Up, Down) and Path 2 (Down, Up).",
+        "In our tree, S0=100. Path 1: 100 → 115 → 97.7. Path 2: 100 → 85 → 97.7.",
+        "Both end at 97.7. But Path 1 average is 104.2, and Path 2 average is 94.2!",
+        "Because the averages are different, the payoffs are different. The tree no longer recombines! We must evaluate every single path."
       ],
       formulas: [
         [ `\\text{Path 1 (UD): } S_0=100, S_1=115, S_2=97.7` ],
@@ -58,10 +58,10 @@ export const lesson7: Lesson = {
       kind: 'static-slides',
       showParamControls: false,
       stepTexts: [
-        "Step 0: We sum the probability-weighted Asian payoffs for all paths.",
-        "Step 1: Then we multiply by the continuous discount factor e^{-rT}.",
-        "Step 2: For N=3 (8 paths), this is easy for a computer.",
-        "Step 3: But what if N=100? There are 2^100 paths (more than the atoms in the universe!). We cannot compute this explicitly. We need a new technique: Monte Carlo Simulation (Lesson 8)."
+        "We sum the probability-weighted Asian payoffs for all paths.",
+        "Then we multiply by the continuous discount factor e^{-rT}.",
+        "For N=3 (8 paths), this is easy for a computer.",
+        "But what if N=100? There are 2^100 paths (more than the atoms in the universe!). We cannot compute this explicitly. We need a new technique: Monte Carlo Simulation (Lesson 8)."
       ],
       formulas: [
         [ `\\text{Expected Payoff} = \\sum_{i=1}^{2^N} \\text{Prob}_i \\times \\text{Payoff}_i` ],

@@ -12,18 +12,19 @@ import Link from 'next/link';
 export const LessonClient: React.FC<{ lesson: Lesson, courseId: string }> = ({ lesson, courseId }) => {
   const storageKey = `lesson-phase-${courseId}-${lesson.id}`;
 
-  const [activePhaseIndex, setActivePhaseIndex] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(storageKey);
-      if (saved !== null) {
-        const parsed = parseInt(saved, 10);
-        if (!isNaN(parsed) && parsed >= 0 && parsed < lesson.phases.length) {
-          return parsed;
-        }
+  const [activePhaseIndex, setActivePhaseIndex] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(storageKey);
+    if (saved !== null) {
+      const parsed = parseInt(saved, 10);
+      if (!isNaN(parsed) && parsed >= 0 && parsed < lesson.phases.length) {
+        setActivePhaseIndex(parsed);
       }
     }
-    return 0;
-  });
+    setMounted(true);
+  }, [storageKey, lesson.phases.length]);
 
   const activePhase = lesson.phases[activePhaseIndex];
   const { updateParams } = useLessonStore();
@@ -32,20 +33,24 @@ export const LessonClient: React.FC<{ lesson: Lesson, courseId: string }> = ({ l
 
   // Smoothly scroll to the phase container when phase changes or on first load
   useEffect(() => {
+    if (!mounted) return;
     const timeout = setTimeout(() => {
       if (phaseContainerRef.current) {
         phaseContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }, 100);
     return () => clearTimeout(timeout);
-  }, [activePhaseIndex]);
+  }, [activePhaseIndex, mounted]);
 
   // Save to localStorage whenever phase changes
   useEffect(() => {
-    localStorage.setItem(storageKey, activePhaseIndex.toString());
-  }, [activePhaseIndex, storageKey]);
+    if (mounted) {
+      localStorage.setItem(storageKey, activePhaseIndex.toString());
+    }
+  }, [activePhaseIndex, storageKey, mounted]);
 
   useEffect(() => {
+    if (!mounted) return;
     // Re-initialize when lesson.id changes if the component doesn't remount
     const saved = localStorage.getItem(storageKey);
     if (saved !== null) {
@@ -56,7 +61,7 @@ export const LessonClient: React.FC<{ lesson: Lesson, courseId: string }> = ({ l
       }
     }
     setActivePhaseIndex(0);
-  }, [lesson.id, lesson.phases.length, storageKey]);
+  }, [lesson.id, lesson.phases.length, storageKey, mounted]);
 
   useEffect(() => {
     updateParams({ ...lesson.defaultParams, ...(activePhase.overrideParams || {}) });

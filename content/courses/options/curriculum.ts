@@ -6,6 +6,10 @@ import { lesson5 } from './lessons/lesson-5';
 import { lesson6 } from './lessons/lesson-6';
 import { lesson7 } from './lessons/lesson-7';
 import { lesson8 } from './lessons/lesson-8';
+import { lesson9 } from './lessons/lesson-9';
+import { lesson10 } from './lessons/lesson-10';
+import { lesson11 } from './lessons/lesson-11';
+import { lesson12 } from './lessons/lesson-12';
 
 import { Course } from '../../types';
 
@@ -18,17 +22,30 @@ export const lessonsList = [
   lesson6,
   lesson7,
   lesson8,
+  lesson9,
+  lesson10,
+  lesson11,
+  lesson12,
 ];
 
 export const courseCurriculum: Course = {
   id: 'options',
   title: 'Derivative Pricing',
-  description: 'Master the fundamentals of derivative pricing using the Binomial Model and Monte Carlo simulations.',
+  description: 'Master the fundamentals of derivative pricing using the Binomial and Trinomial Models.',
   modules: [
     {
       id: 'module-1',
       title: 'The Binomial Model',
-      lessons: lessonsList.map(l => ({
+      lessons: [lesson1, lesson2, lesson3, lesson4, lesson5, lesson6, lesson7, lesson8].map(l => ({
+        id: l.id,
+        title: l.title,
+        description: l.description
+      }))
+    },
+    {
+      id: 'module-2',
+      title: 'The Trinomial Model',
+      lessons: [lesson9, lesson10, lesson11, lesson12].map(l => ({
         id: l.id,
         title: l.title,
         description: l.description

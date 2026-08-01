@@ -13,10 +13,10 @@ export const lesson8: Lesson = {
       kind: 'static-slides',
       showParamControls: false,
       stepTexts: [
-        "Step 0: Instead of calculating EVERY possible path, what if we just randomly sample a few thousand of them?",
-        "Step 1: If we generate random price paths that follow the true statistical behavior of the stock, we can just calculate the option payoff for those random paths.",
-        "Step 2: By the Law of Large Numbers, the average of those random payoffs will converge precisely to the true fair value of the option!",
-        "Step 3: This allows us to price incredibly complex exotics in seconds, completely ignoring the 2^N problem."
+        "Instead of calculating EVERY possible path, what if we just randomly sample a few thousand of them?",
+        "If we generate random price paths that follow the true statistical behavior of the stock, we can just calculate the option payoff for those random paths.",
+        "By the Law of Large Numbers, the average of those random payoffs will converge precisely to the true fair value of the option!",
+        "This allows us to price incredibly complex exotics in seconds, completely ignoring the 2^N problem."
       ],
       formulas: [
         [ `\\text{Paths required (Tree)} = 2^{100} \\approx 1.26 \\times 10^{30}` ],
@@ -32,10 +32,10 @@ export const lesson8: Lesson = {
       kind: 'derivation-steps',
       showParamControls: false,
       stepTexts: [
-        "Step 0: The continuous differential equation for stock movement is dS = μS dt + σS dW, where dW is a random Wiener process.",
-        "Step 1: To simulate discrete steps in our computer, we use the exact solution to this equation.",
-        "Step 2: At each step, we generate a random number Z from a standard normal distribution (a bell curve with mean 0, variance 1).",
-        "Step 3: We multiply the current stock price by e^(drift + shock) to get the next price. Let's see it in action!"
+        "The continuous differential equation for stock movement is dS = μS dt + σS dW, where dW is a random Wiener process.",
+        "To simulate discrete steps in our computer, we use the exact solution to this equation.",
+        "At each step, we generate a random number Z from a standard normal distribution (a bell curve with mean 0, variance 1).",
+        "We multiply the current stock price by e^(drift + shock) to get the next price. Let's see it in action!"
       ],
       formulas: [
         [
@@ -67,10 +67,10 @@ export const lesson8: Lesson = {
       kind: 'static-slides',
       showParamControls: false,
       stepTexts: [
-        "Step 0: We've solved the Asian Option pricing problem.",
-        "Step 1: In the real world, Quants use Monte Carlo to price options with dozens of complex triggers, barriers, and multi-asset dependencies.",
-        "Step 2: While Trees are great for American options (because you can check for early exercise by working backward), Monte Carlo works strictly forward in time.",
-        "Step 3: This makes Monte Carlo terrible for standard American options, but the undisputed king of Exotic options."
+        "We've solved the Asian Option pricing problem.",
+        "In the real world, Quants use Monte Carlo to price options with dozens of complex triggers, barriers, and multi-asset dependencies.",
+        "While Trees are great for American options (because you can check for early exercise by working backward), Monte Carlo works strictly forward in time.",
+        "This makes Monte Carlo terrible for standard American options, but the undisputed king of Exotic options."
       ],
       formulas: [
         [ `C_{European} = e^{-rT} \\frac{1}{M} \\sum_{i=1}^M \\max(0, S^{(i)}_T - K)` ],

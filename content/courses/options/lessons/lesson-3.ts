@@ -15,10 +15,10 @@ export const lesson3: Lesson = {
       showAllInstantly: true,
       visibleParams: [],
       stepTexts: [
-        "Step 0: If you buy 100 shares of stock, and the stock goes up $1, you make $100. Your delta is exactly 1.0 per share.",
-        "Step 1: If you buy a Call option with a Delta of 0.5, and the stock goes up $1, the option's value goes up by $0.50.",
-        "Step 2: Therefore, holding 1 Call option (Δ=0.5) is financially equivalent to holding 0.5 shares of stock for small price movements.",
-        "Step 3: Market Makers use this to hedge. If they sell you a Call option, they are short 0.5 shares of risk. To neutralize this, they simply buy 0.5 shares of the real stock!"
+        "If you buy 100 shares of stock, and the stock goes up $1, you make $100. Your delta is exactly 1.0 per share.",
+        "If you buy a Call option with a Delta of 0.5, and the stock goes up $1, the option's value goes up by $0.50.",
+        "Therefore, holding 1 Call option (Δ=0.5) is financially equivalent to holding 0.5 shares of stock for small price movements.",
+        "Market Makers use this to hedge. If they sell you a Call option, they are short 0.5 shares of risk. To neutralize this, they simply buy 0.5 shares of the real stock!"
       ],
       formulas: [
         [ `\\Delta_{stock} = 1.0` ],
@@ -36,10 +36,10 @@ export const lesson3: Lesson = {
       direction: 'forward',
       showParamControls: false,
       stepTexts: [
-        "Step 0: We want to eliminate risk by creating a portfolio that is immune to stock movements.",
-        "Step 1: We buy 1 option and short Δ shares of stock. To be risk-free, the portfolio value must be the same whether the stock goes up or down.",
-        "Step 2: Solving the equation yields the Delta formula: Δ = (Cu - Cd) / (Su - Sd).",
-        "Step 3: Let's calculate the Delta at the root node using the values from Lesson 1."
+        "We want to eliminate risk by creating a portfolio that is immune to stock movements.",
+        "We buy 1 option and short Δ shares of stock. To be risk-free, the portfolio value must be the same whether the stock goes up or down.",
+        "Solving the equation yields the Delta formula: Δ = (Cu - Cd) / (Su - Sd).",
+        "Let's calculate the Delta at the root node using the values from Lesson 1."
       ],
       formulas: [
         [
@@ -66,9 +66,9 @@ export const lesson3: Lesson = {
       direction: 'forward',
       showParamControls: false,
       stepTexts: [
-        "Step 0: At time t=0, we need to short 0.593 shares of stock for every option we hold.",
-        "Step 1: At t=1, our delta changes! If the stock goes up, we need 0.785 shares. If it goes down, we need 0.267 shares.",
-        "Step 2: At t=2, the option is close to expiration. Deep in the money options approach Δ=1, deep out of the money approach Δ=0."
+        "At time t=0, we need to short 0.593 shares of stock for every option we hold.",
+        "At t=1, our delta changes! If the stock goes up, we need 0.785 shares. If it goes down, we need 0.267 shares.",
+        "At t=2, the option is close to expiration. Deep in the money options approach Δ=1, deep out of the money approach Δ=0."
       ],
       formulas: [
         [
@@ -94,10 +94,10 @@ export const lesson3: Lesson = {
       showAllInstantly: true,
       visibleParams: [],
       stepTexts: [
-        "Step 0: A static hedge (like buying insurance) protects you permanently once purchased.",
-        "Step 1: Delta hedging is DYNAMIC. As the stock moves up and down through the tree, the delta changes constantly.",
-        "Step 2: If the stock goes up, the call option's delta increases (it acts more like a full share of stock). The market maker must BUY more shares to remain hedged.",
-        "Step 3: This constant buying and selling to maintain a delta of 0 is called 'Dynamic Hedging' or 'Delta Neutral Trading'. It is extremely labor-intensive."
+        "A static hedge (like buying insurance) protects you permanently once purchased.",
+        "Delta hedging is DYNAMIC. As the stock moves up and down through the tree, the delta changes constantly.",
+        "If the stock goes up, the call option's delta increases (it acts more like a full share of stock). The market maker must BUY more shares to remain hedged.",
+        "This constant buying and selling to maintain a delta of 0 is called 'Dynamic Hedging' or 'Delta Neutral Trading'. It is extremely labor-intensive."
       ],
       formulas: [
         [ `\\text{Static Hedge} = \\text{Set and Forget}` ],
