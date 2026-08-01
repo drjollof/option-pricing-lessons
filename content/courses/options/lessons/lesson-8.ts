@@ -32,10 +32,10 @@ export const lesson8: Lesson = {
       kind: 'derivation-steps',
       showParamControls: false,
       stepTexts: [
-        "The continuous differential equation for stock movement is dS = μS dt + σS dW, where dW is a random Wiener process.",
-        "To simulate discrete steps in our computer, we use the exact solution to this equation.",
-        "At each step, we generate a random number Z from a standard normal distribution (a bell curve with mean 0, variance 1).",
-        "We multiply the current stock price by e^(drift + shock) to get the next price. Let's see it in action!"
+        "We start with our continuous GBM model: $dS = \\mu S dt + \\sigma S dW$.",
+        "To simulate this on a computer, we use its exact mathematical solution, moving forward in discrete time steps ($\\Delta t$).",
+        "At each step, we draw a random 'shock' multiplier $Z$ from a standard bell curve (like rolling a million-sided die).",
+        "We then multiply the current price by $e^{\\text{Drift} + \\text{Shock}}$. Notice the Drift is penalized slightly by variance ($-\\sigma^2/2$)—this is because volatility drags down compounded returns!"
       ],
       formulas: [
         [

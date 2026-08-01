@@ -14,7 +14,7 @@ export const lesson4: Lesson = {
       showParamControls: false,
       stepTexts: [
         "A real stock price moves continuously. We model this mathematically using Geometric Brownian Motion (GBM).",
-        "GBM has two pieces: the expected trend (like a bank account, mu), and a random shock or 'coin flip' (the volatility, sigma).",
+        "The GBM equation is $dS = \\mu S dt + \\sigma S dW$. It has two parts: $\\mu S dt$ is the predictable trend (like a bank account), and $\\sigma S dW$ is the unpredictable market shock.",
         "If we slice time into very small steps, we can force our discrete binomial tree's up/down jumps to perfectly match the real stock's random shocks.",
         "This process of forcing the tree to match real-world statistics is called 'Calibration'."
       ],
