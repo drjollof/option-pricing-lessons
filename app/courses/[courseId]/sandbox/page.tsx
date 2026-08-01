@@ -191,7 +191,9 @@ export default function SandboxPage({ params }: { params: Promise<{ courseId: st
            </div>
         )}
 
-        <ParamControls maxN={visualizer === 'convergence-sweep' ? 100 : visualizer === 'path-explorer' ? 5 : 6} />
+        {!isEconometrics && (
+          <ParamControls maxN={visualizer === 'convergence-sweep' ? 100 : visualizer === 'path-explorer' ? 5 : 6} />
+        )}
         
         <div className="mt-8">
           <ThreePanePlayer 
