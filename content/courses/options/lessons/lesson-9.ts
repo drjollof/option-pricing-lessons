@@ -51,21 +51,23 @@ export const lesson9: Lesson = {
     {
       id: 'martingale-condition',
       title: 'The Martingale Condition and FTAP I',
-      description: 'For a market to be free of arbitrage, there must exist at least one risk-neutral probability measure (The First Fundamental Theorem of Asset Pricing). Under this measure, the discounted stock price is a Martingale.',
+      description: 'The First Fundamental Theorem of Asset Pricing (FTAP I) states that to prevent arbitrage (free money), there must exist at least one set of risk-neutral probabilities. Let us see exactly what this means using real numbers.',
       kind: 'static-slides',
       showParamControls: false,
       showAllInstantly: true,
       visibleParams: [],
       stepTexts: [
-        "A Martingale is a mathematical process where the expected future value, given all present information, is exactly equal to the present value.",
-        "In a risk-neutral world, investors require no risk premium, so all assets grow at the risk-free rate $r$.",
-        "This means the expected return of the stock must equal the risk-free rate, establishing our first constraint.",
-        "Because we have three probabilities but only two equations (sum to 1, and the expected return), we have an infinite number of solutions. The market is arbitrage-free but incomplete."
+        "Imagine you put $\\$100$ into a risk-free bank account at a $5\\%$ interest rate. After 1 year, you would have exactly $\\$100 \\times e^{0.05} = \\$105.13$.",
+        "A 'Martingale' is simply a mathematically 'fair game'. In a risk-neutral world, the stock market is forced to be a fair game against the bank account.",
+        "This means the expected future payout of our stock must exactly match the bank account: $\\$105.13$. If it didn't, traders would endlessly borrow from the bank to buy the stock (or vice versa) for guaranteed profit!",
+        "So, the weighted average of our three future states must equal the bank's return: $p_u(115) + p_m(100) + p_d(86.90) = 105.13$.",
+        "We also know the probabilities must sum to 1. But wait... we have 3 unknown probabilities and only 2 equations. This means there are an infinite number of valid solutions! The market is arbitrage-free, but 'incomplete'."
       ],
       formulas: [
+        `\\text{Bank Account} = 100 e^{0.05} = 105.13`,
         `E^Q[S_{t+\\Delta t}] = S_t e^{r \\Delta t}`,
-        `p_u S_t u + p_m S_t (1) + p_d S_t d = S_t e^{r \\Delta t}`,
-        `p_u u + p_m + p_d d = e^{r \\Delta t}`,
+        `\\text{Stock Expected Return} = 105.13`,
+        `115 p_u + 100 p_m + 86.9 p_d = 105.13`,
         `\\text{2 Equations, 3 Unknowns}`
       ]
     },
