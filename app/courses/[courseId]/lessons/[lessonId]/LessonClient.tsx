@@ -46,8 +46,9 @@ export const LessonClient: React.FC<{ lesson: Lesson, courseId: string }> = ({ l
   useEffect(() => {
     if (mounted) {
       localStorage.setItem(storageKey, activePhaseIndex.toString());
+      localStorage.setItem(`last-lesson-${courseId}`, lesson.id);
     }
-  }, [activePhaseIndex, storageKey, mounted]);
+  }, [activePhaseIndex, storageKey, courseId, lesson.id, mounted]);
 
   useEffect(() => {
     if (!mounted) return;

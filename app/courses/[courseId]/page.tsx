@@ -17,10 +17,15 @@ export default function CourseHome({ params }: { params: Promise<{ courseId: str
 
   const { completedLessons } = useProgressStore();
   const [mounted, setMounted] = useState(false);
+  const [lastLessonId, setLastLessonId] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    const saved = localStorage.getItem(`last-lesson-${courseId}`);
+    if (saved) {
+      setLastLessonId(saved);
+    }
+  }, [courseId]);
 
   return (
     <main className="min-h-screen bg-[#f8fafc] dark:bg-slate-950 p-6 md:p-12 font-sans selection:bg-blue-200 transition-colors">
@@ -40,6 +45,15 @@ export default function CourseHome({ params }: { params: Promise<{ courseId: str
           </p>
           
           <div className="mt-8 flex flex-wrap items-center gap-4">
+            {lastLessonId && (
+              <Link 
+                href={`/courses/${courseId}/lessons/${lastLessonId}`}
+                className="group inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:bg-blue-700 hover:-translate-y-0.5 transition-all"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                Resume Course
+              </Link>
+            )}
             <Link 
               href={`/courses/${courseId}/sandbox`}
               className="group inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all"
