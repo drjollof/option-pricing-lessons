@@ -8,12 +8,10 @@ export const PCAVisualizer: React.FC = () => {
   
   // Synthetic PCA data
   const data = useMemo(() => {
-    // If we have N features (let's say 10 components)
-    // The first components explain most of the variance
-    const componentsCount = 10;
+    const componentsCount = Math.min(20, Math.max(2, params.N || 10));
     
-    // the steeper the decay, the better PCA works (controlled by sigma in our lesson)
-    const decay = params.sigma || 0.2; 
+    // the steeper the decay, the better PCA works (controlled by u in our lesson)
+    const decay = params.u !== undefined ? params.u : 0.2; 
     
     let currentCumulative = 0;
     const generatedData = [];
@@ -36,7 +34,7 @@ export const PCAVisualizer: React.FC = () => {
     }
     
     return generatedData;
-  }, [params.sigma]);
+  }, [params.N, params.u]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-slate-800">

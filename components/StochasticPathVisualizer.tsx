@@ -2,34 +2,33 @@
 import React, { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
+import { useLessonStore } from '@/store/lessonStore';
+
 interface StochasticPathVisualizerProps {
   currentFrame: number;
-  params: {
+  params?: {
     u?: number; // drift
     sigma?: number; // volatility
+    S0?: number;
+    N?: number;
   };
 }
 
 export const StochasticPathVisualizer: React.FC<StochasticPathVisualizerProps> = ({ currentFrame, params }) => {
-  const { u = 0, sigma = 1 } = params;
-
-  // We will generate 5 different paths:
-  // 0: White Noise
-  // 1: Random Walk
-  // 2: Random Walk with Drift
-  // 3: MA(1)
-  // 4: AR(1)
-  // We use currentFrame to determine how much of the path is drawn
-  const totalSteps = 100;
+  const storeParams = useLessonStore(state => state.params);
   
+  const u = params?.u ?? storeParams.u ?? 0;
+  const sigma = params?.sigma ?? storeParams.sigma ?? 1;
+  const S0 = params?.S0 ?? storeParams.S0 ?? 100;
+  const totalSteps = Math.min(500, Math.max(10, params?.N ?? storeParams.N ?? 100));
+
   const data = useMemo(() => {
-    // Generate base random shocks (seeded approximately by keeping them in memo without strict seed, 
-    // but React strict mode might regenerate. That's fine for conceptual visualization.)
+    // Generate base random shocks
     const shocks = Array.from({ length: totalSteps }, () => (Math.random() + Math.random() + Math.random() - 1.5) * sigma * 2);
     
     let path: Array<{t: number, wn: number, rw: number, rwd: number, ma1: number, ar1: number, arch1: number, garch11: number, arch_shock: number, garch_shock: number, h_t_garch_val: number}> = [];
-    let rw = 100;
-    let rwd = 100;
+    let rw = S0;
+    let rwd = S0;
     
     for (let t = 0; t < totalSteps; t++) {
       const e_t = shocks[t];
@@ -52,7 +51,7 @@ export const StochasticPathVisualizer: React.FC<StochasticPathVisualizerProps> =
       // ARCH(1) Returns
       const omega = 1.0;
       const alpha_arch = 0.8; // High ARCH effect
-      const z_t = e_t / (sigma * 2); // Standard normal roughly
+      const z_t = e_t / (sigma * 2 || 1); // Standard normal roughly
       const h_t_arch = t === 0 ? omega : omega + alpha_arch * (path[t-1].arch_shock * path[t-1].arch_shock);
       const arch_shock = Math.sqrt(h_t_arch) * z_t;
       const arch1 = arch_shock;
@@ -79,7 +78,7 @@ export const StochasticPathVisualizer: React.FC<StochasticPathVisualizerProps> =
       } as any);
     }
     return path;
-  }, [u, sigma]);
+  }, [u, sigma, S0, totalSteps]);
 
   // Determine what we are plotting based on 'u' parameter passed in or some state.
   // Actually, let's use `u` as an enum for the process type for this visualizer.

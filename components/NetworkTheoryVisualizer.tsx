@@ -3,37 +3,81 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 
+import { useLessonStore } from '@/store/lessonStore';
+
 interface NetworkTheoryVisualizerProps {
   currentFrame: number;
 }
 
 export const NetworkTheoryVisualizer: React.FC<NetworkTheoryVisualizerProps> = ({ currentFrame }) => {
+  const storeParams = useLessonStore(state => state.params);
+  
   const width = 800;
   const height = 500;
 
-  // Nodes (Banks/Firms)
-  const nodes = [
-    { id: 'A', label: 'Bank A (Core)', x: 400, y: 250, r: 40 },
-    { id: 'B', label: 'Bank B', x: 250, y: 150, r: 30 },
-    { id: 'C', label: 'Bank C', x: 550, y: 150, r: 30 },
-    { id: 'D', label: 'Bank D', x: 200, y: 350, r: 25 },
-    { id: 'E', label: 'Bank E', x: 600, y: 350, r: 25 },
-    { id: 'F', label: 'Firm F', x: 100, y: 200, r: 20 },
-    { id: 'G', label: 'Firm G', x: 700, y: 200, r: 20 },
-  ];
+  const { nodes, edges } = useMemo(() => {
+    // If we are in the sandbox (where we can tune N), we dynamically generate
+    // Otherwise (textbook), we stick to the 7 hardcoded nodes so the lesson makes sense.
+    // Sandbox uses currentFrame === 0 always, but we can also just check if N is actively tuned.
+    if (storeParams.N !== undefined && storeParams.N !== 100 && currentFrame === 0) {
+      const numNodes = Math.min(20, Math.max(5, storeParams.N));
+      const r = storeParams.r ?? 0.2;
+      
+      const genNodes = [];
+      for (let i = 0; i < numNodes; i++) {
+        genNodes.push({
+          id: `N${i}`,
+          label: i === 0 ? 'Core Bank' : `Bank ${i}`,
+          x: Math.random() * (width - 100) + 50,
+          y: Math.random() * (height - 100) + 50,
+          r: i === 0 ? 40 : Math.random() * 20 + 10
+        });
+      }
+      
+      const genEdges = [];
+      for (let i = 0; i < numNodes; i++) {
+        for (let j = 0; j < numNodes; j++) {
+          if (i !== j) {
+            // Base probability + edge density parameter r
+            const edgeProb = 0.1 + (r * 0.5);
+            if (Math.random() < edgeProb) {
+              genEdges.push({
+                source: `N${i}`,
+                target: `N${j}`,
+                weight: Math.random() * 3 + 1,
+                label: 'Loan'
+              });
+            }
+          }
+        }
+      }
+      return { nodes: genNodes, edges: genEdges };
+    }
 
-  // Directed edges (Borrower -> Lender, meaning exposure/risk flows Lender -> Borrower)
-  // Let's say A owes money to B and C. If A fails, B and C take losses.
-  // We'll draw arrows representing "Risk Exposure" from A to B (A defaults, hurts B).
-  const edges = [
-    { source: 'A', target: 'B', weight: 4, label: 'Loans' },
-    { source: 'A', target: 'C', weight: 4, label: 'Derivatives' },
-    { source: 'B', target: 'D', weight: 2, label: 'Interbank' },
-    { source: 'C', target: 'E', weight: 2, label: 'Interbank' },
-    { source: 'B', target: 'F', weight: 1, label: 'Credit' },
-    { source: 'C', target: 'G', weight: 1, label: 'Credit' },
-    { source: 'D', target: 'E', weight: 1, label: 'Swaps' },
-  ];
+    // Default Textbook Nodes (Banks/Firms)
+    const defaultNodes = [
+      { id: 'A', label: 'Bank A (Core)', x: 400, y: 250, r: 40 },
+      { id: 'B', label: 'Bank B', x: 250, y: 150, r: 30 },
+      { id: 'C', label: 'Bank C', x: 550, y: 150, r: 30 },
+      { id: 'D', label: 'Bank D', x: 200, y: 350, r: 25 },
+      { id: 'E', label: 'Bank E', x: 600, y: 350, r: 25 },
+      { id: 'F', label: 'Firm F', x: 100, y: 200, r: 20 },
+      { id: 'G', label: 'Firm G', x: 700, y: 200, r: 20 },
+    ];
+
+    // Directed edges (Borrower -> Lender, meaning exposure/risk flows Lender -> Borrower)
+    const defaultEdges = [
+      { source: 'A', target: 'B', weight: 4, label: 'Loans' },
+      { source: 'A', target: 'C', weight: 4, label: 'Derivatives' },
+      { source: 'B', target: 'D', weight: 2, label: 'Interbank' },
+      { source: 'C', target: 'E', weight: 2, label: 'Interbank' },
+      { source: 'B', target: 'F', weight: 1, label: 'Credit' },
+      { source: 'C', target: 'G', weight: 1, label: 'Credit' },
+      { source: 'D', target: 'E', weight: 1, label: 'Swaps' },
+    ];
+    
+    return { nodes: defaultNodes, edges: defaultEdges };
+  }, [storeParams.N, storeParams.r, currentFrame]);
 
   // Contagion logic
   // Frame 0: All healthy

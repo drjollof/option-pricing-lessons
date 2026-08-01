@@ -12,29 +12,34 @@ import {
   ReferenceLine
 } from 'recharts';
 
+import { useLessonStore } from '@/store/lessonStore';
+
 interface QQPlotVisualizerProps {
   currentFrame: number;
-  params: {
+  params?: {
     sigma?: number;
-    u: number; // Used for tail heaviness
+    u?: number; // Used for tail heaviness
+    d?: number;
+    N?: number;
   };
 }
 
 export const QQPlotVisualizer: React.FC<QQPlotVisualizerProps> = ({ currentFrame, params }) => {
-  const { sigma = 0.2, u: tailHeaviness } = params;
+  const storeParams = useLessonStore(state => state.params);
   
-  const isFatTailed = tailHeaviness > 1.5; // Threshold
+  const sigma = params?.sigma ?? storeParams.sigma ?? 0.2;
+  const tailHeaviness = params?.u ?? storeParams.u ?? 0;
+  const kurtosis = params?.d ?? storeParams.d ?? 0;
+  const numPts = Math.min(200, Math.max(10, params?.N ?? storeParams.N ?? 100));
+  
+  const isFatTailed = Math.abs(tailHeaviness) > 1.5 || kurtosis > 1.5;
 
   const data = useMemo(() => {
-    // Generate theoretical normal quantiles
-    // For simplicity, we just generate an array from -3 to 3
     const ptsNormal = [];
     const ptsFat = [];
     
-    // We generate sorted random points to simulate QQ
-    // This is deterministic for visualization
-    for (let i = 1; i < 100; i++) {
-      const q = (i - 0.5) / 100; // uniform
+    for (let i = 1; i < numPts; i++) {
+      const q = (i - 0.5) / numPts; // uniform
       
       // Inverse CDF (Probit) approximation for normal
       const p = q < 0.5 ? q : 1 - q;
@@ -48,14 +53,16 @@ export const QQPlotVisualizer: React.FC<QQPlotVisualizerProps> = ({ currentFrame
       const sampleNormal = z * sigma;
       ptsNormal.push({ x: theoretical, y: sampleNormal });
       
-      // Fat tailed sample (simulating t-distribution or just cubic mapping)
-      // Cube the normal quantile to get extreme tails
-      const sampleFat = z * sigma + (Math.pow(z, 3) * sigma * 0.5 * (isFatTailed ? 1 : 0));
+      // Fat tailed sample (simulating skew and kurtosis)
+      const skewEffect = Math.pow(z, 2) * (tailHeaviness / 5) * sigma;
+      const kurtosisEffect = Math.pow(z, 3) * (kurtosis / 5) * sigma;
+      
+      const sampleFat = z * sigma + skewEffect + kurtosisEffect;
       ptsFat.push({ x: theoretical, y: sampleFat });
     }
     
     return { ptsNormal, ptsFat };
-  }, [sigma, isFatTailed]);
+  }, [sigma, tailHeaviness, kurtosis, numPts]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900 rounded-xl p-4">

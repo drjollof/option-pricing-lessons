@@ -16,20 +16,20 @@ export const CorrelationHeatmapVisualizer: React.FC<CorrelationHeatmapVisualizer
   const variables = ['Y', 'X1', 'X2', 'X3'];
   
   const matrix = useMemo(() => {
-    // If noise (sigma) is high, correlation drops.
-    // If N is high, maybe the correlation is stable.
-    const baseCorr = Math.max(0.1, 1 - (params.sigma || 0.2));
+    // Global Correlation (r) overrides the default
+    const baseCorr = params.r !== undefined ? params.r : 0.8;
+    const noise = params.sigma || 0;
     
     // Simulate multicollinearity between X1 and X2
-    const x1x2Corr = Math.min(0.95, baseCorr + 0.3);
+    const x1x2Corr = Math.min(0.99, Math.max(-0.99, baseCorr + 0.3 - noise));
 
     return [
-      [1.00, baseCorr, baseCorr * 0.8, -0.4],
-      [baseCorr, 1.00, x1x2Corr, -0.2],
-      [baseCorr * 0.8, x1x2Corr, 1.00, -0.1],
-      [-0.4, -0.2, -0.1, 1.00]
+      [1.00, baseCorr - noise*0.1, baseCorr * 0.8 + noise*0.2, -0.4 + noise*0.3],
+      [baseCorr - noise*0.1, 1.00, x1x2Corr, -0.2 - noise*0.1],
+      [baseCorr * 0.8 + noise*0.2, x1x2Corr, 1.00, -0.1 + noise*0.1],
+      [-0.4 + noise*0.3, -0.2 - noise*0.1, -0.1 + noise*0.1, 1.00]
     ];
-  }, [params.sigma]);
+  }, [params.sigma, params.r]);
 
   const getColor = (value: number) => {
     // Red-Blue diverging scale. Red = -1, White = 0, Blue = 1

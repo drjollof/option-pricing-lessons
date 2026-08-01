@@ -69,12 +69,48 @@ export const EconometricsParamControls: React.FC<EconometricsParamControlsProps>
       );
       break;
     case 'stochastic-path':
+      controls = (
+        <>
+          {renderSlider('N', 'Time Steps', 10, 500, 10, Math.min(500, Math.max(10, params.N)), params.N)}
+          {renderSlider('sigma', 'Volatility (σ)', 0.05, 3.00, 0.05, params.sigma || 0.2, (params.sigma || 0.2).toFixed(2))}
+          {renderSlider('u', 'Mean Reversion Rate (κ)', -5, 5, 0.1, params.u, params.u.toFixed(2))}
+          {renderSlider('S0', 'Initial Value (S₀)', -50, 150, 5, params.S0, params.S0)}
+        </>
+      );
+      break;
     case 'qq-plot':
+      controls = (
+        <>
+          {renderSlider('N', 'Sample Size', 10, 500, 10, Math.min(500, Math.max(10, params.N)), params.N)}
+          {renderSlider('sigma', 'Standard Deviation', 0.05, 3.00, 0.05, params.sigma || 0.2, (params.sigma || 0.2).toFixed(2))}
+          {renderSlider('u', 'Skewness', -5, 5, 0.1, params.u, params.u.toFixed(2))}
+          {renderSlider('d', 'Kurtosis', -5, 5, 0.1, params.d, params.d.toFixed(2))}
+        </>
+      );
+      break;
     case 'pca-scree':
+      controls = (
+        <>
+          {renderSlider('N', 'Number of Components', 2, 20, 1, Math.min(20, Math.max(2, params.N)), Math.min(20, Math.max(2, params.N)))}
+          {renderSlider('u', 'Decay Factor', -2, 2, 0.1, params.u, params.u.toFixed(2))}
+        </>
+      );
+      break;
     case 'network-theory':
+      controls = (
+        <>
+          {renderSlider('N', 'Number of Nodes', 5, 20, 1, Math.min(20, Math.max(5, params.N)), Math.min(20, Math.max(5, params.N)))}
+          {renderSlider('r', 'Edge Density', 0, 1, 0.01, params.r, params.r.toFixed(2))}
+        </>
+      );
+      break;
     case 'correlation-heatmap':
-      // Some visualizers might not have tunable parameters yet, or they don't need them.
-      controls = <div className="col-span-full text-slate-500 text-sm italic py-4">No tunable parameters for this visualizer yet.</div>;
+      controls = (
+        <>
+          {renderSlider('r', 'Global Correlation', -0.99, 0.99, 0.01, params.r, params.r.toFixed(2))}
+          {renderSlider('sigma', 'Noise Level', 0, 1, 0.05, params.sigma || 0.2, (params.sigma || 0.2).toFixed(2))}
+        </>
+      );
       break;
     default:
       controls = <div className="col-span-full text-slate-500 text-sm italic py-4">Select a visualizer.</div>;
