@@ -35,7 +35,9 @@ export const MathConsolePane: React.FC<MathConsolePaneProps> = ({ stepText, form
   // Auto-scroll to bottom only when stepping forward, not on initial bulk load of static pages
   useEffect(() => {
     if (scrollContainerRef.current && viewMode === 'math') {
-      if (currentFrame > prevFrameRef.current) {
+      if (currentFrame === 0) {
+        scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (currentFrame > prevFrameRef.current) {
         // Scroll only the inner container, preventing the entire window from jumping down
         scrollContainerRef.current.scrollTo({
           top: scrollContainerRef.current.scrollHeight,
@@ -44,7 +46,7 @@ export const MathConsolePane: React.FC<MathConsolePaneProps> = ({ stepText, form
       }
     }
     prevFrameRef.current = currentFrame;
-  }, [currentFrame, viewMode]);
+  }, [currentFrame, viewMode, stepText]);
 
   return (
     <div className="flex flex-col p-6 border border-slate-800 rounded-2xl bg-slate-900 text-slate-100 shadow-xl w-full h-full relative overflow-hidden">
