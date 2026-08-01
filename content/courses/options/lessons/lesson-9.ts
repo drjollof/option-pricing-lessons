@@ -18,9 +18,11 @@ export const lesson9: Lesson = {
         "In a binomial tree, we used an up factor $u$ and a down factor $d$.",
         "A trinomial tree introduces a mid factor $m$. For simplicity, we often set $m = 1.0$, meaning the stock goes sideways.",
         "This gives us three risk-neutral probabilities: $p_u$, $p_m$, and $p_d$, which must sum to 1.",
-        "We also need the downward movement to be the inverse of the upward movement to ensure the tree recombines smoothly."
+        "We also need the downward movement to be the inverse of the upward movement to ensure the tree recombines smoothly.",
+        "This means the stock price at the next step has exactly three possible values."
       ],
       formulas: [
+        null,
         `m = 1.0`,
         `p_u + p_m + p_d = 1`,
         `d = \\frac{1}{u}`,
@@ -39,17 +41,11 @@ export const lesson9: Lesson = {
       overrideParams: { N: 1, S0: 100, u: 1.15, d: 0.869 },
       stepTexts: [
         "We start at $t=0$ with a stock price of $S_0 = 100$.",
-        "In the up-state, the stock price grows by 15% to $S_u = 100 \\times 1.15 = 115.00$.",
-        "In the mid-state, the stock price goes sideways, remaining at $S_m = 100 \\times 1.0 = 100.00$.",
-        "In the down-state, the stock price drops to $S_d = 100 \\times 0.869 = 86.90$.",
-        "If we expand this to $N=2$ steps, the tree would recombine, yielding 5 terminal nodes instead of $3^2 = 9$."
+        "At $t=1$, it instantly splits into three states: $115.00$ (up), $100.00$ (mid), and $86.90$ (down). If we expand to $N=2$ steps, the branches recombine!"
       ],
       formulas: [
         `S_0 = 100`,
-        `S_u = 100 \\times 1.15 = 115`,
-        `S_m = 100 \\times 1.00 = 100`,
-        `S_d = 100 \\times 0.869 = 86.9`,
-        `\\text{Nodes at step } i = 2i + 1`
+        `S_1 \\in \\{115, 100, 86.90\\}`
       ]
     },
     {
