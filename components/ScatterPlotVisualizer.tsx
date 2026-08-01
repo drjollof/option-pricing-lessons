@@ -33,8 +33,8 @@ export const ScatterPlotVisualizer: React.FC<ScatterPlotVisualizerProps> = ({ sh
   const data = useMemo(() => {
     const N = params.N && params.N > 10 ? params.N : 50;
     const noiseLevel = params.sigma || 0.2;
-    const trueSlope = 1.5;
-    const trueIntercept = 10;
+    const trueSlope = params.u !== undefined ? params.u : 1.5;
+    const trueIntercept = params.S0 !== undefined ? params.S0 : 10;
     
     let generatedData = [];
     for (let i = 0; i < N; i++) {
@@ -55,7 +55,7 @@ export const ScatterPlotVisualizer: React.FC<ScatterPlotVisualizerProps> = ({ sh
       generatedData.push({ x, y, isOutlier });
     }
     return generatedData;
-  }, [params.N, params.sigma, highlightOutliers]);
+  }, [params.N, params.sigma, params.u, params.S0, highlightOutliers]);
 
   // Calculate regression line OLS & R-Squared
   const { slope, intercept, rSquared, cleanSlope, cleanIntercept } = useMemo(() => {

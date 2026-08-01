@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { useLessonStore } from '@/store/lessonStore';
 
 // Plotly needs to be dynamically imported because it relies on the window object
 const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
@@ -63,6 +64,7 @@ function inverseNormalCDF(p: number) {
 
 export const Copula3DVisualizer: React.FC<Copula3DVisualizerProps> = ({ currentFrame }) => {
   const [mounted, setMounted] = useState(false);
+  const storeParams = useLessonStore(state => state.params);
   
   useEffect(() => {
     setMounted(true);
@@ -82,6 +84,11 @@ export const Copula3DVisualizer: React.FC<Copula3DVisualizerProps> = ({ currentF
     
     const zMatrix: number[][] = [];
     
+    // Map params.r (-0.99 to 0.99) to rho and theta
+    const rho = Math.max(-0.99, Math.min(0.99, storeParams.r !== undefined ? storeParams.r : 0.7));
+    // Clayton theta is usually positive for positive dependence, mapping r to theta [0.1, 10]
+    const theta = Math.max(0.1, (storeParams.r !== undefined ? storeParams.r + 1 : 0.8) * 5);
+    
     for (let i = 0; i < uArr.length; i++) {
       const u = uArr[i];
       const zRow: number[] = [];
@@ -91,16 +98,14 @@ export const Copula3DVisualizer: React.FC<Copula3DVisualizerProps> = ({ currentF
         let density = 0;
         
         if (currentFrame === 0) {
-          // Gaussian Copula Density (rho = 0.7)
-          const rho = 0.7;
+          // Gaussian Copula Density
           const x = inverseNormalCDF(u);
           const y = inverseNormalCDF(v);
           const coeff = 1 / Math.sqrt(1 - rho*rho);
           const expTerm = Math.exp( - (rho*rho*(x*x + y*y) - 2*rho*x*y) / (2*(1 - rho*rho)) );
           density = coeff * expTerm;
         } else {
-          // Clayton Copula Density (theta = 3.0) -> Lower Tail Dependence
-          const theta = 3.0;
+          // Clayton Copula Density -> Lower Tail Dependence
           const term1 = Math.pow(u, -theta) + Math.pow(v, -theta) - 1;
           
           if (term1 > 0) {
@@ -122,7 +127,7 @@ export const Copula3DVisualizer: React.FC<Copula3DVisualizerProps> = ({ currentF
       y: uArr, // X-axis on the chart conceptually
       z: zMatrix
     };
-  }, [currentFrame]);
+  }, [currentFrame, storeParams.r]);
 
   if (!mounted) return <div className="w-full h-full bg-slate-900 rounded-xl flex items-center justify-center text-slate-400">Loading 3D Visualizer...</div>;
 

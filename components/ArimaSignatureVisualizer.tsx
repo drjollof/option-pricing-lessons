@@ -2,17 +2,24 @@
 import React, { useMemo } from 'react';
 import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceArea } from 'recharts';
 
+import { useLessonStore } from '@/store/lessonStore';
+
 interface ArimaSignatureVisualizerProps {
   currentFrame: number;
 }
 
 export const ArimaSignatureVisualizer: React.FC<ArimaSignatureVisualizerProps> = ({ currentFrame }) => {
+  const storeParams = useLessonStore(state => state.params);
 
   const data = useMemo(() => {
     const lags = 12;
     const result = [];
-    const phi = 0.8;
-    const theta = -0.8;
+    // Ensure phi is strictly between -1 and 1 to prevent explosive ACF. 
+    // We map params.u (range -5 to 5) loosely to -0.99 to 0.99 by clamping it.
+    // Or we can just read params.r which is perfectly -0.99 to 0.99! Let's read r and u.
+    // Actually EconometricsParamControls provides: r (-0.99 to 0.99), u (-5 to 5), d (-5 to 5).
+    const phi = Math.max(-0.99, Math.min(0.99, storeParams.r !== undefined ? storeParams.r : 0.8));
+    const theta = Math.max(-0.99, Math.min(0.99, storeParams.u !== undefined ? (storeParams.u / 5) : -0.8));
 
     for (let i = 0; i <= lags; i++) {
       if (i === 0) {
@@ -31,7 +38,7 @@ export const ArimaSignatureVisualizer: React.FC<ArimaSignatureVisualizerProps> =
       result.push({ lag: i, ar_acf, ar_pacf, ma_acf, ma_pacf });
     }
     return result;
-  }, []);
+  }, [storeParams.r, storeParams.u]);
 
   const yDomain = [-1, 1];
   const sigLevel = 0.2; // roughly 1.96 / sqrt(N)

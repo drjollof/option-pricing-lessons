@@ -2,6 +2,7 @@
 import React, { useState, use } from 'react';
 import { ThreePanePlayer } from '@/components/ThreePanePlayer';
 import { ParamControls } from '@/components/ParamControls';
+import { EconometricsParamControls } from '@/components/EconometricsParamControls';
 import { LessonPhase } from '@/content/types';
 import Link from 'next/link';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
@@ -191,8 +192,10 @@ export default function SandboxPage({ params }: { params: Promise<{ courseId: st
            </div>
         )}
 
-        {!isEconometrics && (
+        {!isEconometrics ? (
           <ParamControls maxN={visualizer === 'convergence-sweep' ? 100 : visualizer === 'path-explorer' ? 5 : 6} />
+        ) : (
+          <EconometricsParamControls />
         )}
         
         <div className="mt-8">

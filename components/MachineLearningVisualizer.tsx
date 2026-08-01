@@ -2,6 +2,7 @@
 
 import React, { useMemo } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, ReferenceLine } from 'recharts';
+import { useLessonStore } from '@/store/lessonStore';
 
 interface MachineLearningVisualizerProps {
   currentFrame: number;
@@ -11,15 +12,19 @@ interface MachineLearningVisualizerProps {
 }
 
 export const MachineLearningVisualizer: React.FC<MachineLearningVisualizerProps> = ({ currentFrame, params }) => {
+  const storeParams = useLessonStore(state => state.params);
   const mode = params?.mode || 'kmeans';
 
   // --- K-MEANS DATA ---
   const kmeansData = useMemo(() => {
     // Two natural clusters
     const pts = [];
-    for (let i = 0; i < 40; i++) {
-      pts.push({ id: i, x: Math.random() * 20 + 10, y: Math.random() * 20 + 10, cluster: 0 });
-      pts.push({ id: i + 40, x: Math.random() * 20 + 60, y: Math.random() * 20 + 60, cluster: 1 });
+    const numPts = Math.min(100, Math.max(10, storeParams.N || 40));
+    const noise = storeParams.sigma !== undefined ? storeParams.sigma * 40 : 20;
+
+    for (let i = 0; i < numPts; i++) {
+      pts.push({ id: i, x: Math.random() * noise + 10, y: Math.random() * noise + 10, cluster: 0 });
+      pts.push({ id: i + numPts, x: Math.random() * noise + (100 - noise), y: Math.random() * noise + (100 - noise), cluster: 1 });
     }
     
     // Initial bad centroids
@@ -45,7 +50,7 @@ export const MachineLearningVisualizer: React.FC<MachineLearningVisualizerProps>
     });
 
     return { pts, c1_init, c2_init, assigned1, c1_final, c2_final, assigned2 };
-  }, []);
+  }, [storeParams.N, storeParams.sigma]);
 
   // --- LDA DATA ---
   const ldaData = useMemo(() => {
