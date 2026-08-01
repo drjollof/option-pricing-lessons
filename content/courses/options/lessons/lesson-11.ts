@@ -34,8 +34,8 @@ export const lesson11: Lesson = {
       kind: 'tree-reveal',
       treeType: 'trinomial',
       reveals: 'option_tree',
-      showParamControls: true,
-      visibleParams: ['S0', 'K', 'u', 'd', 'N'],
+      showParamControls: false,
+      visibleParams: [],
       overrideParams: { N: 2 },
       stepTexts: [
         "With $N=2$, a trinomial tree produces $2(2) + 1 = 5$ terminal nodes.",
@@ -56,8 +56,8 @@ export const lesson11: Lesson = {
       description: 'Starting from the terminal payoffs, we iteratively step backward. The value at any node is the discounted expectation of the three subsequent nodes it connects to.',
       kind: 'derivation-steps',
       treeType: 'trinomial',
-      showParamControls: true,
-      visibleParams: ['r', 'sigma'],
+      showParamControls: false,
+      visibleParams: [],
       overrideParams: { N: 2 },
       stepTexts: [
         "At step $i=1$, we collapse the 5 terminal nodes into 3 intermediate nodes.",

@@ -45,7 +45,7 @@ export const lesson12: Lesson = {
         `\\text{class } \\text{TrinomialModel}:`,
         `\\quad \\text{def } \\_\\_init\\_\\_(self, S_0, r, T, N, \\dots):`,
         `\\quad \\text{def price(self):}`,
-        `\\quad \\text{def payoff(self, S_T): raise NotImplementedError}`
+        `\\quad \\text{def payoff(self, } S_T \\text{): raise NotImplementedError}`
       ],
       codeSnippet: `import numpy as np
 
@@ -87,7 +87,7 @@ class TrinomialModel:
       formulas: [
         `\\text{class EuropeanCall(TrinomialModel):}`,
         `\\quad \\text{def } \\_\\_init\\_\\_(self, S_0, K, \\dots):`,
-        `\\quad \\text{def payoff(self, S_T):}`,
+        `\\quad \\text{def payoff(self, } S_T \\text{):}`,
         `\\quad \\quad \\text{return np.maximum}(0, S_T - K)`
       ],
       codeSnippet: `class EuropeanCall(TrinomialModel):

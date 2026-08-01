@@ -34,8 +34,8 @@ export const lesson9: Lesson = {
       kind: 'tree-reveal',
       treeType: 'trinomial',
       reveals: 'stock_tree',
-      showParamControls: true,
-      visibleParams: ['S0', 'u', 'd'],
+      showParamControls: false,
+      visibleParams: [],
       overrideParams: { N: 1, S0: 100, u: 1.15, d: 0.869 },
       stepTexts: [
         "We start at $t=0$ with a stock price of $S_0 = 100$.",
