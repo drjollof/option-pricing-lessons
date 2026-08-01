@@ -57,9 +57,9 @@ export const lesson9: Lesson = {
       showAllInstantly: true,
       visibleParams: [],
       stepTexts: [
-        "Imagine you put $\\$100$ into a risk-free bank account at a $5\\%$ interest rate. After 1 year, you would have exactly $\\$100 \\times e^{0.05} = \\$105.13$.",
+        "Imagine you put \\$100 into a risk-free bank account at a 5% interest rate. After 1 year, you would have exactly \\$105.13 (since $100 \\times e^{0.05} = 105.13$).",
         "A 'Martingale' is simply a mathematically 'fair game'. In a risk-neutral world, the stock market is forced to be a fair game against the bank account.",
-        "This means the expected future payout of our stock must exactly match the bank account: $\\$105.13$. If it didn't, traders would endlessly borrow from the bank to buy the stock (or vice versa) for guaranteed profit!",
+        "This means the expected future payout of our stock must exactly match the bank account: \\$105.13. If it didn't, traders would endlessly borrow from the bank to buy the stock (or vice versa) for guaranteed profit!",
         "So, the weighted average of our three future states must equal the bank's return: $p_u(115) + p_m(100) + p_d(86.90) = 105.13$.",
         "We also know the probabilities must sum to 1. But wait... we have 3 unknown probabilities and only 2 equations. This means there are an infinite number of valid solutions! The market is arbitrage-free, but 'incomplete'."
       ],
