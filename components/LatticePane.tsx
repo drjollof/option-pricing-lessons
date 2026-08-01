@@ -24,17 +24,19 @@ export const LatticePane: React.FC<LatticePaneProps> = ({ tree, direction = 'for
     );
   }
 
+  const isTrinomial = tree.length > 1 && tree[1].length === 3;
   const width = 400;
   const height = 400;
   const padding = 40;
   
   const getX = (i: number) => N === 0 ? width / 2 : padding + (i / N) * (width - 2 * padding);
   const getY = (i: number, j: number) => {
-    if (N === 0) return height / 2;
+    if (i === 0) return height / 2;
     const spread = (width - 2 * padding) * (i / N);
     const topY = height / 2 - spread / 2;
-    const step = i === 0 ? 0 : spread / i;
-    return topY + (i - j) * step;
+    const maxGaps = isTrinomial ? 2 * i : i;
+    const step = maxGaps === 0 ? 0 : spread / maxGaps;
+    return topY + (maxGaps - j) * step;
   };
 
   return (
@@ -53,24 +55,45 @@ export const LatticePane: React.FC<LatticePaneProps> = ({ tree, direction = 'for
           return layer.map((_, j) => {
             const x1 = getX(i);
             const y1 = getY(i, j);
-            
-            const upX = getX(i + 1);
-            const upY = getY(i + 1, j + 1);
-            
-            const downX = getX(i + 1);
-            const downY = getY(i + 1, j);
 
-            return (
-              <motion.g 
-                key={`edge-${i}-${j}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isVisible ? 1 : 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                <line x1={x1} y1={y1} x2={upX} y2={upY} stroke="#cbd5e1" strokeWidth={2} className="dark:stroke-slate-700" />
-                <line x1={x1} y1={y1} x2={downX} y2={downY} stroke="#cbd5e1" strokeWidth={2} className="dark:stroke-slate-700" />
-              </motion.g>
-            );
+            if (isTrinomial) {
+              const upX = getX(i + 1);
+              const upY = getY(i + 1, j + 2);
+              const midX = getX(i + 1);
+              const midY = getY(i + 1, j + 1);
+              const downX = getX(i + 1);
+              const downY = getY(i + 1, j);
+              
+              return (
+                <motion.g 
+                  key={`edge-${i}-${j}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: isVisible ? 1 : 0 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <line x1={x1} y1={y1} x2={upX} y2={upY} stroke="#cbd5e1" strokeWidth={2} className="dark:stroke-slate-700" />
+                  <line x1={x1} y1={y1} x2={midX} y2={midY} stroke="#cbd5e1" strokeWidth={2} className="dark:stroke-slate-700" />
+                  <line x1={x1} y1={y1} x2={downX} y2={downY} stroke="#cbd5e1" strokeWidth={2} className="dark:stroke-slate-700" />
+                </motion.g>
+              );
+            } else {
+              const upX = getX(i + 1);
+              const upY = getY(i + 1, j + 1);
+              const downX = getX(i + 1);
+              const downY = getY(i + 1, j);
+
+              return (
+                <motion.g 
+                  key={`edge-${i}-${j}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: isVisible ? 1 : 0 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <line x1={x1} y1={y1} x2={upX} y2={upY} stroke="#cbd5e1" strokeWidth={2} className="dark:stroke-slate-700" />
+                  <line x1={x1} y1={y1} x2={downX} y2={downY} stroke="#cbd5e1" strokeWidth={2} className="dark:stroke-slate-700" />
+                </motion.g>
+              );
+            }
           });
         })}
 

@@ -36,85 +36,103 @@ export const lesson12: Lesson = {
       showAllInstantly: true,
       visibleParams: [],
       stepTexts: [
-        "The base class TrinomialModel stores the core parameters (S0, r, T, N, etc.) in its constructor.",
+        "The base class `TrinomialModel` stores the core parameters ($S_0, r, T, N$, etc.) in its constructor.",
         "It contains methods to compute probabilities via variance matching.",
         "It implements the backward induction loop exactly as we did before.",
-        "However, when it needs to calculate the terminal payoff, it calls a placeholder method self.payoff(), which is not defined in the base class."
+        "However, when it needs to calculate the terminal payoff, it calls a placeholder method `self.payoff()`, which is not defined in the base class."
       ],
       formulas: [
-        `\\text{class } TrinomialModel:`,
-        `\\quad \\text{def } \\_\\_init\\_\\_(self, S0, r, T, N, \\dots):`,
+        `\\text{class } \\text{TrinomialModel}:`,
+        `\\quad \\text{def } \\_\\_init\\_\\_(self, S_0, r, T, N, \\dots):`,
         `\\quad \\text{def price(self):}`,
-        `\\quad \\text{def payoff(self, S\\_T): raise NotImplementedError}`
+        `\\quad \\text{def payoff(self, S_T): raise NotImplementedError}`
       ],
       codeSnippet: `import numpy as np
 
 class TrinomialModel:
-    def __init__(self, S0, r, T, N, u, d, pu, pm, pd):
+    def __init__(self, S0, r, T, N, sigma):
         self.S0 = S0
         self.r = r
         self.T = T
         self.N = N
-        self.u = u
-        self.d = d
-        self.pu = pu
-        self.pm = pm
-        self.pd = pd
+        self.sigma = sigma
+        self.dt = T / N
         
+        # We can compute u, d, pu, pm, pd here using Variance Matching
+
     def payoff(self, S_T):
-        # To be implemented by subclasses
-        raise NotImplementedError("Subclass must implement abstract method")
+        """To be implemented by child classes"""
+        raise NotImplementedError("Payoff function must be defined by subclass.")
         
     def price(self):
-        dt = self.T / self.N
-        df = np.exp(-self.r * dt)
-        
-        j = np.arange(self.N, -self.N - 1, -1)
-        S_T = self.S0 * (self.u ** j)
-        
-        # Call the subclass-specific payoff
-        V = self.payoff(S_T)
-        
-        for i in range(self.N - 1, -1, -1):
-            V_up = V[:-2]
-            V_mid = V[1:-1]
-            V_down = V[2:]
-            V = df * (self.pu * V_up + self.pm * V_mid + self.pd * V_down)
-            
-        return V[0]`
+        # 1. Generate Terminal Stock Prices
+        # 2. Call self.payoff(S_T)
+        # 3. Perform Backward Induction
+        pass`
     },
     {
-      id: 'subclass-inheritance',
-      title: 'Inheritance and Subclasses',
-      description: 'With our engine built, creating a new derivative is incredibly simple. We create a subclass that inherits from TrinomialModel and strictly defines its own unique payoff structure.',
+      id: 'inheritance',
+      title: 'Polymorphism via Inheritance',
+      description: 'To price a specific derivative, we create a child class that inherits from TrinomialModel. The child only needs to define the payoff() method.',
       kind: 'static-slides',
       showParamControls: false,
       showAllInstantly: true,
       visibleParams: [],
       stepTexts: [
-        "We create a class TrinomialCall that inherits from TrinomialModel.",
-        "Its constructor simply passes the parameters up to the parent class and stores the Strike Price K.",
-        "It overrides the payoff() method with the specific Call logic: max(0, S - K).",
-        "We can now price the option by instantiating the subclass and calling the inherited price() method."
+        "We create a `EuropeanCall` class that inherits from `TrinomialModel`.",
+        "Its constructor accepts all the stock parameters, plus the strike price $K$.",
+        "It overrides the `payoff()` method to return $\\max(0, S_T - K)$.",
+        "When we call `price()` on the European Call object, the parent class handles the tree logic, but dynamically calls the child's `payoff()` method!"
       ],
       formulas: [
-        `\\text{class } TrinomialCall(TrinomialModel):`,
-        `\\quad \\text{def } \\_\\_init\\_\\_(self, S0, K, \\dots):`,
-        `\\quad \\text{def payoff(self, S\\_T): return max(0, S\\_T - K)}`,
-        `call = TrinomialCall(...); call.price()`
+        `\\text{class EuropeanCall(TrinomialModel):}`,
+        `\\quad \\text{def } \\_\\_init\\_\\_(self, S_0, K, \\dots):`,
+        `\\quad \\text{def payoff(self, S_T):}`,
+        `\\quad \\quad \\text{return np.maximum}(0, S_T - K)`
       ],
-      codeSnippet: `class TrinomialCall(TrinomialModel):
-    def __init__(self, S0, K, r, T, N, u, d, pu, pm, pd):
-        super().__init__(S0, r, T, N, u, d, pu, pm, pd)
+      codeSnippet: `class EuropeanCall(TrinomialModel):
+    def __init__(self, S0, K, r, T, N, sigma):
+        super().__init__(S0, r, T, N, sigma)
         self.K = K
         
     def payoff(self, S_T):
         return np.maximum(0, S_T - self.K)
 
-# Pricing is now clean and modular
-my_call = TrinomialCall(S0=100, K=100, r=0.05, T=1, N=100, 
-                        u=1.15, d=1/1.15, pu=0.3, pm=0.4, pd=0.3)
-print(f"Option Price: \${my_call.price():.2f}")`
+# Pricing is now incredibly clean:
+call_option = EuropeanCall(S0=100, K=100, r=0.05, T=1, N=100, sigma=0.2)
+fair_value = call_option.price()
+print(f"Fair Value: {fair_value:.4f}")`
+    },
+    {
+      id: 'extensibility',
+      title: 'Infinite Extensibility',
+      description: 'Because the engine is decoupled from the contract, adding a new derivative type takes mere seconds.',
+      kind: 'static-slides',
+      showParamControls: false,
+      showAllInstantly: true,
+      visibleParams: [],
+      stepTexts: [
+        "Want to price a European Put? Just inherit and change the payoff.",
+        "Want to price a Digital Option? Just inherit and return 1 if $S_T > K$, else 0.",
+        "This OOP architecture is how industrial-grade quantitative libraries (like QuantLib) are structured.",
+        "It allows quants to model complex, bespoke exotic options without ever touching the core stochastic engine."
+      ],
+      formulas: [
+        `\\text{European Put:} \\max(0, K - S_T)`,
+        `\\text{Digital Call:} \\begin{cases} 1 & \\text{if } S_T > K \\\\ 0 & \\text{if } S_T \\le K \\end{cases}`,
+        `\\text{Industrial Standard (QuantLib)}`,
+        `\\text{Maximum Reusability}`
+      ],
+      codeSnippet: `class DigitalCall(TrinomialModel):
+    def __init__(self, S0, K, r, T, N, sigma):
+        super().__init__(S0, r, T, N, sigma)
+        self.K = K
+        
+    def payoff(self, S_T):
+        return np.where(S_T > self.K, 1.0, 0.0)
+
+digital = DigitalCall(S0=100, K=100, r=0.05, T=1, N=100, sigma=0.2)
+print(f"Digital Option Value: {digital.price():.4f}")`
     }
   ]
 };

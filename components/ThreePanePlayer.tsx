@@ -6,6 +6,7 @@ import { ArrayGridPane } from './ArrayGridPane';
 import { MathConsolePane } from './MathConsolePane';
 import { PlaybackControls } from './PlaybackControls';
 import { buildStockTree, priceEuropeanOption, priceAmericanOption, buildDeltaTree } from '@/lib/binomial';
+import { buildTrinomialStockTree, priceTrinomialOption } from '@/lib/trinomial';
 import { useLessonStore } from '@/store/lessonStore';
 import { LessonPhase } from '@/content/types';
 
@@ -40,17 +41,28 @@ interface ThreePanePlayerProps {
 export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
   const { params, setMaxFrames, setFrame, pause, maxFrames, play, currentFrame } = useLessonStore();
   
-  const stockTree = useMemo(() => buildStockTree(params), [params]);
+  const stockTree = useMemo(() => {
+    return phase.treeType === 'trinomial' 
+      ? buildTrinomialStockTree(params) 
+      : buildStockTree(params);
+  }, [params, phase.treeType]);
+  
   const optionResult = useMemo(() => {
+    if (phase.treeType === 'trinomial') {
+      return priceTrinomialOption(params, phase.optionType || 'call', phase.isAmerican);
+    }
     return phase.isAmerican 
       ? priceAmericanOption(params, phase.optionType || 'call')
       : priceEuropeanOption(params, phase.optionType || 'call');
-  }, [params, phase.optionType, phase.isAmerican]);
+  }, [params, phase.optionType, phase.isAmerican, phase.treeType]);
   
   const optionTree = optionResult.optionTree;
   const exerciseTree = ('exerciseTree' in optionResult ? (optionResult as any).exerciseTree : undefined) as boolean[][] | undefined;
   
-  const deltaTree = useMemo(() => buildDeltaTree(params, optionTree, stockTree), [params, optionTree, stockTree]);
+  const deltaTree = useMemo(() => {
+    if (phase.treeType === 'trinomial') return []; // Trinomial delta not implemented yet
+    return buildDeltaTree(params, optionTree, stockTree);
+  }, [params, optionTree, stockTree, phase.treeType]);
 
   useEffect(() => {
     pause(); 

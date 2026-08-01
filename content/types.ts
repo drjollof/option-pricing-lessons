@@ -11,6 +11,7 @@ export interface LessonPhase {
   formulas?: (string | string[] | null)[];
   codeSnippet?: string;
   isAmerican?: boolean;
+  treeType?: 'binomial' | 'trinomial';
   reveals?: 'stock_tree' | 'option_tree' | 'delta_tree';
   direction?: 'forward' | 'backward';
   showParamControls?: boolean;

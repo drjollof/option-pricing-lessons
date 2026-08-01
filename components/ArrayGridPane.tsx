@@ -13,6 +13,8 @@ interface ArrayGridPaneProps {
 export const ArrayGridPane: React.FC<ArrayGridPaneProps> = ({ tree, direction = 'forward', highlightTree }) => {
   const { currentFrame } = useLessonStore();
   const N = tree.length - 1;
+  const isTrinomial = tree.length > 1 && tree[1].length === 3;
+
   
   if (N > 6) {
     return (
@@ -44,43 +46,93 @@ export const ArrayGridPane: React.FC<ArrayGridPaneProps> = ({ tree, direction = 
           className="grid gap-1.5 p-2 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-100 dark:border-slate-800 shadow-inner"
           style={{ gridTemplateColumns: `repeat(${N + 1}, minmax(0, 1fr))` }}
         >
-          {Array.from({ length: N + 1 }).map((_, r) => {
-            const j = N - r; // top row is highest j
-            return (
-              <React.Fragment key={`row-${j}`}>
-                {Array.from({ length: N + 1 }).map((_, i) => {
-                  const cellVal = i >= j ? tree[i][j] : null;
-                  const isVisible = direction === 'backward' 
-                    ? (i >= N - currentFrame) 
-                    : (currentFrame >= i);
-                  const isHighlighted = highlightTree?.[i]?.[j] ?? false;
+          {isTrinomial ? (
+            // Trinomial Grid
+            Array.from({ length: 2 * N + 1 }).map((_, r) => {
+              return (
+                <React.Fragment key={`row-${r}`}>
+                  {Array.from({ length: N + 1 }).map((_, i) => {
+                    const j = (N - r) + i;
+                    const isValid = j >= 0 && j <= 2 * i;
+                    const cellVal = isValid ? tree[i][j] : null;
+                    const isVisible = direction === 'backward' 
+                      ? (i >= N - currentFrame) 
+                      : (currentFrame >= i);
+                    const isHighlighted = isValid ? (highlightTree?.[i]?.[j] ?? false) : false;
 
-                  return (
-                    <motion.div 
-                      key={`cell-${i}-${j}`}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ 
-                        opacity: cellVal !== null ? (isVisible ? 1 : 0.2) : 0, 
-                        scale: cellVal !== null ? (isVisible ? 1 : 0.95) : 0.8 
-                      }}
-                      transition={{ duration: 0.4 }}
-                      className={`w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-lg text-xs sm:text-sm font-mono font-semibold transition-all shadow-sm border ${
-                        cellVal === null 
-                          ? 'opacity-0' 
-                          : !isVisible 
-                            ? 'bg-slate-50 border-slate-100 text-slate-300 dark:bg-slate-900/50 dark:border-slate-800 dark:text-slate-700'
-                            : isHighlighted 
-                              ? 'bg-red-50 border-red-300 text-red-700 dark:bg-red-950/30 dark:border-red-800/50 dark:text-red-300'
-                              : 'bg-white border-slate-200 text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200'
-                      }`}
-                    >
-                      {cellVal !== null ? cellVal.toFixed(1) : ''}
-                    </motion.div>
-                  );
-                })}
-              </React.Fragment>
-            );
-          })}
+                    return (
+                      <motion.div 
+                        key={`cell-${i}-${j}`}
+                        className={`w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-lg text-xs sm:text-sm font-mono font-semibold transition-all shadow-sm border ${
+                          cellVal === null 
+                            ? 'opacity-0' 
+                            : !isVisible 
+                              ? 'bg-slate-50 border-slate-100 text-slate-300 dark:bg-slate-900/50 dark:border-slate-800 dark:text-slate-700'
+                              : isHighlighted 
+                                ? 'bg-red-50 border-red-300 text-red-700 dark:bg-red-950/30 dark:border-red-800/50 dark:text-red-300'
+                                : 'bg-white border-slate-200 text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200'
+                        }`}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ 
+                          opacity: cellVal !== null ? (isVisible ? 1 : 0.2) : 0, 
+                          scale: cellVal !== null ? (isVisible ? 1 : 0.95) : 0.8 
+                        }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {isVisible && cellVal !== null ? (
+                          <div className="flex flex-col items-center">
+                            <span className="font-mono">{cellVal.toFixed(2)}</span>
+                          </div>
+                        ) : null}
+                      </motion.div>
+                    );
+                  })}
+                </React.Fragment>
+              );
+            })
+          ) : (
+            // Binomial Grid
+            Array.from({ length: N + 1 }).map((_, r) => {
+              const j = N - r; // top row is highest j
+              return (
+                <React.Fragment key={`row-${j}`}>
+                  {Array.from({ length: N + 1 }).map((_, i) => {
+                    const cellVal = i >= j ? tree[i][j] : null;
+                    const isVisible = direction === 'backward' 
+                      ? (i >= N - currentFrame) 
+                      : (currentFrame >= i);
+                    const isHighlighted = highlightTree?.[i]?.[j] ?? false;
+
+                    return (
+                      <motion.div 
+                        key={`cell-${i}-${j}`}
+                        className={`
+                          flex items-center justify-center h-10 w-14 rounded text-xs font-semibold
+                          ${cellVal === null 
+                            ? 'bg-transparent' 
+                            : !isVisible 
+                              ? 'bg-slate-100 dark:bg-slate-800/50 text-transparent border border-dashed border-slate-200 dark:border-slate-700' 
+                              : isHighlighted
+                                ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-100 ring-2 ring-amber-400 dark:ring-amber-500 shadow-md'
+                                : 'text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-sm'}
+                        `}
+                        style={{ backgroundColor: cellVal !== null && isVisible && !isHighlighted ? getBackgroundColor(cellVal) : undefined }}
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: isVisible ? 1 : 0.9, opacity: isVisible ? 1 : (cellVal === null ? 0 : 0.4) }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {isVisible && cellVal !== null ? (
+                          <div className="flex flex-col items-center">
+                            <span className="font-mono">{cellVal.toFixed(2)}</span>
+                          </div>
+                        ) : null}
+                      </motion.div>
+                    );
+                  })}
+                </React.Fragment>
+              );
+            })
+          )}
         </div>
       </div>
     </div>
