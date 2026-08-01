@@ -30,7 +30,7 @@ export const lesson11: Lesson = {
     {
       id: 'terminal-payoff-calc',
       title: 'Terminal Payoffs',
-      description: 'First, we generate the array of final stock prices and evaluate the European Call payoff function: $max(0, S_T - K)$.',
+      description: 'First, we generate the array of final stock prices and evaluate the European Call payoff function: max(0, S_T - K).',
       kind: 'tree-reveal',
       treeType: 'trinomial',
       reveals: 'option_tree',

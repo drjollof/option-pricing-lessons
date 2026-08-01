@@ -30,21 +30,21 @@ export const lesson10: Lesson = {
     {
       id: 'variance-matching',
       title: 'Variance Matching for Completeness',
-      description: 'By asserting that the variance of the asset returns over the time step $\\Delta t$ must match the continuous variance ($\\sigma^2 \\Delta t$), we gain our third equation. This gives us a system of three equations with three unknowns, solvable for the unique probabilities.',
+      description: 'By asserting that the variance of the tree must exactly match the continuous volatility of the stock, we gain our third constraint. This fully solves the system, unlocking a unique set of probabilities.',
       kind: 'static-slides',
       showParamControls: false,
       showAllInstantly: true,
       visibleParams: [],
       stepTexts: [
-        "Equation 1: The probabilities must sum to 1.",
-        "Equation 2: The expected return must equal the risk-free rate $r$ (Martingale condition).",
-        "Equation 3: The second moment of the discrete step must match the second moment of the continuous process $e^{2r\\Delta t} + \\sigma^2 \\Delta t$.",
-        "Solving this system yields the explicit mathematical formulas for $p_u$, $p_d$, and $p_m$."
+        "Think of variance as the 'spread' or 'wildness' of the stock. A highly volatile tech stock swings wildly, while a stable utility stock barely moves.",
+        "If our discrete tree is going to accurately mimic real life, the mathematical spread of our up, down, and mid branches MUST exactly match the stock's true real-world volatility.",
+        "By forcing the tree's second moment (variance) to equal the continuous Black-Scholes variance, we gain our critical third constraint.",
+        "We now have a perfect locked system: the probabilities sum to 1, the expected return matches the risk-free bank account (drift), and the spread matches real life (volatility)!"
       ],
       formulas: [
-        `p_u + p_m + p_d = 1`,
-        `p_u u + p_m (1) + p_d d = e^{r \\Delta t}`,
+        `\\text{Tree Spread} = \\text{Real-World Volatility}`,
         `p_u u^2 + p_m (1)^2 + p_d d^2 = e^{2r \\Delta t} + \\sigma^2 \\Delta t`,
+        `\\text{Constraint 3 Locked}`,
         `\\text{Unique Solution Exists!}`
       ]
     },
@@ -57,10 +57,10 @@ export const lesson10: Lesson = {
       showAllInstantly: true,
       visibleParams: [],
       stepTexts: [
-        "Let's define a convenient term $M = e^{r \\Delta t}$ representing the expected drift.",
-        "Let $V = e^{2r \\Delta t} + \\sigma^2 \\Delta t$ represent the variance constraint.",
-        "By substituting $p_m = 1 - p_u - p_d$ into the other two equations, we can isolate $p_u$ and $p_d$.",
-        "These derived probabilities guarantee that our discrete tree perfectly mimics the continuous Black-Scholes environment as $\\Delta t \\to 0$."
+        "Now that we have our 3 locked constraints, we can use basic algebra to solve for our 3 unknown probabilities.",
+        "To keep the math clean, we define $M$ as our 'Target Drift' (the bank account return), and $V$ as our 'Target Volatility Spread'.",
+        "By substituting $p_m$ out of the equations, we isolate the exact formulas for the up and down probabilities.",
+        "While these formulas look messy, their purpose is beautiful: they guarantee that our step-by-step discrete tree behaves exactly like a continuous Black-Scholes model!"
       ],
       formulas: [
         `M = e^{r \\Delta t}`,
