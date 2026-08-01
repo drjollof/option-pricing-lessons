@@ -32,7 +32,7 @@ export const QQPlotVisualizer: React.FC<QQPlotVisualizerProps> = ({ currentFrame
   const kurtosis = params?.d ?? storeParams.d ?? 0;
   const numPts = Math.min(200, Math.max(10, params?.N ?? storeParams.N ?? 100));
   
-  const isFatTailed = Math.abs(tailHeaviness) > 1.5 || kurtosis > 1.5;
+  const isDistorted = Math.abs(tailHeaviness) > 0.1 || Math.abs(kurtosis) > 0.1;
 
   const data = useMemo(() => {
     const ptsNormal = [];
@@ -104,19 +104,19 @@ export const QQPlotVisualizer: React.FC<QQPlotVisualizerProps> = ({ currentFrame
             />
             
             {/* Normal points */}
-            {currentFrame >= 1 && (
+            {(currentFrame >= 1 || currentFrame === 0) && (
               <Scatter 
                 name="Normal Distribution" 
                 data={data.ptsNormal} 
                 fill="#3b82f6" 
-                opacity={currentFrame === 1 || !isFatTailed ? 0.8 : 0.2}
+                opacity={(currentFrame === 1 && !isDistorted) || (!isDistorted) ? 0.8 : 0.2}
               />
             )}
             
             {/* Fat tailed points */}
-            {currentFrame >= 2 && isFatTailed && (
+            {(currentFrame >= 2 || currentFrame === 0) && isDistorted && (
               <Scatter 
-                name="Fat-Tailed Distribution" 
+                name="Distorted Distribution" 
                 data={data.ptsFat} 
                 fill="#eab308" 
               />
@@ -128,7 +128,7 @@ export const QQPlotVisualizer: React.FC<QQPlotVisualizerProps> = ({ currentFrame
       <div className="mt-4 text-center text-slate-400 text-sm max-w-md">
         {currentFrame === 0 && "The red line represents a perfectly normal distribution."}
         {currentFrame === 1 && "Points hugging the line indicate the sample data is normally distributed."}
-        {currentFrame >= 2 && isFatTailed && "Points deviating sharply at the tails indicate fat tails (e.g. Student's t-distribution)."}
+        {currentFrame >= 2 && isDistorted && "Points deviating sharply at the tails indicate fat tails (e.g. Student's t-distribution)."}
       </div>
     </div>
   );

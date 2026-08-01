@@ -12,54 +12,68 @@ import {
   ReferenceLine
 } from 'recharts';
 
+import { useLessonStore } from '@/store/lessonStore';
+
 interface DistributionVisualizerProps {
   currentFrame: number;
-  params: {
+  params?: {
     sigma?: number;
-    u: number; // Used for Skewness
-    d: number; // Used for Kurtosis
+    u?: number; // Used for Skewness
+    d?: number; // Used for Kurtosis
   };
-}
-
-// Probability Density Function for Skew-Normal
-function skewNormalPDF(x: number, mean: number, std: number, skew: number) {
-  const t = (x - mean) / std;
-  // Normal PDF
-  const phi = (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * t * t);
-  
-  // Normal CDF approximation for skew
-  const approxCDF = (z: number) => {
-    const p = 0.3275911;
-    const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429;
-    const sign = z < 0 ? -1 : 1;
-    const absZ = Math.abs(z) / Math.sqrt(2);
-    const tVal = 1 / (1 + p * absZ);
-    const erf = 1 - (((((a5 * tVal + a4) * tVal) + a3) * tVal + a2) * tVal + a1) * tVal * Math.exp(-absZ * absZ);
-    return 0.5 * (1 + sign * erf);
-  };
-  
-  const Phi = approxCDF(skew * t);
-  return (2 / std) * phi * Phi;
 }
 
 export const DistributionVisualizer: React.FC<DistributionVisualizerProps> = ({ currentFrame, params }) => {
-  const { sigma = 0.2, u: skewParam } = params;
+  const storeParams = useLessonStore(state => state.params);
   
-  // We'll use overrideParams to pass a large u for skew. If u < 5, we assume no skew.
-  const skew = Math.abs(skewParam) > 1.5 ? skewParam : 0; 
-  
-  const data = useMemo(() => {
-    const pts = [];
-    let maxPdf = 0;
-    let modeX = 0;
+  const sigma = params?.sigma ?? storeParams.sigma ?? 0.2;
+  const skew = params?.u ?? storeParams.u ?? 0;
+  const kurtosis = params?.d ?? storeParams.d ?? 0;
+
+  // Unnormalized Probability Density Function for Skew-Generalized-Normal
+  const skewGenNormalPDF = (x: number, mean: number, std: number, sk: number, kurt: number) => {
+    const t = (x - mean) / std;
     
-    // We'll calculate mean and median empirically for the visualization
-    let sumVal = 0;
-    let sumPdf = 0;
+    // Map kurtosis (-5 to +5) to p (3 to 1) for Generalized Normal
+    const p_power = Math.max(0.5, 2 - (kurt / 5));
+    const phi = Math.exp(-0.5 * Math.pow(Math.abs(t), p_power));
+    
+    // Normal CDF approximation for skew
+    const approxCDF = (z: number) => {
+      const p_const = 0.3275911;
+      const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429;
+      const sign = z < 0 ? -1 : 1;
+      const absZ = Math.abs(z) / Math.sqrt(2);
+      const tVal = 1 / (1 + p_const * absZ);
+      const erf = 1 - (((((a5 * tVal + a4) * tVal) + a3) * tVal + a2) * tVal + a1) * tVal * Math.exp(-absZ * absZ);
+      return 0.5 * (1 + sign * erf);
+    };
+    
+    const Phi = approxCDF(sk * t);
+    return phi * Phi;
+  };
+
+  const data = useMemo(() => {
+    let rawPts = [];
+    let integral = 0;
     
     for (let i = -100; i <= 100; i++) {
       const x = i / 20; // Range -5 to 5
-      const pdf = skewNormalPDF(x, 0, sigma, skew);
+      const pdf = skewGenNormalPDF(x, 0, sigma, skew, kurtosis);
+      rawPts.push({ x, pdf });
+      integral += pdf * (1/20); // dx = 1/20
+    }
+    
+    const pts = [];
+    let maxPdf = 0;
+    let modeX = 0;
+    let sumVal = 0;
+    let sumPdf = 0;
+    
+    for (let i = 0; i < rawPts.length; i++) {
+      const x = rawPts[i].x;
+      // Normalize
+      const pdf = rawPts[i].pdf / integral;
       
       if (pdf > maxPdf) {
         maxPdf = pdf;
@@ -85,7 +99,7 @@ export const DistributionVisualizer: React.FC<DistributionVisualizerProps> = ({ 
     }
 
     return { pts, meanX, medianX, modeX };
-  }, [sigma, skew]);
+  }, [sigma, skew, kurtosis]);
 
   // Animation based on currentFrame
   // Frame 0: Just curve

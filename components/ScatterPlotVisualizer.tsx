@@ -24,7 +24,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export const ScatterPlotVisualizer: React.FC<ScatterPlotVisualizerProps> = ({ showRegressionLine = false, highlightOutliers = false, staticParams }) => {
+export const ScatterPlotVisualizer: React.FC<ScatterPlotVisualizerProps> = ({ showRegressionLine = true, highlightOutliers = false, staticParams }) => {
   const storeParams = useLessonStore(state => state.params);
   // Prefer staticParams if provided (e.g. Textbook mode), otherwise fallback to the interactive store
   const params = staticParams || storeParams;

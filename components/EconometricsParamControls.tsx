@@ -29,7 +29,7 @@ export const EconometricsParamControls: React.FC<EconometricsParamControlsProps>
     case 'scatter-plot':
       controls = (
         <>
-          {renderSlider('N', 'Sample Size', 10, 500, 10, Math.min(500, Math.max(10, params.N)), params.N)}
+          {renderSlider('N', 'Sample Size', 10, 200, 10, Math.min(200, Math.max(10, params.N)), params.N)}
           {renderSlider('sigma', 'Noise Variance', 0.05, 3.00, 0.05, params.sigma || 0.2, (params.sigma || 0.2).toFixed(2))}
           {renderSlider('u', 'True Beta (Slope)', -5, 5, 0.1, params.u, params.u.toFixed(2))}
           {renderSlider('S0', 'True Alpha (Intercept)', -50, 150, 5, params.S0, params.S0)}
