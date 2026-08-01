@@ -117,7 +117,7 @@ export default function SandboxPage({ params }: { params: Promise<{ courseId: st
                <p className="text-slate-600 dark:text-slate-400 mt-1">Experiment freely with the pricing engine.</p>
              </div>
              
-             <div className="flex gap-2 p-1 bg-slate-200 dark:bg-slate-800 rounded-lg">
+             <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800 rounded-lg">
                {(['stock_tree', 'option_tree', 'delta_tree', 'convergence-sweep', 'path-explorer', 'monte-carlo'] as const).map(v => (
                  <button
                    key={v}
@@ -132,7 +132,7 @@ export default function SandboxPage({ params }: { params: Promise<{ courseId: st
         </header>
 
         {(visualizer === 'option_tree' || visualizer === 'delta_tree' || visualizer === 'convergence-sweep' || visualizer === 'path-explorer' || visualizer === 'monte-carlo') && (
-           <div className="mb-6 flex gap-2">
+           <div className="mb-6 flex flex-wrap gap-2">
              <button onClick={() => setOptionType('call')} className={`px-4 py-2 rounded-lg font-semibold transition-colors ${optionType === 'call' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 border border-blue-200 dark:border-blue-800' : 'bg-white text-slate-600 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-750'}`}>Call Option</button>
              <button onClick={() => setOptionType('put')} className={`px-4 py-2 rounded-lg font-semibold transition-colors ${optionType === 'put' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 border border-blue-200 dark:border-blue-800' : 'bg-white text-slate-600 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-750'}`}>Put Option</button>
            </div>
