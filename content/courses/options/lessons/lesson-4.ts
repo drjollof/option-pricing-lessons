@@ -13,10 +13,10 @@ export const lesson4: Lesson = {
       kind: 'static-slides',
       showParamControls: false,
       stepTexts: [
-        "A real stock price moves continuously, modeled by Geometric Brownian Motion.",
-        "The two key parameters of this motion are Drift (μ) and Volatility (σ).",
-        "If we slice time into very small steps (Δt), we can force our discrete binomial tree to perfectly match the continuous volatility (σ) of the stock.",
-        "This process is called 'Calibration'."
+        "A real stock price moves continuously. We model this mathematically using Geometric Brownian Motion (GBM).",
+        "GBM has two pieces: the expected trend (like a bank account, mu), and a random shock or 'coin flip' (the volatility, sigma).",
+        "If we slice time into very small steps, we can force our discrete binomial tree's up/down jumps to perfectly match the real stock's random shocks.",
+        "This process of forcing the tree to match real-world statistics is called 'Calibration'."
       ],
       formulas: [
         [ `u = 1.15, d = 0.85 \\quad (\\text{Arbitrary!})` ],
@@ -35,10 +35,10 @@ export const lesson4: Lesson = {
       showParamControls: false,
       overrideParams: { N: 3, u: 1.1224, d: 0.8910 },
       stepTexts: [
-        "We assume a stock volatility of σ = 20% (0.20) and T = 1 year.",
-        "If N = 3 steps, then Δt = 1/3 = 0.3333.",
-        "We calculate the up factor: u = e^(0.20 * √0.3333).",
-        "This guarantees that our discrete binomial tree statistically matches the continuous real-world volatility of the stock!"
+        "Assume a stock volatility of σ = 20% and T = 1 year. For N=3, each step Δt is 0.3333 years.",
+        "Why do we take the square root of time? Because uncertainty (variance) grows linearly, meaning volatility grows with the square root of time!",
+        "By setting the up factor to e^(σ√Δt), we scale our 20% annual volatility down to the exact size needed for a 4-month step.",
+        "This guarantees our tree statistically matches the real world, no matter how many steps we chop the year into."
       ],
       formulas: [
         [

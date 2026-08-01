@@ -101,16 +101,16 @@ export const lesson1: Lesson = {
       showAllInstantly: false,
       visibleParams: ['u', 'd', 'r', 'dt'],
       stepTexts: [
-        "We want to price an option without knowing the true probability of the stock going up or down.",
-        "By creating a risk-free portfolio (delta hedging), the expected return must equal the risk-free rate r.",
-        "This implies a synthetic 'risk-neutral probability' q for the up state.",
-        "We calculate q using the up factor, down factor, and risk-free rate."
+        "We want to price an option without guessing the true probability of the stock going up or down.",
+        "Because arbitrageurs force options to be priced fairly against a risk-free bank account, the expected payout of the stock must exactly match the bank's return.",
+        "Let's assume our bank account grows by 1.0168 (drift). Our stock's expected payout must match this: 115q + 85(1-q) = 100 * 1.0168.",
+        "By solving that simple algebra equation for q, we isolate the exact 'risk-neutral probability'. The messy formula below is just the generalized version of that exact algebra!"
       ],
       formulas: [
-        `q = \\frac{e^{r \\Delta t} - d}{u - d}`,
-        `e^{r \\Delta t} = e^{0.05 \\times (1/3)} \\approx 1.0168`,
-        `q = \\frac{1.0168 - 0.85}{1.15 - 0.85}`,
-        `q \\approx 0.556`
+        `\\text{Stock Payout} = \\text{Bank Return}`,
+        `E[S] = S_0 e^{r \\Delta t}`,
+        `115q + 85(1-q) = 101.68`,
+        `q = \\frac{e^{r \\Delta t} - d}{u - d} \\approx 0.556`
       ]
     },
     {

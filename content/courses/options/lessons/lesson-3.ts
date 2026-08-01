@@ -36,10 +36,10 @@ export const lesson3: Lesson = {
       direction: 'forward',
       showParamControls: false,
       stepTexts: [
-        "We want to eliminate risk by creating a portfolio that is immune to stock movements.",
-        "We buy 1 option and short Δ shares of stock. To be risk-free, the portfolio value must be the same whether the stock goes up or down.",
-        "Solving the equation yields the Delta formula: Δ = (Cu - Cd) / (Su - Sd).",
-        "Let's calculate the Delta at the root node using the values from Lesson 1."
+        "We want to create a portfolio that is perfectly immune to risk. This is a balancing act.",
+        "To achieve perfect balance, the dollars we gain when the stock goes UP must exactly offset the dollars we lose when the stock goes DOWN.",
+        "By setting the 'Up Portfolio' equal to the 'Down Portfolio', we can algebraically find the exact ratio of Options to Stock (Delta) required to freeze our value.",
+        "Plugging in our values from Lesson 1, we see we need to short 0.593 shares for every 1 Call option we hold to stay perfectly insulated."
       ],
       formulas: [
         [
