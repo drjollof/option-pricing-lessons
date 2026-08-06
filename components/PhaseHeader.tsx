@@ -1,6 +1,10 @@
 "use client";
 import React from 'react';
 import { useLessonStore } from '@/store/lessonStore';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 
 interface PhaseHeaderProps {
   title: string;
@@ -16,9 +20,11 @@ export const PhaseHeader: React.FC<PhaseHeaderProps> = ({ title, description, vi
       <div>
         <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">{title}</h2>
         {description && (
-          <p className="text-slate-500 dark:text-slate-400 font-medium max-w-3xl leading-relaxed">
-            {description}
-          </p>
+          <div className="text-slate-500 dark:text-slate-400 font-medium max-w-3xl leading-relaxed prose prose-invert prose-p:my-0">
+            <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+              {description}
+            </ReactMarkdown>
+          </div>
         )}
       </div>
       <div className="flex flex-wrap gap-2">

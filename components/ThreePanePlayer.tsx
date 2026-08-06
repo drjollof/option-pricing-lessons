@@ -13,6 +13,8 @@ import { LessonPhase } from '@/content/types';
 import { ConvergenceChartPane } from './ConvergenceChartPane';
 import { PathExplorerPane } from './PathExplorerPane';
 import { MonteCarloPane } from './MonteCarloPane';
+import { BSMGreeksVisualizer } from './BSMGreeksVisualizer';
+import { MCConvergenceVisualizer } from './MCConvergenceVisualizer';
 import { ScatterPlotVisualizer } from './ScatterPlotVisualizer';
 import { CorrelationHeatmapVisualizer } from './CorrelationHeatmapVisualizer';
 import { PCAVisualizer } from './PCAVisualizer';
@@ -67,11 +69,11 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
   useEffect(() => {
     pause(); 
 
-    const isStaticVisualizer = [
-      'scatter-plot', 'correlation-heatmap', 'pca-scree', 'mc-histogram', 
+      const isStaticVisualizer = [
+      'scatter-plot', 'correlation-heatmap', 'pca-scree',
       'residual-plot', 'robust-regression', 'penalty-path', 'loess-plot', 
-      'distribution-curve', 'qq-plot', 'copula-plot', 'copula-3d', 'rank-correlation', 
-      'correlogram', 'stochastic-path', 'arima-signature', 'static-slides', 'derivation-steps'
+      'qq-plot', 'copula-plot', 'copula-3d', 'rank-correlation', 
+      'correlogram', 'arima-signature', 'static-slides', 'derivation-steps'
     ].includes(phase.kind);
 
     if (isStaticVisualizer || phase.showAllInstantly) {
@@ -81,7 +83,8 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
     }
 
     const isStepTextAnimatedVisualizer = [
-      'factor-analysis', 'network-theory', 'granger-causality', 'machine-learning'
+      'factor-analysis', 'network-theory', 'granger-causality', 'machine-learning',
+      'stochastic-path', 'distribution-curve', 'mc-histogram'
     ].includes(phase.kind);
 
     if (isStepTextAnimatedVisualizer) {
@@ -97,14 +100,18 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
     const maxF = phase.reveals === 'delta_tree' ? params.N - 1 : params.N;
     setMaxFrames(maxF);
     
-    // Always start from 0 and autoplay (user preference)
-    setFrame(0);
-    
-    // Use a small timeout to let the state settle before playing
-    if (maxF > 0) {
-      setTimeout(() => play(), 100);
+    // In sandbox, reveal the full tree immediately so sliders respond visually.
+    // In lesson mode (id !== 'sandbox-phase'), animate step by step.
+    if (phase.id === 'sandbox-phase') {
+      setFrame(maxF);
+    } else {
+      setFrame(0);
+      if (maxF > 0) {
+        setTimeout(() => play(), 100);
+      }
     }
-  }, [params.N, phase, setMaxFrames, setFrame, pause, play]);
+    
+  }, [params.N, params.u, params.d, params.S0, params.K, params.r, params.T, phase, setMaxFrames, setFrame, pause, play]);
 
   if (phase.kind === 'convergence-sweep') {
     return (
@@ -170,6 +177,14 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
                   highlightOutliers={phase.id.includes('outlier')} 
                 />
               </div>
+            ) : phase.kind === 'mc-convergence' ? (
+              <div className="lg:col-span-7 h-[400px] lg:h-[500px] order-3 lg:order-2">
+                <MCConvergenceVisualizer optionType={phase.optionType as 'call' | 'put' || 'call'} />
+              </div>
+            ) : phase.kind === 'bsm-greeks' ? (
+              <div className="lg:col-span-7 h-[400px] lg:h-[500px] order-3 lg:order-2">
+                <BSMGreeksVisualizer optionType={phase.optionType as 'call' | 'put' || 'call'} />
+              </div>
             ) : phase.kind === 'correlation-heatmap' ? (
               <div className="lg:col-span-7 h-[400px] lg:h-[500px] order-3 lg:order-2">
                 <CorrelationHeatmapVisualizer />
@@ -180,7 +195,7 @@ export const ThreePanePlayer: React.FC<ThreePanePlayerProps> = ({ phase }) => {
               </div>
             ) : phase.kind === 'mc-histogram' ? (
               <div className="lg:col-span-7 h-[400px] lg:h-[500px] order-3 lg:order-2">
-                <MonteCarloHistogramVisualizer />
+                <MonteCarloHistogramVisualizer currentFrame={currentFrame} />
               </div>
             ) : phase.kind === 'residual-plot' ? (
               <div className="lg:col-span-7 h-[400px] lg:h-[500px] order-3 lg:order-2">

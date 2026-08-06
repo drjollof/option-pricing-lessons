@@ -38,9 +38,9 @@ export const lesson11: Lesson = {
       visibleParams: [],
       overrideParams: { N: 2 },
       stepTexts: [
-        "With $N=2$, a trinomial tree produces $2(2) + 1 = 5$ terminal nodes.",
-        "The highest possible stock price is $S_0 u^2 = 100 \\times 1.25^2 = 156.25$.",
-        "The payoff at this highest node is $\\max(0, 156.25 - 100) = 56.25$.",
+        "With $N=2$, a trinomial tree produces 5 terminal nodes.",
+        "The highest possible stock price is the original price compounded by the up factor twice.",
+        "The payoff at this highest node is the intrinsic value of the Call option.",
         "We compute this for all 5 nodes to create our terminal payoff array."
       ],
       formulas: [

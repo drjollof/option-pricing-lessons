@@ -18,8 +18,9 @@ interface DistributionVisualizerProps {
   currentFrame: number;
   params?: {
     sigma?: number;
-    u?: number; // Used for Skewness
-    d?: number; // Used for Kurtosis
+    u?: number;
+    d?: number;
+    T?: number;
   };
 }
 
@@ -29,6 +30,9 @@ export const DistributionVisualizer: React.FC<DistributionVisualizerProps> = ({ 
   const sigma = params?.sigma ?? storeParams.sigma ?? 0.2;
   const skew = params?.u ?? storeParams.u ?? 0;
   const kurtosis = params?.d ?? storeParams.d ?? 0;
+  const T = params?.T ?? storeParams.T ?? 1;
+  // sigma*sqrt(T) is the BSM standard deviation of log-returns — T widens the curve
+  const effectiveSigma = sigma * Math.sqrt(T);
 
   // Unnormalized Probability Density Function for Skew-Generalized-Normal
   const skewGenNormalPDF = (x: number, mean: number, std: number, sk: number, kurt: number) => {
@@ -58,10 +62,10 @@ export const DistributionVisualizer: React.FC<DistributionVisualizerProps> = ({ 
     let integral = 0;
     
     for (let i = -100; i <= 100; i++) {
-      const x = i / 20; // Range -5 to 5
-      const pdf = skewGenNormalPDF(x, 0, sigma, skew, kurtosis);
+      const x = i / 20;
+      const pdf = skewGenNormalPDF(x, 0, effectiveSigma, skew, kurtosis);
       rawPts.push({ x, pdf });
-      integral += pdf * (1/20); // dx = 1/20
+      integral += pdf * (1/20);
     }
     
     const pts = [];
@@ -99,7 +103,7 @@ export const DistributionVisualizer: React.FC<DistributionVisualizerProps> = ({ 
     }
 
     return { pts, meanX, medianX, modeX };
-  }, [sigma, skew, kurtosis]);
+  }, [effectiveSigma, skew, kurtosis]);
 
   // Animation based on currentFrame
   // Frame 0: Just curve
@@ -110,8 +114,9 @@ export const DistributionVisualizer: React.FC<DistributionVisualizerProps> = ({ 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900 rounded-xl p-4">
       <h3 className="text-xl font-bold text-slate-200 mb-4 tracking-wider">
-        {skew === 0 ? "Normal Distribution" : "Skewed Distribution"}
+        {skew === 0 ? 'Normal Distribution' : 'Skewed Distribution'}
       </h3>
+      <p className="text-xs text-slate-400 mb-2">σ={sigma.toFixed(2)} · T={T.toFixed(2)}yr · σ√T={effectiveSigma.toFixed(3)}</p>
       
       <div className="w-full h-64 md:h-80 relative">
         <ResponsiveContainer width="100%" height="100%">

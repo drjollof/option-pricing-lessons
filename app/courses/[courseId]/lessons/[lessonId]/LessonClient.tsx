@@ -9,7 +9,7 @@ import { useProgressStore } from '@/store/progressStore';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
 import Link from 'next/link';
 
-export const LessonClient: React.FC<{ lesson: Lesson, courseId: string }> = ({ lesson, courseId }) => {
+export const LessonClient: React.FC<{ lesson: Lesson, courseId: string, prevLessonId?: string, nextLessonId?: string }> = ({ lesson, courseId, prevLessonId, nextLessonId }) => {
   const storageKey = `lesson-phase-${courseId}-${lesson.id}`;
 
   const [activePhaseIndex, setActivePhaseIndex] = useState(0);
@@ -79,9 +79,30 @@ export const LessonClient: React.FC<{ lesson: Lesson, courseId: string }> = ({ l
       <div className="max-w-7xl mx-auto">
         <header className="mb-8">
            <div className="flex justify-between items-center mb-4">
-             <Link href={`/courses/${courseId}`} className="inline-flex items-center text-blue-600 hover:underline font-semibold text-sm transition-colors">
-               ← Back to Course Syllabus
-             </Link>
+             <div className="flex items-center gap-4">
+               <Link href={`/courses/${courseId}`} className="inline-flex items-center text-blue-600 hover:underline font-semibold text-sm transition-colors">
+                 ← Course Syllabus
+               </Link>
+               {(prevLessonId || nextLessonId) && <span className="text-slate-300 dark:text-slate-700">|</span>}
+               {prevLessonId && (
+                 <Link 
+                   href={`/courses/${courseId}/lessons/${prevLessonId}`} 
+                   onClick={() => localStorage.setItem(`lesson-phase-${courseId}-${prevLessonId}`, '0')}
+                   className="inline-flex items-center text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 font-semibold text-sm transition-colors"
+                 >
+                   ← Prev Lesson
+                 </Link>
+               )}
+               {nextLessonId && (
+                 <Link 
+                   href={`/courses/${courseId}/lessons/${nextLessonId}`} 
+                   onClick={() => localStorage.setItem(`lesson-phase-${courseId}-${nextLessonId}`, '0')}
+                   className="inline-flex items-center text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 font-semibold text-sm transition-colors"
+                 >
+                   Next Lesson →
+                 </Link>
+               )}
+             </div>
              <DarkModeToggle />
            </div>
            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-2">{lesson.title}</h1>
@@ -157,6 +178,29 @@ export const LessonClient: React.FC<{ lesson: Lesson, courseId: string }> = ({ l
             Next Phase
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </button>
+        </div>
+
+        {/* Bottom Lesson Navigation */}
+        <div className="flex flex-col sm:flex-row items-center justify-between mt-4 pt-6 border-t border-slate-200 dark:border-slate-800">
+           {prevLessonId ? (
+              <Link 
+                href={`/courses/${courseId}/lessons/${prevLessonId}`} 
+                onClick={() => localStorage.setItem(`lesson-phase-${courseId}-${prevLessonId}`, '0')}
+                className="w-full sm:w-auto px-6 py-3 text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors text-center"
+              >
+                 ← Previous Lesson
+              </Link>
+           ) : <div className="hidden sm:block w-32" />}
+           
+           {nextLessonId ? (
+              <Link 
+                href={`/courses/${courseId}/lessons/${nextLessonId}`} 
+                onClick={() => localStorage.setItem(`lesson-phase-${courseId}-${nextLessonId}`, '0')}
+                className="w-full sm:w-auto mt-4 sm:mt-0 px-6 py-3 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 rounded-xl transition-colors shadow-sm text-center"
+              >
+                 Next Lesson →
+              </Link>
+           ) : <div className="hidden sm:block w-32" />}
         </div>
       </div>
     </main>

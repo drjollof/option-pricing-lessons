@@ -10,6 +10,10 @@ import { lesson9 } from './lessons/lesson-9';
 import { lesson10 } from './lessons/lesson-10';
 import { lesson11 } from './lessons/lesson-11';
 import { lesson12 } from './lessons/lesson-12';
+import { lesson13 } from './lessons/lesson-13';
+import { lesson14 } from './lessons/lesson-14';
+import { lesson15 } from './lessons/lesson-15';
+import { lesson16 } from './lessons/lesson-16';
 
 import { Course } from '../../types';
 
@@ -26,6 +30,10 @@ export const lessonsList = [
   lesson10,
   lesson11,
   lesson12,
+  lesson13,
+  lesson14,
+  lesson15,
+  lesson16,
 ];
 
 export const courseCurriculum: Course = {
@@ -46,6 +54,15 @@ export const courseCurriculum: Course = {
       id: 'module-2',
       title: 'The Trinomial Model',
       lessons: [lesson9, lesson10, lesson11, lesson12].map(l => ({
+        id: l.id,
+        title: l.title,
+        description: l.description
+      }))
+    },
+    {
+      id: 'module-3',
+      title: 'Continuous-Time Models & Pricing',
+      lessons: [lesson13, lesson14, lesson15, lesson16].map(l => ({
         id: l.id,
         title: l.title,
         description: l.description

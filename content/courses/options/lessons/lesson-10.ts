@@ -78,10 +78,10 @@ export const lesson10: Lesson = {
       showAllInstantly: true,
       visibleParams: [],
       stepTexts: [
-        "Assume $r = 0.05, \\sigma = 0.20, \\Delta t = 1, u = 1.25, d = 0.8$.",
-        "First, we calculate the drift $M = e^{0.05 \\times 1} = 1.0513$.",
-        "Next, we calculate the variance constraint $V = e^{0.10} + 0.20^2 = 1.1052 + 0.04 = 1.1452$.",
-        "Plugging $M$, $V$, $u$, and $d$ into our formulas yields $p_u = 0.231$, $p_d = 0.258$, and therefore $p_m = 0.511$."
+        "Assume our default parameters: risk-free rate, volatility, time step, and the up/down jump factors.",
+        "First, we calculate the expected drift term ($M$) using the continuous compounding formula.",
+        "Next, we calculate the variance constraint ($V$) which matches the continuous Geometric Brownian Motion.",
+        "Plugging $M$, $V$, $u$, and $d$ into our formulas yields our unique risk-neutral probabilities."
       ],
       formulas: [
         `M = e^{0.05} = 1.0513`,

@@ -1,6 +1,6 @@
 import { TreeParams } from '@/lib/binomial';
 
-export type PhaseKind = 'static-slides' | 'tree-reveal' | 'derivation-steps' | 'parity-check' | 'hedge-rebalance-animation' | 'convergence-sweep' | 'calibration-form' | 'path-explorer' | 'monte-carlo' | 'placeholder' | 'scatter-plot' | 'correlation-heatmap' | 'pca-scree' | 'mc-histogram' | 'residual-plot' | 'robust-regression' | 'penalty-path' | 'loess-plot' | 'distribution-curve' | 'qq-plot' | 'copula-plot' | 'copula-3d' | 'rank-correlation' | 'correlogram' | 'stochastic-path' | 'arima-signature' | 'factor-analysis' | 'network-theory' | 'granger-causality' | 'machine-learning';
+export type PhaseKind = 'static-slides' | 'tree-reveal' | 'derivation-steps' | 'parity-check' | 'hedge-rebalance-animation' | 'convergence-sweep' | 'calibration-form' | 'path-explorer' | 'monte-carlo' | 'placeholder' | 'scatter-plot' | 'correlation-heatmap' | 'pca-scree' | 'mc-histogram' | 'residual-plot' | 'robust-regression' | 'penalty-path' | 'loess-plot' | 'distribution-curve' | 'qq-plot' | 'copula-plot' | 'copula-3d' | 'rank-correlation' | 'correlogram' | 'stochastic-path' | 'arima-signature' | 'factor-analysis' | 'network-theory' | 'granger-causality' | 'machine-learning' | 'bsm-greeks' | 'mc-convergence';
 
 export interface LessonPhase {
   id: string;

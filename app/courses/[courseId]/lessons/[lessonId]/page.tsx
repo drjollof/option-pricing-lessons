@@ -8,9 +8,13 @@ export default async function LessonPage({ params }: { params: Promise<{ courseI
   if (!courseData) notFound();
 
   // Find the full lesson object containing phases and logic
-  const lesson = courseData.fullLessons.find(l => l.id === lessonId);
+  const lessonIndex = courseData.fullLessons.findIndex(l => l.id === lessonId);
+  const lesson = courseData.fullLessons[lessonIndex];
   
   if (!lesson) notFound();
 
-  return <LessonClient lesson={lesson} courseId={courseId} />;
+  const prevLessonId = lessonIndex > 0 ? courseData.fullLessons[lessonIndex - 1].id : undefined;
+  const nextLessonId = lessonIndex < courseData.fullLessons.length - 1 ? courseData.fullLessons[lessonIndex + 1].id : undefined;
+
+  return <LessonClient lesson={lesson} courseId={courseId} prevLessonId={prevLessonId} nextLessonId={nextLessonId} />;
 }

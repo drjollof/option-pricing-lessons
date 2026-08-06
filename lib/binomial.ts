@@ -7,6 +7,7 @@ export interface TreeParams {
   T: number;
   N: number;
   sigma?: number;
+  modelMode?: string; // e.g. 'vasicek' to distinguish from default gbm
 }
 
 export function buildStockTree(p: TreeParams): number[][] {

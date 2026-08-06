@@ -11,6 +11,7 @@ interface StochasticPathVisualizerProps {
     sigma?: number; // volatility
     S0?: number;
     N?: number;
+    T?: number;
   };
 }
 
@@ -18,9 +19,11 @@ export const StochasticPathVisualizer: React.FC<StochasticPathVisualizerProps> =
   const storeParams = useLessonStore(state => state.params);
   
   const u = params?.u ?? storeParams.u ?? 0;
-  const sigma = params?.sigma ?? storeParams.sigma ?? 1;
+  const sigma = params?.sigma ?? storeParams.sigma ?? 0.2;
   const S0 = params?.S0 ?? storeParams.S0 ?? 100;
+  const T = params?.T ?? storeParams.T ?? 1;
   const totalSteps = Math.min(500, Math.max(10, params?.N ?? storeParams.N ?? 100));
+  const dt = T / totalSteps; // time step size — T directly controls path behaviour
 
   const data = useMemo(() => {
     // Generate base random shocks
@@ -31,14 +34,15 @@ export const StochasticPathVisualizer: React.FC<StochasticPathVisualizerProps> =
     let rwd = S0;
     
     for (let t = 0; t < totalSteps; t++) {
-      const e_t = shocks[t];
-      const e_t_minus_1 = t > 0 ? shocks[t - 1] : 0;
+      // Scale shocks by sqrt(dt) — the key GBM discretisation
+      const e_t = shocks[t] * Math.sqrt(dt);
+      const e_t_minus_1 = t > 0 ? shocks[t - 1] * Math.sqrt(dt) : 0;
       
-      // Random Walk
+      // Random Walk (scaled by T)
       rw += e_t;
       
-      // RW with Drift
-      rwd += u + e_t;
+      // RW with Drift: drift per step = u * dt
+      rwd += u * dt + e_t;
       
       // MA(1)
       const theta = 0.8;
@@ -50,35 +54,35 @@ export const StochasticPathVisualizer: React.FC<StochasticPathVisualizerProps> =
 
       // ARCH(1) Returns
       const omega = 1.0;
-      const alpha_arch = 0.8; // High ARCH effect
-      const z_t = e_t / (sigma * 2 || 1); // Standard normal roughly
+      const alpha_arch = 0.8;
+      const z_t = e_t / (sigma * Math.sqrt(dt) || 1);
       const h_t_arch = t === 0 ? omega : omega + alpha_arch * (path[t-1].arch_shock * path[t-1].arch_shock);
       const arch_shock = Math.sqrt(h_t_arch) * z_t;
       const arch1 = arch_shock;
 
       // GARCH(1,1) Returns
       const beta_garch = 0.6;
-      const alpha_garch = 0.3; // alpha + beta < 1
+      const alpha_garch = 0.3;
       const h_t_garch = t === 0 ? omega : omega + alpha_garch * (path[t-1].garch_shock * path[t-1].garch_shock) + beta_garch * path[t-1].h_t_garch_val;
       const garch_shock = Math.sqrt(h_t_garch) * z_t;
       const garch11 = garch_shock;
 
       path.push({
-        t,
+        t: parseFloat((t * dt).toFixed(3)),
         wn: e_t,
-        rw: rw,
-        rwd: rwd,
-        ma1: ma1,
-        ar1: ar1,
-        arch1: arch1,
-        garch11: garch11,
-        arch_shock: arch_shock,
-        garch_shock: garch_shock,
+        rw,
+        rwd,
+        ma1,
+        ar1,
+        arch1,
+        garch11,
+        arch_shock,
+        garch_shock,
         h_t_garch_val: h_t_garch
       } as any);
     }
     return path;
-  }, [u, sigma, S0, totalSteps]);
+  }, [u, sigma, S0, totalSteps, dt]);
 
   // Determine what we are plotting based on 'u' parameter passed in or some state.
   // Actually, let's use `u` as an enum for the process type for this visualizer.

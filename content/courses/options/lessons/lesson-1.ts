@@ -103,7 +103,7 @@ export const lesson1: Lesson = {
       stepTexts: [
         "We want to price an option without guessing the true probability of the stock going up or down.",
         "Because arbitrageurs force options to be priced fairly against a risk-free bank account, the expected payout of the stock must exactly match the bank's return.",
-        "Let's assume our bank account grows by 1.0168 (drift). Our stock's expected payout must match this: 115q + 85(1-q) = 100 * 1.0168.",
+        "Let's assume our bank account grows by 1.0168 (drift). Our stock's expected payout must match this:",
         "By solving that simple algebra equation for q, we isolate the exact 'risk-neutral probability'. The messy formula below is just the generalized version of that exact algebra!"
       ],
       formulas: [

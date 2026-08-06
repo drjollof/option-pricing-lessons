@@ -33,8 +33,8 @@ export const lesson7: Lesson = {
       showParamControls: false,
       stepTexts: [
         "Consider two paths: Path 1 (Up, Down) and Path 2 (Down, Up).",
-        "In our tree, S0=100. Path 1: 100 → 115 → 97.7. Path 2: 100 → 85 → 97.7.",
-        "Both end at 97.7. But Path 1 average is 104.2, and Path 2 average is 94.2!",
+        "In our tree, we can trace both of these distinct price paths.",
+        "Both end at the same terminal price. But their averages are very different!",
         "Because the averages are different, the payoffs are different. The tree no longer recombines! We must evaluate every single path."
       ],
       formulas: [

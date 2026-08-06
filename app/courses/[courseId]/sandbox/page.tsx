@@ -1,13 +1,14 @@
 "use client";
-import React, { useState, use } from 'react';
+import React, { useState, use, useEffect } from 'react';
 import { ThreePanePlayer } from '@/components/ThreePanePlayer';
 import { ParamControls } from '@/components/ParamControls';
 import { EconometricsParamControls } from '@/components/EconometricsParamControls';
 import { LessonPhase } from '@/content/types';
 import Link from 'next/link';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
+import { useLessonStore } from '@/store/lessonStore';
 
-const optionsVisualizers = ['stock_tree', 'option_tree', 'delta_tree', 'convergence-sweep', 'path-explorer', 'monte-carlo'] as const;
+const optionsVisualizers = ['stock_tree', 'option_tree', 'delta_tree', 'convergence-sweep', 'path-explorer', 'monte-carlo', 'stochastic-path', 'mc-histogram', 'distribution-curve', 'bsm-greeks', 'mc-convergence'] as const;
 const econometricsVisualizers = ['scatter-plot', 'correlation-heatmap', 'pca-scree', 'distribution-curve', 'machine-learning', 'arima-signature', 'copula-3d', 'network-theory', 'stochastic-path', 'qq-plot'] as const;
 
 export default function SandboxPage({ params }: { params: Promise<{ courseId: string }> }) {
@@ -17,6 +18,8 @@ export default function SandboxPage({ params }: { params: Promise<{ courseId: st
   
   const [visualizer, setVisualizer] = useState<string>(defaultVis);
   const [optionType, setOptionType] = useState<'call' | 'put'>('call');
+  const [simModel, setSimModel] = useState<'gbm' | 'vasicek'>('gbm');
+  const updateParams = useLessonStore(state => state.updateParams);
 
   const activeVisualizers = isEconometrics ? econometricsVisualizers : optionsVisualizers;
 
@@ -32,6 +35,7 @@ export default function SandboxPage({ params }: { params: Promise<{ courseId: st
   let codeSnippet: string | undefined = undefined;
   let kind: LessonPhase['kind'] = 'tree-reveal';
   let reveals: any = undefined;
+  let overrideParams: any = undefined;
 
   // Options Visualizers
   if (visualizer === 'stock_tree') {
@@ -87,6 +91,64 @@ export default function SandboxPage({ params }: { params: Promise<{ courseId: st
       "Simulate continuous asset price paths using geometric Brownian motion."
     ];
     formulas = [["dS_t = \\mu S_t dt + \\sigma S_t dW_t"]];
+  } else if (visualizer === 'stochastic-path') {
+    kind = 'stochastic-path';
+    if (simModel === 'gbm') {
+      stepTexts = [
+        "Geometric Brownian Motion (GBM) Path",
+        "Observe a continuous stochastic price path with drift and volatility."
+      ];
+      formulas = [["dS = S(\\mu dt + \\sigma dW_t)"]];
+      overrideParams = { u: 2.1, sigma: 0.2, S0: 100, T: 1, modelMode: undefined };
+    } else {
+      stepTexts = [
+        "Vasicek Interest Rate Model",
+        "Observe a mean-reverting stochastic path for interest rates."
+      ];
+      formulas = [["dr_t = k(\\theta - r_t)dt + \\sigma dW_t"]];
+      overrideParams = { u: 0.05, S0: 0.10, K: 0.5, sigma: 0.02, modelMode: 'vasicek' };
+    }
+  } else if (visualizer === 'mc-histogram') {
+    kind = 'mc-histogram';
+    if (simModel === 'gbm') {
+      stepTexts = [
+        "GBM Terminal Distribution",
+        "Observe the lognormal distribution of stock prices."
+      ];
+      formulas = [["\\ln(S_T) \\sim \\mathcal{N}"]];
+      overrideParams = { u: 2.1, sigma: 0.2, S0: 100, T: 1, modelMode: undefined };
+    } else {
+      stepTexts = [
+        "Vasicek Terminal Distribution",
+        "Observe the normal distribution of mean-reverting interest rates."
+      ];
+      formulas = [["r_T \\sim \\mathcal{N}"]];
+      overrideParams = { u: 0.05, S0: 0.10, K: 0.5, sigma: 0.02, modelMode: 'vasicek' };
+    }
+  } else if (visualizer === 'distribution-curve') {
+    kind = 'distribution-curve';
+    stepTexts = [
+      "Analytical Distribution Curves",
+      "Observe the standard normal curves utilized in Black-Scholes."
+    ];
+    formulas = [["N(d_1), N(d_2)"]];
+  } else if (visualizer === 'bsm-greeks') {
+    kind = 'bsm-greeks';
+    stepTexts = [
+      "Black-Scholes-Merton & The Greeks",
+      "Adjust analytical parameters to see how option prices and their risk metrics (Greeks) change."
+    ];
+    formulas = [
+      ["C = S \\mathcal{N}(d_1) - K e^{-rT} \\mathcal{N}(d_2)"],
+      ["\\Delta, \\Gamma, \\nu, \\Theta, \\rho"]
+    ];
+  } else if (visualizer === 'mc-convergence') {
+    kind = 'mc-convergence';
+    stepTexts = [
+      "Monte Carlo Convergence",
+      "Observe how Monte Carlo price estimates converge to the exact Black-Scholes analytical price as N increases."
+    ];
+    formulas = [["C_0 = e^{-rT} \\frac{1}{N} \\sum \\max(0, S_T - K)"]];
   }
   
   // Econometrics Visualizers
@@ -138,6 +200,8 @@ export default function SandboxPage({ params }: { params: Promise<{ courseId: st
     formulas = [["Q_{\\text{data}}(p) = Q_{\\text{normal}}(p)"]];
   }
 
+  const isTreeVisualizer = visualizer === 'stock_tree' || visualizer === 'option_tree' || visualizer === 'delta_tree';
+
   const dummyPhase: LessonPhase = {
     id: 'sandbox-phase',
     title: isEconometrics ? 'Econometrics Sandbox' : 'Pricing Sandbox',
@@ -147,8 +211,47 @@ export default function SandboxPage({ params }: { params: Promise<{ courseId: st
     stepTexts,
     formulas,
     codeSnippet,
-    showAllInstantly: true
+    overrideParams,
+    showAllInstantly: !isTreeVisualizer
   };
+
+  // Sync override params with global state when visualizer changes
+  useEffect(() => {
+    if (overrideParams) {
+      updateParams(overrideParams);
+    }
+  }, [visualizer, simModel]); // Only run when these change, to apply defaults but allow user overrides after
+
+  // Determine what parameters to show
+  let currentVisibleParams: string[] | undefined;
+  if (!isEconometrics) {
+    switch (visualizer) {
+      case 'stock_tree':
+        currentVisibleParams = ['S0', 'u', 'd', 'N'];
+        break;
+      case 'option_tree':
+      case 'delta_tree':
+      case 'path-explorer':
+        currentVisibleParams = ['S0', 'K', 'u', 'd', 'r', 'N', 'T'];
+        break;
+      case 'convergence-sweep':
+      case 'monte-carlo':
+      case 'bsm-greeks':
+      case 'mc-convergence':
+        currentVisibleParams = ['S0', 'K', 'r', 'sigma', 'T'];
+        break;
+      case 'distribution-curve':
+        // DistributionVisualizer only reads sigma and T (effectiveSigma = sigma * sqrt(T))
+        currentVisibleParams = ['sigma', 'T'];
+        break;
+      case 'stochastic-path':
+      case 'mc-histogram':
+        currentVisibleParams = ['S0', 'sigma', 'T', 'u'];
+        break;
+      default:
+        currentVisibleParams = undefined;
+    }
+  }
 
   return (
     <main className="min-h-screen bg-[#f8fafc] dark:bg-slate-950 p-6 md:p-10 font-sans selection:bg-blue-200 transition-colors">
@@ -185,15 +288,25 @@ export default function SandboxPage({ params }: { params: Promise<{ courseId: st
            </div>
         </header>
 
-        {!isEconometrics && (visualizer === 'option_tree' || visualizer === 'delta_tree' || visualizer === 'convergence-sweep' || visualizer === 'path-explorer' || visualizer === 'monte-carlo') && (
+        {!isEconometrics && (visualizer === 'option_tree' || visualizer === 'delta_tree' || visualizer === 'convergence-sweep' || visualizer === 'path-explorer' || visualizer === 'monte-carlo' || visualizer === 'bsm-greeks' || visualizer === 'mc-convergence') && (
            <div className="mb-6 flex flex-wrap gap-2">
              <button onClick={() => setOptionType('call')} className={`px-4 py-2 rounded-lg font-semibold transition-colors ${optionType === 'call' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 border border-blue-200 dark:border-blue-800' : 'bg-white text-slate-600 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-750'}`}>Call Option</button>
              <button onClick={() => setOptionType('put')} className={`px-4 py-2 rounded-lg font-semibold transition-colors ${optionType === 'put' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 border border-blue-200 dark:border-blue-800' : 'bg-white text-slate-600 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-750'}`}>Put Option</button>
            </div>
         )}
 
+        {!isEconometrics && (visualizer === 'stochastic-path' || visualizer === 'mc-histogram') && (
+           <div className="mb-6 flex flex-wrap gap-2">
+             <button onClick={() => setSimModel('gbm')} className={`px-4 py-2 rounded-lg font-semibold transition-colors ${simModel === 'gbm' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 border border-blue-200 dark:border-blue-800' : 'bg-white text-slate-600 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-750'}`}>Geometric Brownian Motion</button>
+             <button onClick={() => setSimModel('vasicek')} className={`px-4 py-2 rounded-lg font-semibold transition-colors ${simModel === 'vasicek' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 border border-blue-200 dark:border-blue-800' : 'bg-white text-slate-600 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-750'}`}>Vasicek Model</button>
+           </div>
+        )}
+
         {!isEconometrics ? (
-          <ParamControls maxN={visualizer === 'convergence-sweep' ? 100 : visualizer === 'path-explorer' ? 5 : 6} />
+          <ParamControls 
+            maxN={visualizer === 'convergence-sweep' ? 100 : visualizer === 'path-explorer' ? 5 : 6} 
+            visibleParams={currentVisibleParams}
+          />
         ) : (
           <EconometricsParamControls visualizer={visualizer} />
         )}

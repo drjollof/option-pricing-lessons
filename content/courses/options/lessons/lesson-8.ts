@@ -32,10 +32,10 @@ export const lesson8: Lesson = {
       kind: 'derivation-steps',
       showParamControls: false,
       stepTexts: [
-        "We start with our continuous GBM model: $dS = \\mu S dt + \\sigma S dW$.",
+        "We start with our continuous GBM model.",
         "To simulate this on a computer, we use its exact mathematical solution, moving forward in discrete time steps ($\\Delta t$).",
         "At each step, we draw a random 'shock' multiplier $Z$ from a standard bell curve (like rolling a million-sided die).",
-        "We then multiply the current price by $e^{\\text{Drift} + \\text{Shock}}$. Notice the Drift is penalized slightly by variance ($-\\sigma^2/2$)—this is because volatility drags down compounded returns!"
+        "We then multiply the current price by $e^{\\text{Drift} + \\text{Shock}}$. Notice the Drift is penalized slightly by variance—this is because volatility drags down compounded returns!"
       ],
       formulas: [
         [
